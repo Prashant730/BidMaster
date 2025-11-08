@@ -16,10 +16,10 @@ const Header = ({ user, onLoginClick, onLogout }) => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">BID</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm sm:text-lg">BID</span>
             </div>
-            <span className="text-2xl font-bold text-gray-800 dark:text-white">BidMaster</span>
+            <span className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">BidMaster</span>
           </Link>
 
           {/* Navigation */}
@@ -156,12 +156,13 @@ const Header = ({ user, onLoginClick, onLogout }) => {
 							</div>
 						)}
 					</div>
-				) : (
+            ) : (
               <button
                 onClick={onLoginClick}
-                className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 shadow-lg"
+                className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg"
               >
-                Login / Register
+                <span className="hidden sm:inline">Login / Register</span>
+                <span className="sm:hidden">Login</span>
               </button>
             )}
 
@@ -179,29 +180,52 @@ const Header = ({ user, onLoginClick, onLogout }) => {
 
         {/* Mobile menu */}
 				{isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-gray-200 dark:border-slate-700 pt-4">
-            <div className="flex flex-col space-y-4">
-              <Link to="/" className="font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400" onClick={() => setIsMenuOpen(false)}>
+          <div className="md:hidden mt-4 pb-4 border-t border-gray-200 dark:border-slate-700 pt-4 animate-fadeIn">
+            <div className="flex flex-col space-y-3">
+              <Link to="/" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
                 Live Auctions
               </Link>
-              <Link to="/create" className="font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400" onClick={() => setIsMenuOpen(false)}>
-                Sell Item
-              </Link>
+              {!user?.isAdmin && (
+                <Link to="/create" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+                  Sell Item
+                </Link>
+              )}
 							{user && (
-								<Link to="/profile" className="font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400" onClick={() => setIsMenuOpen(false)}>
-									My Profile
-								</Link>
+								<>
+									<Link to="/profile" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+										My Profile
+									</Link>
+									{user.isAdmin && (
+										<Link to="/admin" className="font-medium text-base text-purple-600 dark:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+											Admin Panel
+										</Link>
+									)}
+									{(user.role === 'auctioneer' || user.isAdmin) && user.isValidated && (
+										<Link to="/auctioneer" className="font-medium text-base text-blue-600 dark:text-blue-400 py-2" onClick={() => setIsMenuOpen(false)}>
+											Auctioneer Dashboard
+										</Link>
+									)}
+								</>
 							)}
               <button
                 onClick={() => {
                   setShowBeginnerGuide(true)
                   setIsMenuOpen(false)
                 }}
-                className="font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 text-left"
+                className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 text-left py-2"
               >
                 Learn More
               </button>
-
+              {user && !user.isAdmin && (
+                <>
+                  <Link to="/policy" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+                    Policy
+                  </Link>
+                  <Link to="/contact" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+                    Contact
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
