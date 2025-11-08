@@ -1,0 +1,512 @@
+import React, { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Header from './components/Header.jsx'
+import Hero from './components/Hero.jsx'
+import AuctionGrid from './components/AuctionGrid.jsx'
+import AuctionDetail from './components/AuctionDetail.jsx'
+import CreateAuction from './components/CreateAuction.jsx'
+import UserProfile from './components/UserProfile.jsx'
+import LoginModal from './components/LoginModal.jsx'
+import BiddingPolicy from './components/BiddingPolicy.jsx'
+import ContactSupport from './components/ContactSupport.jsx'
+import Admin from './components/Admin.jsx'
+import AdminGuide from './components/AdminGuide.jsx'
+import AuctioneerDashboard from './components/AuctioneerDashboard.jsx'
+import { AuctionProvider } from './context/AuctionContext.jsx'
+import { ThemeProvider } from './context/ThemeContext.jsx'
+import { AppProvider, useApp } from './context/AppContext.jsx'
+import './index.css'
+
+// Mock data for auctions
+const mockAuctions = [
+  {
+    id: 1,
+    title: 'Vintage Rolex Submariner',
+    description: 'Beautiful vintage Rolex Submariner from 1965, excellent condition with original papers.',
+    currentPrice: 12500,
+    startingPrice: 10000,
+    image: 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=800',
+    endTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+    bids: [
+      { bidder: 'John D.', amount: 12500, time: new Date(Date.now() - 3600000) },
+      { bidder: 'Sarah M.', amount: 12200, time: new Date(Date.now() - 7200000) }
+    ],
+    seller: 'Luxury Watches Inc.',
+    category: 'Watches'
+  },
+  {
+    id: 2,
+    title: 'Abstract Painting - Modern Art',
+    description: 'Stunning abstract painting by contemporary artist, perfect for modern interiors.',
+    currentPrice: 3200,
+    startingPrice: 2500,
+    image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800',
+    endTime: new Date(Date.now() + 12 * 60 * 60 * 1000), // 12 hours from now
+    bids: [
+      { bidder: 'Art Lover', amount: 3200, time: new Date(Date.now() - 1800000) }
+    ],
+    seller: 'Gallery Modern',
+    category: 'Art'
+  },
+  {
+    id: 3,
+    title: 'Rare Vintage Wine Collection',
+    description: "Collection of 6 bottles of Château Margaux 1982, perfectly stored.",
+    currentPrice: 8500,
+    startingPrice: 7000,
+    image: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800',
+    endTime: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48 hours from now
+    bids: [
+      { bidder: 'Wine Connoisseur', amount: 8500, time: new Date(Date.now() - 5400000) },
+      { bidder: 'Collector', amount: 8200, time: new Date(Date.now() - 10800000) }
+    ],
+    seller: 'Vintage Cellars',
+    category: 'Collectibles'
+  },
+  {
+    id: 4,
+    title: 'Designer Leather Sofa',
+    description: 'Italian designer leather sofa in pristine condition, 3-seater.',
+    currentPrice: 1800,
+    startingPrice: 1500,
+    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800',
+    endTime: new Date(Date.now() + 6 * 60 * 60 * 1000), // 6 hours from now
+    bids: [
+      { bidder: 'Home Decor', amount: 1800, time: new Date(Date.now() - 900000) }
+    ],
+    seller: 'Furniture World',
+    category: 'Furniture'
+  },
+  {
+    id: 5,
+    title: 'MacBook Pro 16" M3 Max',
+    description: 'Brand new MacBook Pro 16-inch with M3 Max chip, 32GB RAM, 1TB SSD. Latest generation, sealed in box.',
+    currentPrice: 3200,
+    startingPrice: 2800,
+    image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800',
+    endTime: new Date(Date.now() + 18 * 60 * 60 * 1000), // 18 hours from now
+    bids: [
+      { bidder: 'Tech Enthusiast', amount: 3200, time: new Date(Date.now() - 2400000) },
+      { bidder: 'Developer Pro', amount: 3100, time: new Date(Date.now() - 4800000) }
+    ],
+    seller: 'Tech Store Premium',
+    category: 'Electronics'
+  },
+  {
+    id: 6,
+    title: 'Sony PlayStation 5 Pro Bundle',
+    description: 'PlayStation 5 Pro console with 2TB SSD, 2 controllers, and 5 exclusive games. Limited edition.',
+    currentPrice: 850,
+    startingPrice: 700,
+    image: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800',
+    endTime: new Date(Date.now() + 30 * 60 * 60 * 1000), // 30 hours from now
+    bids: [
+      { bidder: 'Gamer Elite', amount: 850, time: new Date(Date.now() - 1200000) }
+    ],
+    seller: 'Gaming Hub',
+    category: 'Electronics'
+  },
+  {
+    id: 7,
+    title: 'Diamond Solitaire Ring - 2 Carat',
+    description: 'Exquisite 2-carat diamond solitaire ring in 18k white gold. GIA certified, excellent cut and clarity.',
+    currentPrice: 18500,
+    startingPrice: 15000,
+    image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800',
+    endTime: new Date(Date.now() + 36 * 60 * 60 * 1000), // 36 hours from now
+    bids: [
+      { bidder: 'Luxury Collector', amount: 18500, time: new Date(Date.now() - 3600000) },
+      { bidder: 'Diamond Lover', amount: 17500, time: new Date(Date.now() - 7200000) },
+      { bidder: 'Jewelry Enthusiast', amount: 16500, time: new Date(Date.now() - 10800000) }
+    ],
+    seller: 'Prestige Jewelers',
+    category: 'Jewelry'
+  },
+  {
+    id: 8,
+    title: 'Pearl Necklace - Akoya Classic',
+    description: 'Stunning 18-inch Akoya pearl necklace with 14k gold clasp. Perfect luster, AAA grade pearls.',
+    currentPrice: 2800,
+    startingPrice: 2200,
+    image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800',
+    endTime: new Date(Date.now() + 20 * 60 * 60 * 1000), // 20 hours from now
+    bids: [
+      { bidder: 'Elegance Seeker', amount: 2800, time: new Date(Date.now() - 1800000) },
+      { bidder: 'Classic Style', amount: 2600, time: new Date(Date.now() - 3600000) }
+    ],
+    seller: 'Pearl Masters',
+    category: 'Jewelry'
+  },
+  {
+    id: 9,
+    title: 'iPhone 15 Pro Max 1TB',
+    description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+    currentPrice: 1400,
+    startingPrice: 1200,
+    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
+    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000), // 15 hours from now
+    bids: [
+      { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
+      { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
+      { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+    ],
+    seller: 'Mobile Tech Store',
+    category: 'Furniture'
+  },
+  {
+    id: 10,
+    title: 'iPhone 15 Pro Max 1TB',
+    description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+    currentPrice: 1400,
+    startingPrice: 1200,
+    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
+    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000), // 15 hours from now
+    bids: [
+      { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
+      { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
+      { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+    ],
+    seller: 'Mobile Tech Store',
+    category: 'Collectibles'
+  },
+  {
+    id: 11,
+    title: 'iPhone 15 Pro Max 1TB',
+    description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+    currentPrice: 1400,
+    startingPrice: 1200,
+    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
+    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000), // 15 hours from now
+    bids: [
+      { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
+      { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
+      { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+    ],
+    seller: 'Mobile Tech Store',
+    category: 'Art'
+  },
+  {
+    id: 12,
+    title: 'iPhone 15 Pro Max 1TB',
+    description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+    currentPrice: 1400,
+    startingPrice: 1200,
+    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
+    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000), // 15 hours from now
+    bids: [
+      { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
+      { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
+      { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+    ],
+    seller: 'Mobile Tech Store',
+    category: 'Watches'
+  }
+]
+
+function AppContent() {
+  const { auctions, users, commissionRate, updateAuction, removeAuction, addUser, createAuction } = useApp()
+  const [showLogin, setShowLogin] = useState(false)
+  const [user, setUser] = useState(null)
+
+  // Mock login function
+  const handleLogin = (email, password, name) => {
+    // In a real app, this would be an API call
+    const isAdmin = email && email.endsWith('@admin.com')
+    const isSeller = email && email.endsWith('@seller.com')
+
+    const newUser = {
+      name: name || 'Demo User',
+      email: email,
+      bids: [1, 2],
+      wonItems: [3],
+      address: '',
+      phone: '',
+      profilePhoto: '',
+      status: 'active',
+      role: isAdmin ? 'admin' : (isSeller ? 'auctioneer' : 'bidder'),
+      isValidated: isSeller ? false : true,
+      isAdmin: isAdmin
+    }
+    setUser(newUser)
+    addUser(newUser) // Add to shared context (will emit socket event)
+    setShowLogin(false)
+  }
+
+  const onUpdateAuction = (auctionId, updates) => {
+    updateAuction(auctionId, updates) // Uses context function (will emit socket event)
+  }
+
+  const onUserBid = (auctionId) => {
+    setUser(prev => {
+      if (!prev) return prev
+      const already = prev.bids && prev.bids.includes(auctionId)
+      return already ? prev : { ...prev, bids: [...(prev.bids || []), auctionId] }
+    })
+  }
+
+  const handleLogout = () => {
+    setUser(null)
+  }
+
+  return (
+    <Router>
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200">
+        <Header user={user} onLoginClick={() => setShowLogin(true)} onLogout={handleLogout} />
+
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero user={user} />
+                <AuctionGrid auctions={auctions} currentUser={user} onAdminRemove={removeAuction} />
+              </>
+            }
+          />
+          <Route path="/auction/:id" element={<AuctionDetail auctions={auctions} user={user} onUpdateAuction={onUpdateAuction} onUserBid={onUserBid} onAdminRemove={removeAuction} />} />
+          <Route path="/create" element={<CreateAuction user={user} onAddAuction={(auctionData) => createAuction({ ...auctionData, user })} />} />
+          <Route
+            path="/admin"
+            element={
+              <Admin
+                currentUser={user}
+                users={users}
+                auctions={auctions}
+                commissionRate={commissionRate}
+              />
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <UserProfile
+                user={user}
+                auctions={auctions}
+                onUpdateUser={(updated) => setUser(updated)}
+                users={users}
+              />
+            }
+          />
+          <Route path="/policy" element={<BiddingPolicy />} />
+          <Route path="/contact" element={<ContactSupport />} />
+          <Route path="/admin-guide" element={<AdminGuide />} />
+          <Route
+            path="/auctioneer"
+            element={
+              <AuctioneerDashboard
+                currentUser={user}
+                auctions={auctions}
+              />
+            }
+          />
+        </Routes>
+
+        {showLogin && <LoginModal onClose={() => setShowLogin(false)} onLogin={handleLogin} />}
+      </div>
+    </Router>
+  )
+}
+
+function App() {
+  // Mock data for auctions
+  const mockAuctions = [
+    {
+      id: 1,
+      title: 'Vintage Rolex Submariner',
+      description: 'Beautiful vintage Rolex Submariner from 1965, excellent condition with original papers.',
+      currentPrice: 12500,
+      startingPrice: 10000,
+      image: 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=800',
+      endTime: new Date(Date.now() + 24 * 60 * 60 * 1000).getTime(), // 24 hours from now
+      bids: [
+        { bidder: 'John D.', amount: 12500, time: new Date(Date.now() - 3600000) },
+        { bidder: 'Sarah M.', amount: 12200, time: new Date(Date.now() - 7200000) }
+      ],
+      seller: 'Luxury Watches Inc.',
+      category: 'Watches'
+    },
+    {
+      id: 2,
+      title: 'Abstract Painting - Modern Art',
+      description: 'Stunning abstract painting by contemporary artist, perfect for modern interiors.',
+      currentPrice: 3200,
+      startingPrice: 2500,
+      image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800',
+      endTime: new Date(Date.now() + 12 * 60 * 60 * 1000).getTime(), // 12 hours from now
+      bids: [
+        { bidder: 'Art Lover', amount: 3200, time: new Date(Date.now() - 1800000) }
+      ],
+      seller: 'Gallery Modern',
+      category: 'Art'
+    },
+    {
+      id: 3,
+      title: 'Rare Vintage Wine Collection',
+      description: "Collection of 6 bottles of Château Margaux 1982, perfectly stored.",
+      currentPrice: 8500,
+      startingPrice: 7000,
+      image: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800',
+      endTime: new Date(Date.now() + 48 * 60 * 60 * 1000).getTime(), // 48 hours from now
+      bids: [
+        { bidder: 'Wine Connoisseur', amount: 8500, time: new Date(Date.now() - 5400000) },
+        { bidder: 'Collector', amount: 8200, time: new Date(Date.now() - 10800000) }
+      ],
+      seller: 'Vintage Cellars',
+      category: 'Collectibles'
+    },
+    {
+      id: 4,
+      title: 'Designer Leather Sofa',
+      description: 'Italian designer leather sofa in pristine condition, 3-seater.',
+      currentPrice: 1800,
+      startingPrice: 1500,
+      image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800',
+      endTime: new Date(Date.now() + 6 * 60 * 60 * 1000).getTime(), // 6 hours from now
+      bids: [
+        { bidder: 'Home Decor', amount: 1800, time: new Date(Date.now() - 900000) }
+      ],
+      seller: 'Furniture World',
+      category: 'Furniture'
+    },
+    {
+      id: 5,
+      title: 'MacBook Pro 16" M3 Max',
+      description: 'Brand new MacBook Pro 16-inch with M3 Max chip, 32GB RAM, 1TB SSD. Latest generation, sealed in box.',
+      currentPrice: 3200,
+      startingPrice: 2800,
+      image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800',
+      endTime: new Date(Date.now() + 18 * 60 * 60 * 1000).getTime(), // 18 hours from now
+      bids: [
+        { bidder: 'Tech Enthusiast', amount: 3200, time: new Date(Date.now() - 2400000) },
+        { bidder: 'Developer Pro', amount: 3100, time: new Date(Date.now() - 4800000) }
+      ],
+      seller: 'Tech Store Premium',
+      category: 'Electronics'
+    },
+    {
+      id: 6,
+      title: 'Sony PlayStation 5 Pro Bundle',
+      description: 'PlayStation 5 Pro console with 2TB SSD, 2 controllers, and 5 exclusive games. Limited edition.',
+      currentPrice: 850,
+      startingPrice: 700,
+      image: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800',
+      endTime: new Date(Date.now() + 30 * 60 * 60 * 1000).getTime(), // 30 hours from now
+      bids: [
+        { bidder: 'Gamer Elite', amount: 850, time: new Date(Date.now() - 1200000) }
+      ],
+      seller: 'Gaming Hub',
+      category: 'Electronics'
+    },
+    {
+      id: 7,
+      title: 'Diamond Solitaire Ring - 2 Carat',
+      description: 'Exquisite 2-carat diamond solitaire ring in 18k white gold. GIA certified, excellent cut and clarity.',
+      currentPrice: 18500,
+      startingPrice: 15000,
+      image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800',
+      endTime: new Date(Date.now() + 36 * 60 * 60 * 1000).getTime(), // 36 hours from now
+      bids: [
+        { bidder: 'Luxury Collector', amount: 18500, time: new Date(Date.now() - 3600000) },
+        { bidder: 'Diamond Lover', amount: 17500, time: new Date(Date.now() - 7200000) },
+        { bidder: 'Jewelry Enthusiast', amount: 16500, time: new Date(Date.now() - 10800000) }
+      ],
+      seller: 'Prestige Jewelers',
+      category: 'Jewelry'
+    },
+    {
+      id: 8,
+      title: 'Pearl Necklace - Akoya Classic',
+      description: 'Stunning 18-inch Akoya pearl necklace with 14k gold clasp. Perfect luster, AAA grade pearls.',
+      currentPrice: 2800,
+      startingPrice: 2200,
+      image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800',
+      endTime: new Date(Date.now() + 20 * 60 * 60 * 1000).getTime(), // 20 hours from now
+      bids: [
+        { bidder: 'Elegance Seeker', amount: 2800, time: new Date(Date.now() - 1800000) },
+        { bidder: 'Classic Style', amount: 2600, time: new Date(Date.now() - 3600000) }
+      ],
+      seller: 'Pearl Masters',
+      category: 'Jewelry'
+    },
+    {
+      id: 9,
+      title: 'iPhone 15 Pro Max 1TB',
+      description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+      currentPrice: 1400,
+      startingPrice: 1200,
+      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
+      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(), // 15 hours from now
+      bids: [
+        { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
+        { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
+        { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+      ],
+      seller: 'Mobile Tech Store',
+      category: 'Furniture'
+    },
+    {
+      id: 10,
+      title: 'iPhone 15 Pro Max 1TB',
+      description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+      currentPrice: 1400,
+      startingPrice: 1200,
+      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
+      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(), // 15 hours from now
+      bids: [
+        { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
+        { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
+        { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+      ],
+      seller: 'Mobile Tech Store',
+      category: 'Collectibles'
+    },
+    {
+      id: 11,
+      title: 'iPhone 15 Pro Max 1TB',
+      description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+      currentPrice: 1400,
+      startingPrice: 1200,
+      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
+      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(), // 15 hours from now
+      bids: [
+        { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
+        { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
+        { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+      ],
+      seller: 'Mobile Tech Store',
+      category: 'Art'
+    },
+    {
+      id: 12,
+      title: 'iPhone 15 Pro Max 1TB',
+      description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+      currentPrice: 1400,
+      startingPrice: 1200,
+      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
+      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(), // 15 hours from now
+      bids: [
+        { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
+        { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
+        { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+      ],
+      seller: 'Mobile Tech Store',
+      category: 'Watches'
+    }
+  ]
+
+  return (
+    <ThemeProvider>
+      <AuctionProvider>
+        <AppProvider
+          initialAuctions={mockAuctions}
+          initialUsers={[]}
+          initialCommissionRate={0.05}
+        >
+          <AppContent />
+        </AppProvider>
+      </AuctionProvider>
+    </ThemeProvider>
+  )
+}
+
+export default App
