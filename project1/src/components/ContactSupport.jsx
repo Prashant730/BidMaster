@@ -82,20 +82,20 @@ const ContactSupport = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 transition-colors duration-200">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-4xl font-bold text-gray-800 mb-2">Contact Support</h1>
-              <p className="text-gray-600 text-lg">
+              <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">Contact Support</h1>
+              <p className="text-gray-600 dark:text-gray-300 text-lg">
                 We're here to help! Get in touch with our support team for any questions or concerns.
               </p>
             </div>
             <button
               onClick={() => navigate('/')}
-              className="flex items-center space-x-2 text-gray-600 hover:text-purple-600 transition-colors"
+              className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -109,8 +109,8 @@ const ContactSupport = () => {
           {/* Contact Information Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             {/* Contact Methods */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Get in Touch</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 transition-colors duration-200">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Get in Touch</h2>
 
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
@@ -118,47 +118,47 @@ const ContactSupport = () => {
                     <span className="text-xl">📧</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Email</h3>
-                    <a href="mailto:support@bidmaster.com" className="text-purple-600 hover:text-purple-700">
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-100">Email</h3>
+                    <a href="mailto:support@bidmaster.com" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
                       support@bidmaster.com
                     </a>
-                    <p className="text-sm text-gray-500 mt-1">Response within 24 hours</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Response within 24 hours</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-xl">📞</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Phone</h3>
-                    <a href="tel:18002436278" className="text-purple-600 hover:text-purple-700">
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-100">Phone</h3>
+                    <a href="tel:18002436278" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
                       1-800-BID-MASTER
                     </a>
-                    <p className="text-sm text-gray-500 mt-1">Mon-Fri: 9 AM - 6 PM EST</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Mon-Fri: 9 AM - 6 PM EST</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-xl">💬</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Live Chat</h3>
-                    <button className="text-purple-600 hover:text-purple-700">
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-100">Live Chat</h3>
+                    <button className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
                       Start Chat
                     </button>
-                    <p className="text-sm text-gray-500 mt-1">Available 24/7</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Available 24/7</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-xl">📍</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Address</h3>
-                    <p className="text-gray-600 text-sm">
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-100">Address</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">
                       123 Auction Street<br />
                       New York, NY 10001<br />
                       United States
@@ -169,35 +169,35 @@ const ContactSupport = () => {
             </div>
 
             {/* Response Times */}
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl shadow-lg p-6">
-              <h3 className="font-bold text-gray-800 mb-3">Response Times</h3>
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl shadow-lg p-6 transition-colors duration-200">
+              <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-3">Response Times</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Live Chat:</span>
-                  <span className="font-semibold text-gray-800">Immediate</span>
+                  <span className="text-gray-600 dark:text-gray-300">Live Chat:</span>
+                  <span className="font-semibold text-gray-800 dark:text-gray-100">Immediate</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Email:</span>
-                  <span className="font-semibold text-gray-800">Within 24 hours</span>
+                  <span className="text-gray-600 dark:text-gray-300">Email:</span>
+                  <span className="font-semibold text-gray-800 dark:text-gray-100">Within 24 hours</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Phone:</span>
-                  <span className="font-semibold text-gray-800">During business hours</span>
+                  <span className="text-gray-600 dark:text-gray-300">Phone:</span>
+                  <span className="font-semibold text-gray-800 dark:text-gray-100">During business hours</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Disputes:</span>
-                  <span className="font-semibold text-gray-800">7 business days</span>
+                  <span className="text-gray-600 dark:text-gray-300">Disputes:</span>
+                  <span className="font-semibold text-gray-800 dark:text-gray-100">7 business days</span>
                 </div>
               </div>
             </div>
 
             {/* Helpful Links */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="font-bold text-gray-800 mb-3">Helpful Resources</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 transition-colors duration-200">
+              <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-3">Helpful Resources</h3>
               <div className="space-y-2">
                 <button
                   onClick={() => navigate('/policy')}
-                  className="block w-full text-left text-purple-600 hover:text-purple-700 hover:underline"
+                  className="block w-full text-left text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:underline"
                 >
                   📜 Bidding Policy
                 </button>
@@ -206,13 +206,13 @@ const ContactSupport = () => {
                     // This would open the beginner guide
                     window.scrollTo({ top: 0, behavior: 'smooth' })
                   }}
-                  className="block w-full text-left text-purple-600 hover:text-purple-700 hover:underline"
+                  className="block w-full text-left text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:underline"
                 >
                   📚 Beginner's Guide
                 </button>
                 <a
                   href="#faq"
-                  className="block text-purple-600 hover:text-purple-700 hover:underline"
+                  className="block text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:underline"
                 >
                   ❓ Frequently Asked Questions
                 </a>
@@ -223,8 +223,8 @@ const ContactSupport = () => {
           {/* Main Content - Contact Form */}
           <div className="lg:col-span-2 space-y-6">
             {/* Contact Form */}
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Send us a Message</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 transition-colors duration-200">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Send us a Message</h2>
 
               {submitStatus === 'success' && (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
@@ -240,7 +240,7 @@ const ContactSupport = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Your Name *
                     </label>
                     <input
@@ -250,13 +250,13 @@ const ContactSupport = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       placeholder="John Doe"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Email Address *
                     </label>
                     <input
@@ -266,14 +266,14 @@ const ContactSupport = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       placeholder="john@example.com"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Category *
                   </label>
                   <select
@@ -282,7 +282,7 @@ const ContactSupport = () => {
                     value={formData.category}
                     onChange={handleChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     {supportCategories.map(cat => (
                       <option key={cat.value} value={cat.value}>
@@ -293,7 +293,7 @@ const ContactSupport = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Subject *
                   </label>
                   <input
@@ -303,13 +303,13 @@ const ContactSupport = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     placeholder="Brief description of your inquiry"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Message *
                   </label>
                   <textarea
@@ -319,7 +319,7 @@ const ContactSupport = () => {
                     onChange={handleChange}
                     required
                     rows={6}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                    className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
                     placeholder="Please provide as much detail as possible so we can assist you better..."
                   />
                 </div>
@@ -345,13 +345,13 @@ const ContactSupport = () => {
             </div>
 
             {/* FAQ Section */}
-            <div id="faq" className="bg-white rounded-xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h2>
+            <div id="faq" className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 transition-colors duration-200">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Frequently Asked Questions</h2>
               <div className="space-y-4">
                 {faqItems.map((faq, index) => (
-                  <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
-                    <h3 className="font-semibold text-gray-800 mb-2">{faq.question}</h3>
-                    <p className="text-gray-600 text-sm">{faq.answer}</p>
+                  <div key={index} className="border-b border-gray-200 dark:border-slate-700 pb-4 last:border-0">
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">{faq.question}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{faq.answer}</p>
                   </div>
                 ))}
               </div>

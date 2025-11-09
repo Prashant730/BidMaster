@@ -63,9 +63,9 @@ const BiddingPolicy = () => {
       case 'overview':
         return (
           <div className="space-y-6">
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-l-4 border-purple-500 p-6 rounded-lg">
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">BidMaster Bidding Policy</h3>
-              <p className="text-gray-700 leading-relaxed">
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-l-4 border-purple-500 dark:border-purple-400 p-6 rounded-lg">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">BidMaster Bidding Policy</h3>
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                 This policy establishes the rules and procedures for participating in auctions on BidMaster.
                 Our goal is to ensure fair competition, transparency, and integrity in all bidding processes.
                 All bidders are required to read, understand, and comply with these policies before participating in any auction.
@@ -73,11 +73,11 @@ const BiddingPolicy = () => {
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Purpose</h4>
-              <p className="text-gray-600 mb-4">
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Purpose</h4>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 The BidMaster Bidding Policy is designed to:
               </p>
-              <ul className="list-disc list-inside text-gray-600 space-y-2 ml-4">
+              <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2 ml-4">
                 <li>Promote fair and open competition among all bidders</li>
                 <li>Ensure transparency in the bidding and evaluation process</li>
                 <li>Protect the interests of both buyers and sellers</li>
@@ -87,11 +87,11 @@ const BiddingPolicy = () => {
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Scope</h4>
-              <p className="text-gray-600 mb-4">
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Scope</h4>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 This policy applies to:
               </p>
-              <ul className="list-disc list-inside text-gray-600 space-y-2 ml-4">
+              <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2 ml-4">
                 <li>All auctions conducted on the BidMaster platform</li>
                 <li>All registered bidders and sellers</li>
                 <li>All items listed for auction, regardless of category or value</li>
@@ -99,11 +99,11 @@ const BiddingPolicy = () => {
               </ul>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-blue-800">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <p className="text-blue-800 dark:text-blue-300">
                 <strong>Last Updated:</strong> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
-              <p className="text-blue-700 text-sm mt-2">
+              <p className="text-blue-700 dark:text-blue-300 text-sm mt-2">
                 BidMaster reserves the right to update this policy at any time. Users will be notified of significant changes.
               </p>
             </div>
@@ -113,38 +113,38 @@ const BiddingPolicy = () => {
       case 'fair-competition':
         return (
           <div className="space-y-6">
-            <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">Fair Competition Policy</h3>
-              <p className="text-gray-700">
+            <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-400 p-6 rounded-lg">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Fair Competition Policy</h3>
+              <p className="text-gray-700 dark:text-gray-300">
                 BidMaster is committed to maintaining a fair and competitive bidding environment for all participants.
               </p>
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Principles</h4>
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Principles</h4>
               <div className="space-y-4">
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                  <h5 className="font-semibold text-gray-800 mb-2">Equal Opportunity</h5>
-                  <p className="text-gray-600">
+                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600">
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Equal Opportunity</h5>
+                  <p className="text-gray-600 dark:text-gray-300">
                     All registered bidders have equal opportunity to participate in auctions. No bidder receives
                     preferential treatment or advance information about other bids.
                   </p>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                  <h5 className="font-semibold text-gray-800 mb-2">No Favoritism</h5>
-                  <p className="text-gray-600">
+                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600">
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">No Favoritism</h5>
+                  <p className="text-gray-600 dark:text-gray-300">
                     BidMaster prohibits any form of favoritism, collusion, or manipulation of the bidding process.
                     All bids are evaluated based solely on the criteria specified in the auction listing.
                   </p>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                  <h5 className="font-semibold text-gray-800 mb-2">Anti-Collusion Measures</h5>
-                  <p className="text-gray-600">
+                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600">
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Anti-Collusion Measures</h5>
+                  <p className="text-gray-600 dark:text-gray-300">
                     Bidders are prohibited from:
                   </p>
-                  <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4 mt-2">
+                  <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-1 ml-4 mt-2">
                     <li>Coordinating bids with other participants</li>
                     <li>Creating fake accounts to inflate bids</li>
                     <li>Engaging in bid shilling or artificial price inflation</li>
@@ -154,9 +154,9 @@ const BiddingPolicy = () => {
               </div>
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <h5 className="font-semibold text-yellow-800 mb-2">⚠️ Violations</h5>
-              <p className="text-yellow-700 text-sm">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <h5 className="font-semibold text-yellow-800 dark:text-yellow-300 mb-2">⚠️ Violations</h5>
+              <p className="text-yellow-700 dark:text-yellow-300 text-sm">
                 Violations of fair competition policies may result in account suspension, bid cancellation,
                 or permanent ban from the platform.
               </p>
@@ -167,21 +167,21 @@ const BiddingPolicy = () => {
       case 'transparency':
         return (
           <div className="space-y-6">
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">Transparency Policy</h3>
-              <p className="text-gray-700">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-400 p-6 rounded-lg">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Transparency Policy</h3>
+              <p className="text-gray-700 dark:text-gray-300">
                 Complete transparency ensures all bidders have access to the same information and understand the bidding process.
               </p>
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Information Disclosure</h4>
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Information Disclosure</h4>
               <div className="space-y-3">
                 <div className="flex items-start space-x-3">
                   <span className="text-2xl">📊</span>
                   <div>
-                    <h5 className="font-semibold text-gray-800">Auction Details</h5>
-                    <p className="text-gray-600">
+                    <h5 className="font-semibold text-gray-800 dark:text-gray-100">Auction Details</h5>
+                    <p className="text-gray-600 dark:text-gray-300">
                       All auction listings include complete item descriptions, images, starting price,
                       current bid, time remaining, and seller information.
                     </p>
@@ -191,8 +191,8 @@ const BiddingPolicy = () => {
                 <div className="flex items-start space-x-3">
                   <span className="text-2xl">📈</span>
                   <div>
-                    <h5 className="font-semibold text-gray-800">Bid History</h5>
-                    <p className="text-gray-600">
+                    <h5 className="font-semibold text-gray-800 dark:text-gray-100">Bid History</h5>
+                    <p className="text-gray-600 dark:text-gray-300">
                       All bids are publicly visible, showing bidder names (anonymized), bid amounts,
                       and timestamps. This ensures transparency in the bidding process.
                     </p>
@@ -202,8 +202,8 @@ const BiddingPolicy = () => {
                 <div className="flex items-start space-x-3">
                   <span className="text-2xl">⏰</span>
                   <div>
-                    <h5 className="font-semibold text-gray-800">Time Information</h5>
-                    <p className="text-gray-600">
+                    <h5 className="font-semibold text-gray-800 dark:text-gray-100">Time Information</h5>
+                    <p className="text-gray-600 dark:text-gray-300">
                       Auction start and end times are clearly displayed in real-time.
                       Countdown timers show exact time remaining for each auction.
                     </p>
@@ -213,8 +213,8 @@ const BiddingPolicy = () => {
                 <div className="flex items-start space-x-3">
                   <span className="text-2xl">💰</span>
                   <div>
-                    <h5 className="font-semibold text-gray-800">Pricing Transparency</h5>
-                    <p className="text-gray-600">
+                    <h5 className="font-semibold text-gray-800 dark:text-gray-100">Pricing Transparency</h5>
+                    <p className="text-gray-600 dark:text-gray-300">
                       All prices, fees, and charges are clearly displayed before bidding.
                       No hidden fees or surprise charges.
                     </p>
@@ -224,11 +224,11 @@ const BiddingPolicy = () => {
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Evaluation Process</h4>
-              <p className="text-gray-600 mb-3">
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Evaluation Process</h4>
+              <p className="text-gray-600 dark:text-gray-300 mb-3">
                 The evaluation and award process is transparent:
               </p>
-              <ul className="list-disc list-inside text-gray-600 space-y-2 ml-4">
+              <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2 ml-4">
                 <li>Evaluation criteria are clearly stated in each auction listing</li>
                 <li>Bid evaluation is automated and based on objective criteria</li>
                 <li>Winning bidder is determined by highest bid at auction close</li>
@@ -241,16 +241,16 @@ const BiddingPolicy = () => {
       case 'bid-submission':
         return (
           <div className="space-y-6">
-            <div className="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg">
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">Bid Submission Requirements</h3>
-              <p className="text-gray-700">
+            <div className="bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-500 dark:border-purple-400 p-6 rounded-lg">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Bid Submission Requirements</h3>
+              <p className="text-gray-700 dark:text-gray-300">
                 All bids must be submitted in accordance with these requirements to be considered valid.
               </p>
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Submission Process</h4>
-              <ol className="list-decimal list-inside text-gray-600 space-y-3 ml-4">
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Submission Process</h4>
+              <ol className="list-decimal list-inside text-gray-600 dark:text-gray-300 space-y-3 ml-4">
                 <li>
                   <strong>Registration Required:</strong> Bidders must have a registered account with verified email address
                 </li>
@@ -270,9 +270,9 @@ const BiddingPolicy = () => {
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Bid Format Requirements</h4>
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Bid Format Requirements</h4>
+              <div className="bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg p-4">
+                <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2">
                   <li>Bid amount must be entered as a numeric value (no currency symbols)</li>
                   <li>Bids must be in the currency specified for the auction (typically USD)</li>
                   <li>Decimal values are accepted for items with fractional pricing</li>
@@ -282,10 +282,10 @@ const BiddingPolicy = () => {
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Invalid Bids</h4>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-red-800 font-semibold mb-2">The following bids will be automatically rejected:</p>
-                <ul className="list-disc list-inside text-red-700 space-y-1 ml-4">
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Invalid Bids</h4>
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                <p className="text-red-800 dark:text-red-300 font-semibold mb-2">The following bids will be automatically rejected:</p>
+                <ul className="list-disc list-inside text-red-700 dark:text-red-300 space-y-1 ml-4">
                   <li>Bids below the current highest bid</li>
                   <li>Bids below the minimum starting price</li>
                   <li>Bids submitted after auction end time</li>
@@ -300,44 +300,44 @@ const BiddingPolicy = () => {
       case 'evaluation':
         return (
           <div className="space-y-6">
-            <div className="bg-indigo-50 border-l-4 border-indigo-500 p-6 rounded-lg">
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">Bid Evaluation Criteria</h3>
-              <p className="text-gray-700">
+            <div className="bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 dark:border-indigo-400 p-6 rounded-lg">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Bid Evaluation Criteria</h3>
+              <p className="text-gray-700 dark:text-gray-300">
                 Bids are evaluated based on objective, predetermined criteria to ensure fairness and consistency.
               </p>
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Primary Evaluation Criteria</h4>
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Primary Evaluation Criteria</h4>
               <div className="space-y-4">
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                  <h5 className="font-semibold text-gray-800 mb-2 flex items-center">
+                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600">
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center">
                     <span className="text-2xl mr-2">💰</span>
                     Bid Amount (Primary Factor)
                   </h5>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-gray-300">
                     The highest bid amount at the time of auction closure is the primary determining factor.
                     In case of identical bids, the earliest bid takes precedence.
                   </p>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                  <h5 className="font-semibold text-gray-800 mb-2 flex items-center">
+                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600">
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center">
                     <span className="text-2xl mr-2">⏰</span>
                     Bid Timing
                   </h5>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-gray-300">
                     For bids of equal amount, the bid submitted first is given priority.
                     Timestamps are recorded with millisecond precision.
                   </p>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                  <h5 className="font-semibold text-gray-800 mb-2 flex items-center">
+                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600">
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center">
                     <span className="text-2xl mr-2">✅</span>
                     Bidder Eligibility
                   </h5>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-gray-300">
                     Only bids from eligible, verified bidders are considered.
                     Bidders must meet all eligibility requirements at the time of bid submission.
                   </p>
@@ -346,8 +346,8 @@ const BiddingPolicy = () => {
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Evaluation Process</h4>
-              <ol className="list-decimal list-inside text-gray-600 space-y-2 ml-4">
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Evaluation Process</h4>
+              <ol className="list-decimal list-inside text-gray-600 dark:text-gray-300 space-y-2 ml-4">
                 <li>All bids are automatically validated upon submission</li>
                 <li>Bids are ranked by amount (highest first) and timestamp (earliest first)</li>
                 <li>At auction close, the highest valid bid is automatically selected as the winner</li>
@@ -356,9 +356,9 @@ const BiddingPolicy = () => {
               </ol>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h5 className="font-semibold text-blue-800 mb-2">📊 Automated Evaluation</h5>
-              <p className="text-blue-700 text-sm">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <h5 className="font-semibold text-blue-800 dark:text-blue-300 mb-2">📊 Automated Evaluation</h5>
+              <p className="text-blue-700 dark:text-blue-300 text-sm">
                 BidMaster uses automated systems to ensure objective, consistent, and fair evaluation
                 of all bids without human bias or intervention.
               </p>
@@ -369,19 +369,19 @@ const BiddingPolicy = () => {
       case 'bid-security':
         return (
           <div className="space-y-6">
-            <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">Bid Security Requirements</h3>
-              <p className="text-gray-700">
+            <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 p-6 rounded-lg">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Bid Security Requirements</h3>
+              <p className="text-gray-700 dark:text-gray-300">
                 Bid security ensures commitment and prevents frivolous bidding on high-value items.
               </p>
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">When Bid Security is Required</h4>
-              <p className="text-gray-600 mb-3">
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">When Bid Security is Required</h4>
+              <p className="text-gray-600 dark:text-gray-300 mb-3">
                 Bid security (also known as Earnest Money Deposit or EMD) may be required for:
               </p>
-              <ul className="list-disc list-inside text-gray-600 space-y-2 ml-4">
+              <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2 ml-4">
                 <li>Auctions with starting price above $10,000</li>
                 <li>High-value items (luxury goods, collectibles, electronics)</li>
                 <li>Auctions specified by the seller as requiring bid security</li>
@@ -390,9 +390,9 @@ const BiddingPolicy = () => {
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Security Amount</h4>
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Security Amount</h4>
+              <div className="bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg p-4">
+                <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2">
                   <li>Typically 5-10% of the starting bid amount</li>
                   <li>Minimum security: $500</li>
                   <li>Maximum security: $5,000</li>
@@ -402,28 +402,28 @@ const BiddingPolicy = () => {
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Security Forms</h4>
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Security Forms</h4>
               <div className="space-y-3">
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                  <h5 className="font-semibold text-gray-800 mb-1">Credit Card Hold</h5>
-                  <p className="text-gray-600 text-sm">Authorization hold on credit card (most common)</p>
+                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600">
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Credit Card Hold</h5>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">Authorization hold on credit card (most common)</p>
                 </div>
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                  <h5 className="font-semibold text-gray-800 mb-1">Bank Guarantee</h5>
-                  <p className="text-gray-600 text-sm">Bank guarantee letter for high-value items</p>
+                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600">
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Bank Guarantee</h5>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">Bank guarantee letter for high-value items</p>
                 </div>
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                  <h5 className="font-semibold text-gray-800 mb-1">Escrow Account</h5>
-                  <p className="text-gray-600 text-sm">Funds held in escrow until auction completion</p>
+                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-600">
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Escrow Account</h5>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">Funds held in escrow until auction completion</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Security Refund</h4>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="text-green-800 font-semibold mb-2">Security is refunded if:</p>
-                <ul className="list-disc list-inside text-green-700 space-y-1 ml-4">
+              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Security Refund</h4>
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                <p className="text-green-800 dark:text-green-300 font-semibold mb-2">Security is refunded if:</p>
+                <ul className="list-disc list-inside text-green-700 dark:text-green-300 space-y-1 ml-4">
                   <li>You are not the winning bidder</li>
                   <li>You win and complete payment within 48 hours</li>
                   <li>The auction is cancelled by the seller</li>
@@ -814,21 +814,21 @@ const BiddingPolicy = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 transition-colors duration-200">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center">
              <div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">Bidding Policy</h1>
-            <p className="text-gray-600 text-lg">
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">Bidding Policy</h1>
+            <p className="text-gray-600 dark:text-gray-300 text-lg">
               Comprehensive rules and procedures for participating in BidMaster auctions
             </p>
           </div>
           <div>
             <button
               onClick={() => navigate('/')}
-              className="flex items-center space-x-2 text-gray-600 hover:text-purple-600 mb-4 transition-colors">
+              className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 mb-4 transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -841,8 +841,8 @@ const BiddingPolicy = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-lg p-4 sticky top-24">
-              <h2 className="font-bold text-gray-800 mb-4">Policy Sections</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-4 sticky top-24 transition-colors duration-200">
+              <h2 className="font-bold text-gray-800 dark:text-gray-100 mb-4">Policy Sections</h2>
               <nav className="space-y-1">
                 {policySections.map((section) => (
                   <button
@@ -851,7 +851,7 @@ const BiddingPolicy = () => {
                     className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
                       activeSection === section.id
                         ? 'bg-purple-600 text-white shadow-md'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
                     }`}
                   >
                     <span className="mr-2">{section.icon}</span>
@@ -864,7 +864,7 @@ const BiddingPolicy = () => {
 
           {/* Main Content */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-xl shadow-lg p-8">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 transition-colors duration-200">
               {renderContent()}
             </div>
           </div>

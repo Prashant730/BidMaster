@@ -16,10 +16,10 @@ const CreateAuction = ({ user, onAddAuction }) => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center transition-colors duration-200">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Please Login</h2>
-          <p className="text-gray-600 mb-6">You need to be logged in to create an auction.</p>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Please Login</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">You need to be logged in to create an auction.</p>
           <button onClick={() => navigate('/')} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">Back to Home</button>
         </div>
       </div>
@@ -101,15 +101,15 @@ const CreateAuction = ({ user, onAddAuction }) => {
           <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
             {/* Image URL Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Item Image URL</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Item Image URL</label>
               <input
                 type="url"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="https://images.unsplash.com/photo-..."
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
-              <p className="text-sm text-gray-500 mt-1">Enter an image URL for your item, or leave blank to use a default image</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter an image URL for your item, or leave blank to use a default image</p>
             </div>
 
             {/* Image Upload (Optional - for local files) */}
@@ -123,12 +123,12 @@ const CreateAuction = ({ user, onAddAuction }) => {
                   </div>
                 ))}
                 {images.length < 4 && (
-                  <label className="border-2 border-dashed border-gray-300 rounded-lg h-32 flex items-center justify-center cursor-pointer hover:border-purple-500 transition-colors">
+                  <label className="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg h-32 flex items-center justify-center cursor-pointer hover:border-purple-500 dark:hover:border-purple-400 transition-colors">
                     <div className="text-center">
-                      <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>
-                      <span className="text-sm text-gray-600">Add Image</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Add Image</span>
                       <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
                     </div>
                   </label>
@@ -138,14 +138,14 @@ const CreateAuction = ({ user, onAddAuction }) => {
 
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Item Title</label>
-              <input type="text" value={formData.title} onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))} placeholder="e.g., Vintage Rolex Submariner 1965" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required />
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Item Title</label>
+              <input type="text" value={formData.title} onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))} placeholder="e.g., Vintage Rolex Submariner 1965" className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-              <textarea value={formData.description} onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))} rows={6} placeholder="Describe your item in detail. Include condition, features, history, and any relevant information for potential bidders." className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-vertical" required />
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+              <textarea value={formData.description} onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))} rows={6} placeholder="Describe your item in detail. Include condition, features, history, and any relevant information for potential bidders." className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-vertical" required />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -165,15 +165,15 @@ const CreateAuction = ({ user, onAddAuction }) => {
 
               {/* Starting Price */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Starting Price ($)</label>
-                <input type="number" value={formData.startingPrice} onChange={(e) => setFormData(prev => ({ ...prev, startingPrice: e.target.value }))} placeholder="0.00" min="0" step="0.01" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required />
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Starting Price ($)</label>
+                <input type="number" value={formData.startingPrice} onChange={(e) => setFormData(prev => ({ ...prev, startingPrice: e.target.value }))} placeholder="0.00" min="0" step="0.01" className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required />
               </div>
             </div>
 
             {/* Auction Duration */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Auction Duration</label>
-              <select value={formData.duration} onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Auction Duration</label>
+              <select value={formData.duration} onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
                 <option value="6">6 Hours</option>
                 <option value="12">12 Hours</option>
                 <option value="24">24 Hours</option>

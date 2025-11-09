@@ -48,9 +48,9 @@ const AuctionDetail = ({ auctions, user, onUpdateAuction, onUserBid, onAdminRemo
 
   if (!auction) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center transition-colors duration-200">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Auction Not Found</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Auction Not Found</h2>
           <button onClick={() => navigate('/')} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">Back to Auctions</button>
         </div>
       </div>
