@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const BeginnerGuide = ({ onClose }) => {
+function BeginnerGuide(props) {
+  const onClose = props.onClose
   const [activeSection, setActiveSection] = useState('getting-started')
 
   const sections = {
@@ -298,20 +299,30 @@ const BeginnerGuide = ({ onClose }) => {
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 px-6">
           <div className="flex space-x-1 overflow-x-auto">
-            {Object.entries(sections).map(([key, section]) => (
-              <button
-                key={key}
-                onClick={() => setActiveSection(key)}
-                className={`px-4 py-3 font-medium text-sm whitespace-nowrap transition-colors ${
-                  activeSection === key
-                    ? 'text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400 bg-white dark:bg-slate-800'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <span className="mr-2">{section.icon}</span>
-                {section.title}
-              </button>
-            ))}
+            {Object.keys(sections).map(function(key) {
+              const section = sections[key]
+              function handleTabClick() {
+                setActiveSection(key)
+              }
+              
+              let buttonClass = 'px-4 py-3 font-medium text-sm whitespace-nowrap transition-colors '
+              if (activeSection === key) {
+                buttonClass += 'text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400 bg-white dark:bg-slate-800'
+              } else {
+                buttonClass += 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-slate-800'
+              }
+              
+              return (
+                <button
+                  key={key}
+                  onClick={handleTabClick}
+                  className={buttonClass}
+                >
+                  <span className="mr-2">{section.icon}</span>
+                  {section.title}
+                </button>
+              )
+            })}
           </div>
         </div>
 

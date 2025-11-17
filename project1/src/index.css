@@ -1,181 +1,260 @@
+/* 
+   index.css - Main CSS file for the application
+   This file imports Tailwind CSS and defines custom styles
+*/
+
+/* Import Tailwind CSS base styles, components, and utilities */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* -----------------------------
    CSS Variables & Theme tokens
+   These variables define colors and styles used throughout the app
    ----------------------------- */
+/* Light theme colors - default theme */
 :root {
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --muted: #6b7280;
-  --text: #111827;
-  --accent-1: 59 130 246; /* blue-500 */
-  --accent-2: 139 92 246; /* purple-600 */
-  --accent-grad: linear-gradient(135deg, rgba(var(--accent-2),1) 0%, rgba(var(--accent-1),1) 100%);
-  --glass-bg: rgba(255,255,255,0.6);
-  --glass-border: rgba(255,255,255,0.14);
+  --bg: #f8fafc; /* Background color */
+  --surface: #ffffff; /* Card/surface background */
+  --muted: #6b7280; /* Muted text color */
+  --text: #111827; /* Main text color */
+  --accent-1: 59 130 246; /* Blue accent color (blue-500) */
+  --accent-2: 139 92 246; /* Purple accent color (purple-600) */
+  --accent-grad: linear-gradient(135deg, rgba(var(--accent-2),1) 0%, rgba(var(--accent-1),1) 100%); /* Gradient for buttons */
+  --glass-bg: rgba(255,255,255,0.6); /* Glass effect background */
+  --glass-border: rgba(255,255,255,0.14); /* Glass effect border */
 }
 
+/* Dark theme colors - when dark mode is enabled */
 .dark {
-  --bg: #0f172a;
-  --surface: #1e293b;
-  --muted: #94a3b8;
-  --text: #f1f5f9;
-  --glass-bg: rgba(30, 41, 59, 0.6);
-  --glass-border: rgba(255,255,255,0.1);
+  --bg: #0f172a; /* Dark background */
+  --surface: #1e293b; /* Dark card/surface */
+  --muted: #94a3b8; /* Light muted text */
+  --text: #f1f5f9; /* Light text color */
+  --glass-bg: rgba(30, 41, 59, 0.6); /* Dark glass effect background */
+  --glass-border: rgba(255,255,255,0.1); /* Dark glass effect border */
 }
 
+/* Base layer - styles applied to HTML elements */
 @layer base {
+  /* HTML element styles */
   html {
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    /* Mobile optimizations */
+    scroll-behavior: smooth; /* Smooth scrolling when clicking links */
+    -webkit-font-smoothing: antialiased; /* Better font rendering on Mac */
+    -moz-osx-font-smoothing: grayscale; /* Better font rendering on Firefox Mac */
+    /* Mobile optimizations - prevent text from being too small */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Hide horizontal scrollbar */
   }
 
-  /* Better touch targets for mobile */
+  /* Better touch targets for mobile devices */
   button, a {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    touch-action: manipulation; /* Improve touch response */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1); /* Subtle tap highlight */
   }
 
+  /* Body element styles */
   body {
+    /* Font family - tries Inter first, then falls back to system fonts */
     font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    /* Background with gradient effects */
     background: radial-gradient(1200px 600px at 10% 10%, rgba(99,102,241,0.06), transparent),
                 radial-gradient(1000px 500px at 90% 90%, rgba(59,130,246,0.04), transparent),
                 var(--bg);
-    color: var(--text);
-    -webkit-tap-highlight-color: transparent;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    color: var(--text); /* Text color from CSS variable */
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth color transitions */
     /* Mobile optimizations */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Hide horizontal scrollbar */
   }
 
+  /* Dark mode body background */
   .dark body {
     background: radial-gradient(1200px 600px at 10% 10%, rgba(99,102,241,0.1), transparent),
                 radial-gradient(1000px 500px at 90% 90%, rgba(59,130,246,0.08), transparent),
                 var(--bg);
   }
 
-  /* Selection */
+  /* Text selection styling - when user selects text */
   ::selection {
-    background: rgb(var(--accent-2));
-    color: white;
+    background: rgb(var(--accent-2)); /* Purple background when text is selected */
+    color: white; /* White text when selected */
   }
 
-  /* Accessible focus ring for non-Tailwind elements */
+  /* Focus ring for accessibility - visible outline when element is focused */
   :focus {
-    outline: 3px solid rgba(var(--accent-1),0.12);
-    outline-offset: 2px;
+    outline: 3px solid rgba(var(--accent-1),0.12); /* Blue outline */
+    outline-offset: 2px; /* Space between element and outline */
   }
 }
 
+/* Components layer - reusable component styles */
 @layer components {
-  /* Re-usable component classes used alongside Tailwind utilities */
+  /* Glass card effect - frosted glass appearance */
   .glass-card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(8px) saturate(120%);
-    -webkit-backdrop-filter: blur(8px) saturate(120%);
-    box-shadow: 0 8px 30px rgba(16,24,40,0.06);
-    border-radius: 1rem;
+    background: var(--glass-bg); /* Semi-transparent background */
+    border: 1px solid var(--glass-border); /* Subtle border */
+    backdrop-filter: blur(8px) saturate(120%); /* Blur effect behind card */
+    -webkit-backdrop-filter: blur(8px) saturate(120%); /* Safari support */
+    box-shadow: 0 8px 30px rgba(16,24,40,0.06); /* Soft shadow */
+    border-radius: 1rem; /* Rounded corners */
   }
 
+  /* Primary button style */
   .btn-primary {
     @apply inline-flex items-center justify-center font-semibold rounded-lg shadow-md;
-    padding: 0.6rem 1.1rem;
-    background-image: var(--accent-grad);
-    color: white;
-    transition: transform .18s ease, box-shadow .18s ease;
+    padding: 0.6rem 1.1rem; /* Button padding */
+    background-image: var(--accent-grad); /* Gradient background */
+    color: white; /* White text */
+    transition: transform .18s ease, box-shadow .18s ease; /* Smooth transitions */
   }
-  .btn-primary:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 10px 30px rgba(99,102,241,0.18); }
+  /* Primary button hover effect - lifts up slightly */
+  .btn-primary:hover { 
+    transform: translateY(-3px) scale(1.01); /* Move up and slightly larger */
+    box-shadow: 0 10px 30px rgba(99,102,241,0.18); /* Stronger shadow */
+  }
 
+  /* Soft card style - simple card with shadow */
   .card-soft {
-    background: var(--surface);
-    border-radius: 1rem;
-    padding: 1rem;
-    box-shadow: 0 6px 20px rgba(15,23,42,0.06);
+    background: var(--surface); /* Card background */
+    border-radius: 1rem; /* Rounded corners */
+    padding: 1rem; /* Inner spacing */
+    box-shadow: 0 6px 20px rgba(15,23,42,0.06); /* Soft shadow */
   }
 
+  /* Live badge - shows "LIVE" status with gradient */
   .badge-live {
-    background: linear-gradient(90deg,#ef4444,#f97316);
-    color: white;
-    padding: .25rem .5rem;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: .75rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    background: linear-gradient(90deg,#ef4444,#f97316); /* Red to orange gradient */
+    color: white; /* White text */
+    padding: .25rem .5rem; /* Padding */
+    border-radius: 999px; /* Fully rounded (pill shape) */
+    font-weight: 700; /* Bold text */
+    font-size: .75rem; /* Small text size */
+    display: inline-flex; /* Flexbox layout */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
   }
 
+  /* Progress bar container */
   .progress-soft {
-    height: .5rem;
-    background: rgba(15,23,42,0.06);
-    border-radius: 999px;
-    overflow: hidden;
+    height: .5rem; /* Bar height */
+    background: rgba(15,23,42,0.06); /* Light gray background */
+    border-radius: 999px; /* Rounded */
+    overflow: hidden; /* Hide overflow */
   }
+  /* Progress bar fill */
   .progress-soft > i {
-    display: block; height: 100%; background-image: var(--accent-grad); width: 40%; transition: width 1s linear;
+    display: block; 
+    height: 100%; 
+    background-image: var(--accent-grad); /* Gradient fill */
+    width: 40%; /* Default width */
+    transition: width 1s linear; /* Smooth width change */
   }
 
-  /* Tiny utilities */
-  .soft-shadow { box-shadow: 0 10px 30px rgba(16,24,40,0.06); }
-  .muted { color: var(--muted); }
+  /* Utility classes */
+  .soft-shadow { 
+    box-shadow: 0 10px 30px rgba(16,24,40,0.06); /* Soft shadow effect */
+  }
+  .muted { 
+    color: var(--muted); /* Muted text color */
+  }
 
-  .floating { animation: float 6s ease-in-out infinite; }
+  /* Floating animation */
+  .floating { 
+    animation: float 6s ease-in-out infinite; /* Continuous floating motion */
+  }
 
-  /* Line clamp helpers (add standard property for compatibility) */
-  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-clamp: 2; }
-  .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-clamp: 3; }
+  /* Line clamp helpers - limit text to 2 or 3 lines with ellipsis */
+  .line-clamp-2 { 
+    display: -webkit-box; 
+    -webkit-line-clamp: 2; /* Show only 2 lines */
+    -webkit-box-orient: vertical; 
+    overflow: hidden; 
+    line-clamp: 2; 
+  }
+  .line-clamp-3 { 
+    display: -webkit-box; 
+    -webkit-line-clamp: 3; /* Show only 3 lines */
+    -webkit-box-orient: vertical; 
+    overflow: hidden; 
+    line-clamp: 3; 
+  }
 }
 
 /* -----------------------------
    Animations
+   Keyframe animations for various effects
    ----------------------------- */
+
+/* Float animation - moves element up and down */
 @keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0); }
+  0% { transform: translateY(0); } /* Start position */
+  50% { transform: translateY(-6px); } /* Move up */
+  100% { transform: translateY(0); } /* Return to start */
 }
 
+/* Shimmer animation - creates a shimmering effect */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% { background-position: -200% 0; } /* Start off-screen left */
+  100% { background-position: 200% 0; } /* End off-screen right */
 }
 
+/* Fade in animation - element fades in and slides up */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { 
+    opacity: 0; /* Invisible */
+    transform: translateY(-10px); /* Slightly above */
+  }
+  to { 
+    opacity: 1; /* Fully visible */
+    transform: translateY(0); /* Final position */
+  }
 }
 
+/* Apply fade in animation */
 .animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.3s ease-out; /* 0.3 seconds, ease-out timing */
 }
 
-/* Shimmer helper */
+/* Shimmer effect class - creates a loading shimmer */
 .shimmer {
   background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.06) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.6s linear infinite;
+  background-size: 200% 100%; /* Larger background for animation */
+  animation: shimmer 1.6s linear infinite; /* Continuous shimmer */
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: rgba(15,23,42,0.03); }
-::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #c4b5fd, #a78bfa); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { filter: brightness(.95); }
+/* Custom scrollbar styling - only works in WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar { 
+  width: 8px; /* Scrollbar width */
+  height: 8px; /* Scrollbar height */
+}
+::-webkit-scrollbar-track { 
+  background: rgba(15,23,42,0.03); /* Track background */
+}
+::-webkit-scrollbar-thumb { 
+  background: linear-gradient(180deg, #c4b5fd, #a78bfa); /* Thumb gradient */
+  border-radius: 999px; /* Rounded thumb */
+}
+::-webkit-scrollbar-thumb:hover { 
+  filter: brightness(.95); /* Slightly darker on hover */
+}
 
-.dark ::-webkit-scrollbar-track { background: rgba(15,23,42,0.3); }
-.dark ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #6366f1, #8b5cf6); }
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track { 
+  background: rgba(15,23,42,0.3); /* Darker track */
+}
+.dark ::-webkit-scrollbar-thumb { 
+  background: linear-gradient(180deg, #6366f1, #8b5cf6); /* Different gradient */
+}
 
-/* Respect prefers-reduced-motion */
+/* Respect user preference for reduced motion - disable animations if user prefers */
 @media (prefers-reduced-motion: reduce) {
-  .floating, .shimmer, * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  .floating, .shimmer, * { 
+    animation-duration: 0.001ms !important; /* Almost instant */
+    animation-iteration-count: 1 !important; /* Run only once */
+    transition-duration: 0.001ms !important; /* Almost instant transitions */
+  }
 }

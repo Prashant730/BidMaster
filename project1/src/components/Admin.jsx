@@ -1,19 +1,24 @@
 import React, { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
+import { useTheme } from '../context/ThemeContext.jsx'
 
-const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissionRate: commissionRateProp }) => {
+function Admin(props) {
+  const currentUser = props.currentUser
+  const usersProp = props.users
+  const auctionsProp = props.auctions
+  const commissionRateProp = props.commissionRate
+  const { isDark } = useTheme()
   // Use context for real-time updates
-  const {
-    auctions: contextAuctions,
-    users: contextUsers,
-    commissionRate: contextCommissionRate,
-    setCommissionRate: setContextCommissionRate,
-    updateUser: updateContextUser,
-    deleteUser: deleteContextUser,
-    removeAuction: removeContextAuction,
-    updateAuction: updateContextAuction
-  } = useApp()
+  const appContext = useApp()
+  const contextAuctions = appContext.auctions
+  const contextUsers = appContext.users
+  const contextCommissionRate = appContext.commissionRate
+  const setContextCommissionRate = appContext.setCommissionRate
+  const updateContextUser = appContext.updateUser
+  const deleteContextUser = appContext.deleteUser
+  const removeContextAuction = appContext.removeAuction
+  const updateContextAuction = appContext.updateAuction
 
   // Use context values if available, otherwise fall back to props
   const auctions = contextAuctions.length > 0 ? contextAuctions : auctionsProp
@@ -69,66 +74,170 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
 
   if (!currentUser || !currentUser.isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Access Denied</h2>
-          <p className="text-gray-600 mb-4">You must be an administrator to view this page.</p>
-          <button onClick={() => navigate('/')} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">Go Home</button>
+          <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Access Denied</h2>
+          <p className={`mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>You must be an administrator to view this page.</p>
+          <button onClick={function() { navigate('/') }} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">Go Home</button>
         </div>
       </div>
     )
   }
 
-  const stats = useMemo(() => {
+  // Calculate statistics for dashboard
+  const stats = useMemo(function() {
+    // Step 1: Count total users
     const totalUsers = users.length
-    const pendingValidations = users.filter(u => u.role === 'auctioneer' && !u.isValidated).length
+
+    // Step 2: Count pending validations (auctioneers waiting for approval)
+    let pendingValidations = 0
+    for (let i = 0; i < users.length; i++) {
+      if (users[i].role === 'auctioneer' && !users[i].isValidated) {
+        pendingValidations = pendingValidations + 1
+      }
+    }
+
+    // Step 3: Count active and ended auctions
     const now = Date.now()
-    const activeAuctions = auctions.filter(a => {
-      const endTime = a.endTime instanceof Date ? a.endTime.getTime() : a.endTime
-      return (endTime - now) > 0 && a.status !== 'ended'
-    }).length
-    const endedAuctions = auctions.filter(a => {
-      const endTime = a.endTime instanceof Date ? a.endTime.getTime() : a.endTime
-      return (endTime - now) <= 0 || a.status === 'ended'
-    }).length
-    const bidsToday = auctions.reduce((sum, a) => sum + a.bids.filter(b => isToday(b.time)).length, 0)
-    const estimatedRevenue = auctions
-      .filter(a => {
-        const endTime = a.endTime instanceof Date ? a.endTime.getTime() : a.endTime
-        return (endTime - now) <= 0 || a.status === 'ended'
-      })
-      .filter(a => a.bids.length > 0)
-      .reduce((sum, a) => sum + a.currentPrice * commissionRate, 0)
-    const totalBidders = users.filter(u => u.role === 'bidder' || !u.role).length
-    const totalAuctioneers = users.filter(u => u.role === 'auctioneer').length
-    const suspendedUsers = users.filter(u => u.status === 'suspended').length
-    const bannedUsers = users.filter(u => u.status === 'banned').length
+    let activeAuctions = 0
+    let endedAuctions = 0
+
+    for (let i = 0; i < auctions.length; i++) {
+      const auction = auctions[i]
+      let endTime = auction.endTime
+      if (endTime instanceof Date) {
+        endTime = endTime.getTime()
+      }
+
+      if ((endTime - now) > 0 && auction.status !== 'ended') {
+        activeAuctions = activeAuctions + 1
+      } else {
+        endedAuctions = endedAuctions + 1
+      }
+    }
+
+    // Step 4: Count bids placed today
+    let bidsToday = 0
+    for (let i = 0; i < auctions.length; i++) {
+      const auction = auctions[i]
+      for (let j = 0; j < auction.bids.length; j++) {
+        if (isToday(auction.bids[j].time)) {
+          bidsToday = bidsToday + 1
+        }
+      }
+    }
+
+    // Step 5: Calculate estimated revenue from ended auctions
+    let estimatedRevenue = 0
+    for (let i = 0; i < auctions.length; i++) {
+      const auction = auctions[i]
+      let endTime = auction.endTime
+      if (endTime instanceof Date) {
+        endTime = endTime.getTime()
+      }
+
+      if ((endTime - now) <= 0 || auction.status === 'ended') {
+        if (auction.bids.length > 0) {
+          const revenue = auction.currentPrice * commissionRate
+          estimatedRevenue = estimatedRevenue + revenue
+        }
+      }
+    }
+
+    // Step 6: Count users by role
+    let totalBidders = 0
+    let totalAuctioneers = 0
+    let suspendedUsers = 0
+    let bannedUsers = 0
+
+    for (let i = 0; i < users.length; i++) {
+      const currentUser = users[i]
+      if (currentUser.role === 'bidder' || !currentUser.role) {
+        totalBidders = totalBidders + 1
+      }
+      if (currentUser.role === 'auctioneer') {
+        totalAuctioneers = totalAuctioneers + 1
+      }
+      if (currentUser.status === 'suspended') {
+        suspendedUsers = suspendedUsers + 1
+      }
+      if (currentUser.status === 'banned') {
+        bannedUsers = bannedUsers + 1
+      }
+    }
+
+    // Return all calculated statistics
     return {
-      totalUsers,
-      pendingValidations,
-      activeAuctions,
-      endedAuctions,
-      bidsToday,
-      estimatedRevenue,
-      totalBidders,
-      totalAuctioneers,
-      suspendedUsers,
-      bannedUsers
+      totalUsers: totalUsers,
+      pendingValidations: pendingValidations,
+      activeAuctions: activeAuctions,
+      endedAuctions: endedAuctions,
+      bidsToday: bidsToday,
+      estimatedRevenue: estimatedRevenue,
+      totalBidders: totalBidders,
+      totalAuctioneers: totalAuctioneers,
+      suspendedUsers: suspendedUsers,
+      bannedUsers: bannedUsers
     }
   }, [users, auctions, commissionRate])
 
-  const filteredUsers = useMemo(() => {
-    return users.filter(u => {
-      const matchesSearch = !searchTerm ||
-        u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesRole = filterRole === 'all' ||
-        (filterRole === 'admin' && (u.role === 'admin' || u.isAdmin)) ||
-        (filterRole === 'auctioneer' && u.role === 'auctioneer') ||
-        (filterRole === 'bidder' && (!u.role || u.role === 'bidder') && !u.isAdmin)
-      const matchesStatus = filterStatus === 'all' || u.status === filterStatus || (!u.status && filterStatus === 'active')
-      return matchesSearch && matchesRole && matchesStatus
-    })
+  // Filter users based on search term, role, and status
+  const filteredUsers = useMemo(function() {
+    const filtered = []
+
+    for (let i = 0; i < users.length; i++) {
+      const u = users[i]
+      let matchesSearch = true
+      let matchesRole = true
+      let matchesStatus = true
+
+      // Check if user matches search term
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase()
+        const nameLower = u.name ? u.name.toLowerCase() : ''
+        const emailLower = u.email ? u.email.toLowerCase() : ''
+        if (!nameLower.includes(searchLower) && !emailLower.includes(searchLower)) {
+          matchesSearch = false
+        }
+      }
+
+      // Check if user matches selected role
+      if (filterRole === 'all') {
+        matchesRole = true
+      } else if (filterRole === 'admin') {
+        if (u.role !== 'admin' && !u.isAdmin) {
+          matchesRole = false
+        }
+      } else if (filterRole === 'auctioneer') {
+        if (u.role !== 'auctioneer') {
+          matchesRole = false
+        }
+      } else if (filterRole === 'bidder') {
+        if ((u.role && u.role !== 'bidder') || u.isAdmin) {
+          matchesRole = false
+        }
+      }
+
+      // Check if user matches selected status
+      if (filterStatus === 'all') {
+        matchesStatus = true
+      } else {
+        if (u.status === filterStatus) {
+          matchesStatus = true
+        } else if (!u.status && filterStatus === 'active') {
+          matchesStatus = true
+        } else {
+          matchesStatus = false
+        }
+      }
+
+      // Add user to filtered list if all conditions match
+      if (matchesSearch && matchesRole && matchesStatus) {
+        filtered.push(u)
+      }
+    }
+
+    return filtered
   }, [users, searchTerm, filterRole, filterStatus])
 
   function isToday(dt) {
@@ -137,80 +246,114 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
     return d.getDate() === t.getDate() && d.getMonth() === t.getMonth() && d.getFullYear() === t.getFullYear()
   }
 
-  const approveUser = (email) => {
+  function approveUser(email) {
     updateContextUser(email, { isValidated: true })
   }
-  const suspendUser = (email) => {
+
+  function suspendUser(email) {
     updateContextUser(email, { status: 'suspended' })
   }
-  const banUser = (email) => {
+
+  function banUser(email) {
     updateContextUser(email, { status: 'banned' })
   }
-  const reactivateUser = (email) => {
+
+  function reactivateUser(email) {
     updateContextUser(email, { status: 'active' })
   }
-  const unbanUser = (email) => {
+
+  function unbanUser(email) {
     updateContextUser(email, { status: 'active' })
   }
-  const deleteUser = (email) => {
+
+  function deleteUser(email) {
     if (window.confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
       deleteContextUser(email)
     }
   }
-  const resetPassword = (email) => {
+
+  function resetPassword(email) {
     const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-    setPasswordResetTokens(prev => ({ ...prev, [email]: { token, createdAt: new Date(), expiresAt: new Date(Date.now() + 3600000) } }))
-    alert(`Password reset link sent to ${email}\nReset token: ${token}\n(Link expires in 1 hour)`)
+    const newTokens = { ...passwordResetTokens }
+    newTokens[email] = { token: token, createdAt: new Date(), expiresAt: new Date(Date.now() + 3600000) }
+    setPasswordResetTokens(newTokens)
+    alert('Password reset link sent to ' + email + '\nReset token: ' + token + '\n(Link expires in 1 hour)')
   }
 
-  const cancelAuction = (id) => updateContextAuction(id, { endTime: Date.now() - 1 })
-  const removeAuction = (id) => {
+  function cancelAuction(id) {
+    updateContextAuction(id, { endTime: Date.now() - 1 })
+  }
+
+  function removeAuction(id) {
     if (window.confirm('Are you sure you want to permanently remove this auction? This action cannot be undone.')) {
       removeContextAuction(id)
     }
   }
 
-  const deleteCategory = (category) => {
-    if (window.confirm(`Are you sure you want to delete the category "${category}"?`)) {
-      setCategories(prev => prev.filter(c => c !== category))
+  function deleteCategory(category) {
+    if (window.confirm('Are you sure you want to delete the category "' + category + '"?')) {
+      const newCategories = categories.filter(function(c) {
+        return c !== category
+      })
+      setCategories(newCategories)
     }
   }
 
-  const updateRule = (key, value) => {
-    setSiteRules(prev => ({ ...prev, [key]: value }))
+  function updateRule(key, value) {
+    const newRules = { ...siteRules }
+    newRules[key] = value
+    setSiteRules(newRules)
     setEditingRule(null)
   }
 
-  const addAnnouncement = () => {
+  function addAnnouncement() {
     if (!newAnnouncement.title || !newAnnouncement.message) {
       alert('Please fill in both title and message')
       return
     }
     const announcement = {
       id: Date.now(),
-      ...newAnnouncement,
+      title: newAnnouncement.title,
+      message: newAnnouncement.message,
+      priority: newAnnouncement.priority,
       active: true,
       createdAt: new Date()
     }
-    setAnnouncements(prev => [announcement, ...prev])
+    const newAnnouncements = [announcement, ...announcements]
+    setAnnouncements(newAnnouncements)
     setNewAnnouncement({ title: '', message: '', priority: 'low' })
   }
 
-  const toggleAnnouncement = (id) => {
-    setAnnouncements(prev => prev.map(a => a.id === id ? { ...a, active: !a.active } : a))
+  function toggleAnnouncement(id) {
+    const newAnnouncements = announcements.map(function(a) {
+      if (a.id === id) {
+        return { ...a, active: !a.active }
+      }
+      return a
+    })
+    setAnnouncements(newAnnouncements)
   }
 
-  const deleteAnnouncement = (id) => {
+  function deleteAnnouncement(id) {
     if (window.confirm('Are you sure you want to delete this announcement?')) {
-      setAnnouncements(prev => prev.filter(a => a.id !== id))
+      const newAnnouncements = announcements.filter(function(a) {
+        return a.id !== id
+      })
+      setAnnouncements(newAnnouncements)
     }
   }
 
-  const resolveReport = (reportId, action) => {
-    setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: 'resolved', action, resolvedAt: new Date(), resolvedBy: currentUser.name } : r))
+  function resolveReport(reportId, action) {
+    const newReports = reports.map(function(r) {
+      if (r.id === reportId) {
+        return { ...r, status: 'resolved', action: action, resolvedAt: new Date(), resolvedBy: currentUser.name }
+      }
+      return r
+    })
+    setReports(newReports)
   }
 
-  const addTicketResponse = (ticketId) => {
+  function addTicketResponse(ticketId) {
     if (!ticketResponse.trim()) {
       alert('Please enter a response')
       return
@@ -220,33 +363,53 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
       message: ticketResponse,
       createdAt: new Date()
     }
-    setSupportTickets(prev => prev.map(t => t.id === ticketId ? { ...t, responses: [...t.responses, response], status: 'open' } : t))
+    const newTickets = supportTickets.map(function(t) {
+      if (t.id === ticketId) {
+        const newResponses = [...t.responses, response]
+        return { ...t, responses: newResponses, status: 'open' }
+      }
+      return t
+    })
+    setSupportTickets(newTickets)
     setTicketResponse('')
   }
 
-  const updateTicketStatus = (ticketId, status) => {
-    setSupportTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status } : t))
+  function updateTicketStatus(ticketId, status) {
+    const newTickets = supportTickets.map(function(t) {
+      if (t.id === ticketId) {
+        return { ...t, status: status }
+      }
+      return t
+    })
+    setSupportTickets(newTickets)
   }
 
-  const removeBid = (auctionId, bidToRemove) => {
-    const auction = auctions.find(a => a.id === auctionId)
+  function removeBid(auctionId, bidToRemove) {
+    const auction = auctions.find(function(a) {
+      return a.id === auctionId
+    })
     if (!auction) return
 
     // Find and remove the specific bid by matching bidder, amount, and time
-    const newBids = auction.bids.filter((bid) => {
+    const newBids = auction.bids.filter(function(bid) {
       // Remove the bid that matches the one we want to remove
       // We compare by bidder name, amount, and time to uniquely identify it
       const bidTime = new Date(bid.time).getTime()
       const removeTime = new Date(bidToRemove.time).getTime()
-      return !(bid.bidder === bidToRemove.bidder &&
+      const isMatch = bid.bidder === bidToRemove.bidder &&
                bid.amount === bidToRemove.amount &&
-               Math.abs(bidTime - removeTime) < 1000) // Allow 1 second tolerance for time comparison
+               Math.abs(bidTime - removeTime) < 1000
+      return !isMatch
     })
 
     // Recalculate current price from remaining bids
-    const newCurrentPrice = newBids.length > 0
-      ? Math.max(...newBids.map(b => b.amount))
-      : auction.startingPrice
+    let newCurrentPrice = auction.startingPrice
+    if (newBids.length > 0) {
+      const amounts = newBids.map(function(b) {
+        return b.amount
+      })
+      newCurrentPrice = Math.max.apply(null, amounts)
+    }
 
     // Update the auction using context function
     updateContextAuction(auctionId, {
@@ -256,45 +419,57 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
   }
 
   // Get all bids from all auctions for moderation view
-  const allBids = useMemo(() => {
-    return auctions.flatMap(auction =>
-      auction.bids.map((bid, bidIndex) => ({
-        ...bid,
-        auctionId: auction.id,
-        auctionTitle: auction.title,
-        auctionImage: auction.image,
-        bidIndex,
-        auctionEndTime: auction.endTime
-      }))
-    ).sort((a, b) => new Date(b.time) - new Date(a.time))
+  const allBids = useMemo(function() {
+    const allBidsList = []
+    for (let i = 0; i < auctions.length; i++) {
+      const auction = auctions[i]
+      for (let j = 0; j < auction.bids.length; j++) {
+        const bid = auction.bids[j]
+        allBidsList.push({
+          bidder: bid.bidder,
+          amount: bid.amount,
+          time: bid.time,
+          auctionId: auction.id,
+          auctionTitle: auction.title,
+          auctionImage: auction.image,
+          bidIndex: j,
+          auctionEndTime: auction.endTime
+        })
+      }
+    }
+    allBidsList.sort(function(a, b) {
+      return new Date(b.time) - new Date(a.time)
+    })
+    return allBidsList
   }, [auctions])
 
-  const filteredBids = useMemo(() => {
+  const filteredBids = useMemo(function() {
     if (!bidSearchTerm) return allBids
     const search = bidSearchTerm.toLowerCase()
-    return allBids.filter(bid =>
-      bid.bidder?.toLowerCase().includes(search) ||
-      bid.auctionTitle?.toLowerCase().includes(search) ||
-      bid.amount.toString().includes(search)
-    )
+    return allBids.filter(function(bid) {
+      const bidderMatch = bid.bidder && bid.bidder.toLowerCase().includes(search)
+      const titleMatch = bid.auctionTitle && bid.auctionTitle.toLowerCase().includes(search)
+      const amountMatch = bid.amount.toString().includes(search)
+      return bidderMatch || titleMatch || amountMatch
+    })
   }, [allBids, bidSearchTerm])
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className={`min-h-screen py-8 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 flex items-center justify-between">
+        <div className={`rounded-2xl shadow-lg p-6 mb-6 flex items-center justify-between ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
-            <p className="text-gray-500">Manage users, auctions, and platform settings</p>
+            <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>Admin Dashboard</h1>
+            <p className={isDark ? 'text-gray-400' : 'text-gray-500'}>Manage users, auctions, and platform settings</p>
           </div>
           <div className="flex space-x-2">
-            <button onClick={() => setActiveTab('dashboard')} className={`px-4 py-2 rounded-lg ${activeTab==='dashboard'?'bg-purple-600 text-white':'bg-gray-100 text-gray-700'}`}>Dashboard</button>
-            <button onClick={() => setActiveTab('users')} className={`px-4 py-2 rounded-lg ${activeTab==='users'?'bg-purple-600 text-white':'bg-gray-100 text-gray-700'}`}>Users</button>
-            <button onClick={() => setActiveTab('auctions')} className={`px-4 py-2 rounded-lg ${activeTab==='auctions'?'bg-purple-600 text-white':'bg-gray-100 text-gray-700'}`}>Auctions</button>
-            <button onClick={() => setActiveTab('financials')} className={`px-4 py-2 rounded-lg ${activeTab==='financials'?'bg-purple-600 text-white':'bg-gray-100 text-gray-700'}`}>Financials</button>
-            <button onClick={() => setActiveTab('config')} className={`px-4 py-2 rounded-lg ${activeTab==='config'?'bg-purple-600 text-white':'bg-gray-100 text-gray-700'}`}>Configuration</button>
-            <button onClick={() => setActiveTab('moderation')} className={`px-4 py-2 rounded-lg ${activeTab==='moderation'?'bg-purple-600 text-white':'bg-gray-100 text-gray-700'}`}>Moderation</button>
+            <button onClick={function() { setActiveTab('dashboard') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='dashboard'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Dashboard</button>
+            <button onClick={function() { setActiveTab('users') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='users'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Users</button>
+            <button onClick={function() { setActiveTab('auctions') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='auctions'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Auctions</button>
+            <button onClick={function() { setActiveTab('financials') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='financials'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Financials</button>
+            <button onClick={function() { setActiveTab('config') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='config'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Configuration</button>
+            <button onClick={function() { setActiveTab('moderation') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='moderation'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Moderation</button>
           </div>
         </div>
 
@@ -317,8 +492,8 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="bg-white rounded-2xl shadow p-6 lg:col-span-2">
-                <h2 className="text-lg font-bold text-gray-800 mb-4">Quick Access</h2>
+              <div className={`rounded-2xl shadow p-6 lg:col-span-2 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+                <h2 className={`text-lg font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Quick Access</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <QuickLink label="Approve Users" onClick={() => setActiveTab('users')} />
                   <QuickLink label="Reported Items" onClick={() => setActiveTab('moderation')} />
@@ -326,8 +501,8 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
                   <QuickLink label="Financial Reports" onClick={() => setActiveTab('financials')} />
                 </div>
               </div>
-              <div className="bg-white rounded-2xl shadow p-6">
-                <h2 className="text-lg font-bold text-gray-800 mb-4">Live Activity</h2>
+              <div className={`rounded-2xl shadow p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+                <h2 className={`text-lg font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Live Activity</h2>
                 <div className="space-y-3 max-h-64 overflow-y-auto">
                   {auctions
                     .flatMap(a => a.bids.map(b => ({ a, b })))
@@ -336,10 +511,10 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
                     .map((x, i) => (
                       <div key={i} className="flex items-center justify-between text-sm">
                         <div className="flex items-center space-x-2">
-                          <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-700 font-semibold">Bid</span>
-                          <span className="text-gray-700">${x.b.amount.toLocaleString()} on {x.a.title}</span>
+                          <span className={`px-2 py-0.5 rounded font-semibold ${isDark ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-700'}`}>Bid</span>
+                          <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>${x.b.amount.toLocaleString()} on {x.a.title}</span>
                         </div>
-                        <span className="text-gray-500">{new Date(x.b.time).toLocaleTimeString()}</span>
+                        <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{new Date(x.b.time).toLocaleTimeString()}</span>
                       </div>
                     ))}
                 </div>
@@ -350,36 +525,36 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
 
         {/* Users */}
         {activeTab === 'users' && (
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-6">
+          <div className={`rounded-2xl shadow-lg p-6 space-y-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">User Management</h2>
-                <p className="text-sm text-gray-600 mt-1">Manage user accounts, roles, and permissions</p>
+                <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>User Management</h2>
+                <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Manage user accounts, roles, and permissions</p>
               </div>
-              <div className="text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-lg">
+              <div className={`text-sm px-4 py-2 rounded-lg ${isDark ? 'bg-gray-700 text-gray-300' : 'text-gray-600 bg-gray-100'}`}>
                 Total: {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''}
               </div>
             </div>
 
             {/* Search and Filters */}
-            <div className="bg-gray-50 rounded-xl p-4">
+            <div className={`rounded-xl p-4 ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Search</label>
                   <input
                     type="text"
                     placeholder="Search by name or email..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className={`w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 ${isDark ? 'bg-gray-600 border-gray-500 text-white placeholder-gray-400' : 'border-gray-300'}`}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Role</label>
                   <select
                     value={filterRole}
                     onChange={(e) => setFilterRole(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className={`w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 ${isDark ? 'bg-gray-600 border-gray-500 text-white' : 'border-gray-300'}`}
                   >
                     <option value="all">All Roles</option>
                     <option value="bidder">Bidders</option>
@@ -388,11 +563,11 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Status</label>
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className={`w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 ${isDark ? 'bg-gray-600 border-gray-500 text-white' : 'border-gray-300'}`}
                   >
                     <option value="all">All Status</option>
                     <option value="active">Active</option>
@@ -798,7 +973,7 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
                                 <div className="text-xs text-gray-500">ID: {auction.id}</div>
                               </td>
                               <td className="py-4 pr-4">
-                                <span className="text-gray-700">{winningBid?.bidder || 'N/A'}</span>
+                                <span className="text-gray-700">{winningBid && winningBid.bidder ? winningBid.bidder : 'N/A'}</span>
                               </td>
                               <td className="py-4 pr-4">
                                 <span className="font-semibold text-gray-800">${auction.currentPrice.toLocaleString()}</span>
@@ -1630,18 +1805,27 @@ const Admin = ({ currentUser, users: usersProp, auctions: auctionsProp, commissi
   )
 }
 
-const StatCard = ({ title, value, color }) => (
-  <div className={`rounded-2xl p-5 text-white bg-gradient-to-r ${color}`}>
-    <div className="text-sm text-white/80">{title}</div>
-    <div className="text-2xl font-bold">{value}</div>
-  </div>
-)
+function StatCard(props) {
+  const title = props.title
+  const value = props.value
+  const color = props.color
+  return (
+    <div className={'rounded-2xl p-5 text-white bg-gradient-to-r ' + color}>
+      <div className="text-sm text-white/80">{title}</div>
+      <div className="text-2xl font-bold">{value}</div>
+    </div>
+  )
+}
 
-const QuickLink = ({ label, onClick }) => (
-  <button onClick={onClick} className="px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium text-sm text-left">
-    {label}
-  </button>
-)
+function QuickLink(props) {
+  const label = props.label
+  const onClick = props.onClick
+  return (
+    <button onClick={onClick} className="px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium text-sm text-left">
+      {label}
+    </button>
+  )
+}
 
 export default Admin
 

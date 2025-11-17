@@ -204,18 +204,60 @@ const mockAuctions = [
 ]
 
 function AppContent() {
-  const { auctions, users, commissionRate, updateAuction, removeAuction, addUser, createAuction } = useApp()
+  // Get data and functions from AppContext
+  const appContext = useApp()
+  const auctions = appContext.auctions
+  const users = appContext.users
+  const commissionRate = appContext.commissionRate
+  const updateAuction = appContext.updateAuction
+  const removeAuction = appContext.removeAuction
+  const addUser = appContext.addUser
+  const createAuction = appContext.createAuction
+  
+  // State for showing login modal
   const [showLogin, setShowLogin] = useState(false)
+  // State for current logged in user
   const [user, setUser] = useState(null)
 
-  // Mock login function
-  const handleLogin = (email, password, name) => {
-    // In a real app, this would be an API call
-    const isAdmin = email && email.endsWith('@admin.com')
-    const isSeller = email && email.endsWith('@seller.com')
+  // Function to handle when user logs in
+  function handleLogin(email, password, name) {
+    // Note: In a real app, this would be an API call to verify login
+    
+    // Step 1: Check if email ends with @admin.com to determine if user is admin
+    let isAdmin = false
+    if (email && email.endsWith('@admin.com')) {
+      isAdmin = true
+    }
+    
+    // Step 2: Check if email ends with @seller.com to determine if user is seller
+    let isSeller = false
+    if (email && email.endsWith('@seller.com')) {
+      isSeller = true
+    }
 
+    // Step 3: Determine user role based on email
+    let userRole = 'bidder'
+    if (isAdmin) {
+      userRole = 'admin'
+    } else if (isSeller) {
+      userRole = 'auctioneer'
+    }
+
+    // Step 4: Determine if user is validated (sellers need validation, others don't)
+    let isValidated = true
+    if (isSeller) {
+      isValidated = false
+    }
+
+    // Step 5: Set user name, use provided name or default to 'Demo User'
+    let userName = 'Demo User'
+    if (name) {
+      userName = name
+    }
+
+    // Create new user object
     const newUser = {
-      name: name || 'Demo User',
+      name: userName,
       email: email,
       bids: [1, 2],
       wonItems: [3],
@@ -223,37 +265,111 @@ function AppContent() {
       phone: '',
       profilePhoto: '',
       status: 'active',
-      role: isAdmin ? 'admin' : (isSeller ? 'auctioneer' : 'bidder'),
-      isValidated: isSeller ? false : true,
+      role: userRole,
+      isValidated: isValidated,
       isAdmin: isAdmin
     }
+    
+    // Set the current user
     setUser(newUser)
-    addUser(newUser) // Add to shared context (will emit socket event)
+    // Add user to shared context (will emit socket event)
+    addUser(newUser)
+    // Hide login modal
     setShowLogin(false)
   }
 
-  const onUpdateAuction = (auctionId, updates) => {
-    updateAuction(auctionId, updates) // Uses context function (will emit socket event)
+  // Function to handle auction updates
+  function onUpdateAuction(auctionId, updates) {
+    // Uses context function (will emit socket event)
+    updateAuction(auctionId, updates)
   }
 
-  const onUserBid = (auctionId) => {
-    setUser(prev => {
-      if (!prev) return prev
-      const already = prev.bids && prev.bids.includes(auctionId)
-      return already ? prev : { ...prev, bids: [...(prev.bids || []), auctionId] }
+  // Function to handle when user places a bid
+  function onUserBid(auctionId) {
+    setUser(function(prev) {
+      // If no user, return previous state
+      if (!prev) {
+        return prev
+      }
+      
+      // Check if user already has this auction in their bids
+      let alreadyHasBid = false
+      if (prev.bids && prev.bids.includes(auctionId)) {
+        alreadyHasBid = true
+      }
+      
+      // If already has bid, return previous state unchanged
+      if (alreadyHasBid) {
+        return prev
+      }
+      
+      // Add auction ID to user's bids list
+      let userBids = []
+      if (prev.bids) {
+        userBids = prev.bids.slice()
+      }
+      userBids.push(auctionId)
+      
+      // Return updated user object
+      return {
+        name: prev.name,
+        email: prev.email,
+        bids: userBids,
+        wonItems: prev.wonItems,
+        address: prev.address,
+        phone: prev.phone,
+        profilePhoto: prev.profilePhoto,
+        status: prev.status,
+        role: prev.role,
+        isValidated: prev.isValidated,
+        isAdmin: prev.isAdmin
+      }
     })
   }
 
-  const handleLogout = () => {
+  // Function to handle user logout
+  function handleLogout() {
     setUser(null)
+  }
+
+  // Function to show login modal
+  function handleShowLogin() {
+    setShowLogin(true)
+  }
+
+  // Function to hide login modal
+  function handleHideLogin() {
+    setShowLogin(false)
+  }
+
+  // Function to handle creating auction
+  function handleCreateAuction(auctionData) {
+    const auctionWithUser = {
+      title: auctionData.title,
+      description: auctionData.description,
+      category: auctionData.category,
+      startingPrice: auctionData.startingPrice,
+      duration: auctionData.duration,
+      image: auctionData.image,
+      user: user
+    }
+    createAuction(auctionWithUser)
+  }
+
+  // Function to handle updating user profile
+  function handleUpdateUser(updated) {
+    setUser(updated)
   }
 
   return (
     <Router>
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200">
-        <Header user={user} onLoginClick={() => setShowLogin(true)} onLogout={handleLogout} />
+        {/* Header component - shows navigation and user menu */}
+        <Header user={user} onLoginClick={handleShowLogin} onLogout={handleLogout} />
 
+        {/* Routes - define different pages in the application */}
         <Routes>
+          {/* Home page - shows hero section and auction grid */}
           <Route
             path="/"
             element={
@@ -263,8 +379,33 @@ function AppContent() {
               </>
             }
           />
-          <Route path="/auction/:id" element={<AuctionDetail auctions={auctions} user={user} onUpdateAuction={onUpdateAuction} onUserBid={onUserBid} onAdminRemove={removeAuction} />} />
-          <Route path="/create" element={<CreateAuction user={user} onAddAuction={(auctionData) => createAuction({ ...auctionData, user })} />} />
+          
+          {/* Auction detail page - shows single auction details */}
+          <Route 
+            path="/auction/:id" 
+            element={
+              <AuctionDetail 
+                auctions={auctions} 
+                user={user} 
+                onUpdateAuction={onUpdateAuction} 
+                onUserBid={onUserBid} 
+                onAdminRemove={removeAuction} 
+              />
+            } 
+          />
+          
+          {/* Create auction page - form to create new auction */}
+          <Route 
+            path="/create" 
+            element={
+              <CreateAuction 
+                user={user} 
+                onAddAuction={handleCreateAuction} 
+              />
+            } 
+          />
+          
+          {/* Admin page - admin dashboard */}
           <Route
             path="/admin"
             element={
@@ -276,20 +417,30 @@ function AppContent() {
               />
             }
           />
+          
+          {/* User profile page - shows user information */}
           <Route
             path="/profile"
             element={
               <UserProfile
                 user={user}
                 auctions={auctions}
-                onUpdateUser={(updated) => setUser(updated)}
+                onUpdateUser={handleUpdateUser}
                 users={users}
               />
             }
           />
+          
+          {/* Bidding policy page */}
           <Route path="/policy" element={<BiddingPolicy />} />
+          
+          {/* Contact support page */}
           <Route path="/contact" element={<ContactSupport />} />
+          
+          {/* Admin guide page */}
           <Route path="/admin-guide" element={<AdminGuide />} />
+          
+          {/* Auctioneer dashboard page */}
           <Route
             path="/auctioneer"
             element={
@@ -301,7 +452,8 @@ function AppContent() {
           />
         </Routes>
 
-        {showLogin && <LoginModal onClose={() => setShowLogin(false)} onLogin={handleLogin} />}
+        {/* Show login modal if showLogin is true */}
+        {showLogin && <LoginModal onClose={handleHideLogin} onLogin={handleLogin} />}
       </div>
     </Router>
   )

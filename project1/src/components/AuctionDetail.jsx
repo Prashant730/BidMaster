@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 
-const AuctionDetail = ({ auctions, user, onUpdateAuction, onUserBid, onAdminRemove }) => {
+function AuctionDetail(props) {
+  const auctions = props.auctions
+  const user = props.user
+  const onUpdateAuction = props.onUpdateAuction
+  const onUserBid = props.onUserBid
+  const onAdminRemove = props.onAdminRemove
   const { placeBid: placeBidContext } = useApp()
   const { id } = useParams()
   const navigate = useNavigate()
-  const auction = auctions.find(a => a.id === parseInt(id))
+  const auction = auctions.find(function(a) {
+    return a.id === parseInt(id)
+  })
   const [bidAmount, setBidAmount] = useState('')
   const [timeLeft, setTimeLeft] = useState(() => calculateTimeLeft())
   const [showBidSuccess, setShowBidSuccess] = useState(false)
@@ -43,7 +50,9 @@ const AuctionDetail = ({ auctions, user, onUpdateAuction, onUserBid, onAdminRemo
       }
     }, 1000)
 
-    return () => clearInterval(timer)
+    return function() {
+      clearInterval(timer)
+    }
   }, [auction])
 
   if (!auction) {
@@ -57,67 +66,85 @@ const AuctionDetail = ({ auctions, user, onUpdateAuction, onUserBid, onAdminRemo
     )
   }
 
-  const handlePlaceBid = (e) => {
+  // Function to handle when user clicks "Place Bid" button
+  function handlePlaceBid(e) {
+    // Step 1: Prevent form from submitting normally
     e.preventDefault()
+    
+    // Step 2: Check if user is logged in
     if (!user) {
       alert('Please login to place a bid')
       return
     }
 
-    if (user?.isAdmin) {
+    // Step 3: Check if user is admin (admins cannot bid)
+    if (user && user.isAdmin) {
       alert('Admins are not allowed to place bids')
       return
     }
 
+    // Step 4: Check if auction has already ended
     if (isAuctionEnded) {
       alert('This auction has ended')
       return
     }
 
-    // Check auction status from context as well
-    const endTime = auction.endTime instanceof Date ? auction.endTime.getTime() : auction.endTime
-    if (endTime <= Date.now() || auction.status === 'ended') {
+    // Step 5: Check auction end time from context
+    let endTime = auction.endTime
+    if (endTime instanceof Date) {
+      endTime = endTime.getTime()
+    }
+    const currentTime = Date.now()
+    if (endTime <= currentTime || auction.status === 'ended') {
       alert('This auction has ended')
       setIsAuctionEnded(true)
       return
     }
 
+    // Step 6: Convert bid amount to number
     const bid = parseFloat(bidAmount)
+    
+    // Step 7: Check if bid amount is valid
     if (isNaN(bid) || bid <= 0) {
       alert('Please enter a valid bid amount')
       return
     }
 
+    // Step 8: Check if bid is higher than current price
     if (bid <= auction.currentPrice) {
-      alert(`Bid must be higher than current price of $${auction.currentPrice.toLocaleString()}`)
+      const priceText = '$' + auction.currentPrice.toLocaleString()
+      alert('Bid must be higher than current price of ' + priceText)
       return
     }
 
-    // Use context to place bid (will emit socket event for real-time sync)
-    const result = placeBidContext(auction.id, {
+    // Step 9: Use context to place bid (will emit socket event for real-time sync)
+    const bidData = {
       bidderName: user.name,
       amount: bid
-    })
+    }
+    const result = placeBidContext(auction.id, bidData)
 
-    // Check if bid was successful
+    // Step 10: Check if bid was successful
     if (result && !result.success) {
-      alert(result.message || 'Failed to place bid')
+      const errorMessage = result.message || 'Failed to place bid'
+      alert(errorMessage)
       if (result.message && result.message.includes('ended')) {
         setIsAuctionEnded(true)
       }
       return
     }
 
-    // Also update via callback for local state (if needed)
+    // Step 11: Also update via callback for local state (if needed)
     if (onUpdateAuction) {
       const newBid = {
         bidder: user.name,
         amount: bid,
         time: new Date()
       }
+      const updatedBids = auction.bids.concat([newBid])
       onUpdateAuction(auction.id, {
         currentPrice: bid,
-        bids: [...auction.bids, newBid]
+        bids: updatedBids
       })
     }
 
@@ -177,9 +204,14 @@ const AuctionDetail = ({ auctions, user, onUpdateAuction, onUserBid, onAdminRemo
                   </div>
                 </div>
                 <div className="flex items-center space-x-2 flex-shrink-0">
-                  {user?.isAdmin && (
+                  {user && user.isAdmin && (
                     <button
-                      onClick={() => { onAdminRemove && onAdminRemove(auction.id); navigate('/') }}
+                      onClick={function() {
+                        if (onAdminRemove) {
+                          onAdminRemove(auction.id)
+                        }
+                        navigate('/')
+                      }}
                       className="px-2 sm:px-3 py-1 rounded bg-red-600 text-white text-xs sm:text-sm"
                     >
                       Remove
@@ -234,7 +266,7 @@ const AuctionDetail = ({ auctions, user, onUpdateAuction, onUserBid, onAdminRemo
                       />
                       <button
                         type="submit"
-                        disabled={!user || user?.isAdmin}
+                        disabled={!user || (user && user.isAdmin)}
                         className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg"
                       >
                         {user ? (user.isAdmin ? 'Admins cannot bid' : 'Place Bid') : 'Login to Bid'}
@@ -270,9 +302,14 @@ const AuctionDetail = ({ auctions, user, onUpdateAuction, onUserBid, onAdminRemo
               <h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">Bid History ({auction.bids.length} bids)</h3>
               <div className="space-y-2 sm:space-y-3 max-h-64 sm:max-h-96 overflow-y-auto">
                 {auction.bids.length > 0 ? (
-                  [...auction.bids]
-                    .sort((a, b) => new Date(b.time) - new Date(a.time))
-                    .map((bid, index, arr) => (
+                  (function() {
+                    const sortedBids = auction.bids.slice()
+                    sortedBids.sort(function(a, b) {
+                      return new Date(b.time) - new Date(a.time)
+                    })
+                    return sortedBids
+                  }()).map(function(bid, index) {
+                    return (
                       <div key={index} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${index === 0 ? 'bg-purple-50 dark:bg-purple-900/20 border-2 border-purple-200 dark:border-purple-800' : 'bg-gray-50 dark:bg-slate-700'}`}>
                         <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
                           <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">{(bid.bidder || '').charAt(0)}</div>
@@ -288,7 +325,8 @@ const AuctionDetail = ({ auctions, user, onUpdateAuction, onUserBid, onAdminRemo
                         </div>
                         <div className="text-base sm:text-lg font-bold text-gray-800 dark:text-gray-100 flex-shrink-0 ml-2">${bid.amount.toLocaleString()}</div>
                       </div>
-                    ))
+                    )
+                  })
                 ) : (
                   <div className="text-center py-6 sm:py-8 text-gray-500 dark:text-gray-400 text-sm sm:text-base">No bids yet. Be the first to bid!</div>
                 )}

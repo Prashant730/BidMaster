@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const CreateAuction = ({ user, onAddAuction }) => {
+function CreateAuction(props) {
+  const user = props.user
+  const onAddAuction = props.onAddAuction
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     title: '',
@@ -26,7 +28,7 @@ const CreateAuction = ({ user, onAddAuction }) => {
     )
   }
 
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault()
 
     if (!formData.title || !formData.description || !formData.category || !formData.startingPrice) {
@@ -74,10 +76,11 @@ const CreateAuction = ({ user, onAddAuction }) => {
     }, 2000)
   }
 
-  const handleImageUpload = (e) => {
+  function handleImageUpload(e) {
     const files = Array.from(e.target.files)
     // In a real app, these would be uploaded to a server
-    setImages(prev => [...prev, ...files.slice(0, 4)])
+    const newImages = images.concat(files.slice(0, 4))
+    setImages(newImages)
   }
 
   return (
@@ -105,7 +108,9 @@ const CreateAuction = ({ user, onAddAuction }) => {
               <input
                 type="url"
                 value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
+                onChange={function(e) {
+                  setImageUrl(e.target.value)
+                }}
                 placeholder="https://images.unsplash.com/photo-..."
                 className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
@@ -116,12 +121,19 @@ const CreateAuction = ({ user, onAddAuction }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 sm:mb-4">Or Upload Images (Up to 4 images)</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4">
-                {images.map((image, index) => (
-                  <div key={index} className="relative group">
-                    <img src={URL.createObjectURL(image)} alt={`Preview ${index + 1}`} className="w-full h-32 object-cover rounded-lg" />
-                    <button type="button" onClick={() => setImages(prev => prev.filter((_, i) => i !== index))} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button>
-                  </div>
-                ))}
+                {images.map(function(image, index) {
+                  return (
+                    <div key={index} className="relative group">
+                      <img src={URL.createObjectURL(image)} alt={'Preview ' + (index + 1)} className="w-full h-32 object-cover rounded-lg" />
+                      <button type="button" onClick={function() {
+                        const newImages = images.filter(function(_, i) {
+                          return i !== index
+                        })
+                        setImages(newImages)
+                      }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button>
+                    </div>
+                  )
+                })}
                 {images.length < 4 && (
                   <label className="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg h-32 flex items-center justify-center cursor-pointer hover:border-purple-500 dark:hover:border-purple-400 transition-colors">
                     <div className="text-center">
@@ -139,20 +151,50 @@ const CreateAuction = ({ user, onAddAuction }) => {
             {/* Title */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Item Title</label>
-              <input type="text" value={formData.title} onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))} placeholder="e.g., Vintage Rolex Submariner 1965" className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required />
+              <input type="text" value={formData.title} onChange={function(e) {
+                const newFormData = {
+                  title: e.target.value,
+                  description: formData.description,
+                  category: formData.category,
+                  startingPrice: formData.startingPrice,
+                  duration: formData.duration,
+                  image: formData.image
+                }
+                setFormData(newFormData)
+              }} placeholder="e.g., Vintage Rolex Submariner 1965" className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required />
             </div>
 
             {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
-              <textarea value={formData.description} onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))} rows={6} placeholder="Describe your item in detail. Include condition, features, history, and any relevant information for potential bidders." className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-vertical" required />
+              <textarea value={formData.description} onChange={function(e) {
+                const newFormData = {
+                  title: formData.title,
+                  description: e.target.value,
+                  category: formData.category,
+                  startingPrice: formData.startingPrice,
+                  duration: formData.duration,
+                  image: formData.image
+                }
+                setFormData(newFormData)
+              }} rows={6} placeholder="Describe your item in detail. Include condition, features, history, and any relevant information for potential bidders." className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-vertical" required />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {/* Category */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                <select value={formData.category} onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
+                <select value={formData.category} onChange={function(e) {
+                  const newFormData = {
+                    title: formData.title,
+                    description: formData.description,
+                    category: e.target.value,
+                    startingPrice: formData.startingPrice,
+                    duration: formData.duration,
+                    image: formData.image
+                  }
+                  setFormData(newFormData)
+                }} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
                   <option value="">Select a category</option>
                   <option value="Watches">Watches</option>
                   <option value="Art">Art</option>
@@ -166,14 +208,34 @@ const CreateAuction = ({ user, onAddAuction }) => {
               {/* Starting Price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Starting Price ($)</label>
-                <input type="number" value={formData.startingPrice} onChange={(e) => setFormData(prev => ({ ...prev, startingPrice: e.target.value }))} placeholder="0.00" min="0" step="0.01" className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required />
+                <input type="number" value={formData.startingPrice} onChange={function(e) {
+                  const newFormData = {
+                    title: formData.title,
+                    description: formData.description,
+                    category: formData.category,
+                    startingPrice: e.target.value,
+                    duration: formData.duration,
+                    image: formData.image
+                  }
+                  setFormData(newFormData)
+                }} placeholder="0.00" min="0" step="0.01" className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required />
               </div>
             </div>
 
             {/* Auction Duration */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Auction Duration</label>
-              <select value={formData.duration} onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
+              <select value={formData.duration} onChange={function(e) {
+                const newFormData = {
+                  title: formData.title,
+                  description: formData.description,
+                  category: formData.category,
+                  startingPrice: formData.startingPrice,
+                  duration: e.target.value,
+                  image: formData.image
+                }
+                setFormData(newFormData)
+              }} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
                 <option value="6">6 Hours</option>
                 <option value="12">12 Hours</option>
                 <option value="24">24 Hours</option>

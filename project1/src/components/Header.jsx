@@ -3,7 +3,10 @@ import { Link, useLocation } from 'react-router-dom'
 import BeginnerGuide from './BeginnerGuide.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
 
-const Header = ({ user, onLoginClick, onLogout }) => {
+function Header(props) {
+  const user = props.user
+  const onLoginClick = props.onLoginClick
+  const onLogout = props.onLogout
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const [showBeginnerGuide, setShowBeginnerGuide] = useState(false)
 	const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -32,7 +35,7 @@ const Header = ({ user, onLoginClick, onLogout }) => {
             >
               Live Auctions
             </Link>
-				{!user?.isAdmin && (
+				{(!user || !user.isAdmin) && (
 					<>
 						<Link
 							to="/create"
@@ -125,7 +128,7 @@ const Header = ({ user, onLoginClick, onLogout }) => {
 								>
 									My Profile
 								</Link>
-							{!user?.isAdmin && (
+							{(!user || !user.isAdmin) && (
 								<>
 									<Link
 										to="/policy"
@@ -185,7 +188,7 @@ const Header = ({ user, onLoginClick, onLogout }) => {
               <Link to="/" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
                 Live Auctions
               </Link>
-              {!user?.isAdmin && (
+              {(!user || !user.isAdmin) && (
                 <Link to="/create" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
                   Sell Item
                 </Link>

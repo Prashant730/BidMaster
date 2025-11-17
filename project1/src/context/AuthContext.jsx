@@ -3,7 +3,7 @@ import { authAPI } from '../services/api.js'
 
 const AuthContext = createContext()
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext)
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider')
@@ -11,20 +11,24 @@ export const useAuth = () => {
   return context
 }
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider(props) {
+  const children = props.children
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [token, setToken] = useState(localStorage.getItem('token'))
 
-  useEffect(() => {
+  // Load user when token changes
+  useEffect(function() {
     if (token) {
+      // Step 1: If token exists, load user data
       loadUser()
     } else {
+      // Step 2: If no token, set loading to false
       setLoading(false)
     }
   }, [token])
 
-  const loadUser = async () => {
+  async function loadUser() {
     try {
       const response = await authAPI.getMe()
       setUser(response.data)
@@ -36,10 +40,17 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const login = async (email, password) => {
+  async function login(email, password) {
     try {
-      const response = await authAPI.login({ email, password })
-      const { token: newToken, ...userData } = response.data
+      const response = await authAPI.login({ email: email, password: password })
+      const responseData = response.data
+      const newToken = responseData.token
+      const userData = {}
+      for (let key in responseData) {
+        if (key !== 'token') {
+          userData[key] = responseData[key]
+        }
+      }
 
       localStorage.setItem('token', newToken)
       localStorage.setItem('user', JSON.stringify(userData))
@@ -47,17 +58,31 @@ export const AuthProvider = ({ children }) => {
       setUser(userData)
       return { success: true }
     } catch (error) {
+      let errorMessage = 'Login failed'
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message
+      }
       return {
         success: false,
-        message: error.response?.data?.message || 'Login failed'
+        message: errorMessage
       }
     }
   }
 
-  const register = async (username, email, password, role = 'bidder') => {
+  async function register(username, email, password, role) {
+    if (role === undefined) {
+      role = 'bidder'
+    }
     try {
-      const response = await authAPI.register({ username, email, password, role })
-      const { token: newToken, ...userData } = response.data
+      const response = await authAPI.register({ username: username, email: email, password: password, role: role })
+      const responseData = response.data
+      const newToken = responseData.token
+      const userData = {}
+      for (let key in responseData) {
+        if (key !== 'token') {
+          userData[key] = responseData[key]
+        }
+      }
 
       localStorage.setItem('token', newToken)
       localStorage.setItem('user', JSON.stringify(userData))
@@ -65,14 +90,22 @@ export const AuthProvider = ({ children }) => {
       setUser(userData)
       return { success: true }
     } catch (error) {
+      let errorMessage = 'Registration failed'
+      if (error.response && error.response.data) {
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response.data.errors && error.response.data.errors.length > 0 && error.response.data.errors[0].msg) {
+          errorMessage = error.response.data.errors[0].msg
+        }
+      }
       return {
         success: false,
-        message: error.response?.data?.message || error.response?.data?.errors?.[0]?.msg || 'Registration failed'
+        message: errorMessage
       }
     }
   }
 
-  const logout = () => {
+  function logout() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setToken(null)

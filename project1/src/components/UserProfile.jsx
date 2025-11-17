@@ -1,7 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const UserProfile = ({ user, auctions, onUpdateUser, users, setUsers }) => {
+function UserProfile(props) {
+  const user = props.user
+  const auctions = props.auctions
+  const onUpdateUser = props.onUpdateUser
+  const users = props.users
+  const setUsers = props.setUsers
   const navigate = useNavigate()
   const [activeBids, setActiveBids] = useState([])
   const [wonItems, setWonItems] = useState([])
@@ -10,26 +15,32 @@ const UserProfile = ({ user, auctions, onUpdateUser, users, setUsers }) => {
   const [recentActivity, setRecentActivity] = useState([])
 
   // Admin-specific stats
-  const adminStats = useMemo(() => {
-    if (!user?.isAdmin || !users || !auctions) return null
+  const adminStats = useMemo(function() {
+    if (!user || !user.isAdmin || !users || !auctions) return null
     const now = Date.now()
     const totalUsers = users.length
-    const pendingValidations = users.filter(u => u.role === 'auctioneer' && !u.isValidated).length
-    const activeAuctions = auctions.filter(a => (a.endTime - now) > 0).length
-    const totalRevenue = auctions
-      .filter(a => (a.endTime - now) <= 0 && a.bids.length > 0)
-      .reduce((sum, a) => sum + a.currentPrice * 0.05, 0)
-    const actionsToday = users.filter(u => {
+    const pendingValidations = users.filter(function(u) { return u.role === 'auctioneer' && !u.isValidated }).length
+    const activeAuctions = auctions.filter(function(a) { return (a.endTime - now) > 0 }).length
+    
+    const endedWithBids = auctions.filter(function(a) {
+      return (a.endTime - now) <= 0 && a.bids.length > 0
+    })
+    let totalRevenue = 0
+    for (let i = 0; i < endedWithBids.length; i++) {
+      totalRevenue += endedWithBids[i].currentPrice * 0.05
+    }
+    
+    const actionsToday = users.filter(function(u) {
       // Mock: count users modified today (in real app, track action timestamps)
       return u.status === 'suspended' || u.status === 'banned'
     }).length
 
     return {
-      totalUsers,
-      pendingValidations,
-      activeAuctions,
-      totalRevenue,
-      actionsToday
+      totalUsers: totalUsers,
+      pendingValidations: pendingValidations,
+      activeAuctions: activeAuctions,
+      totalRevenue: totalRevenue,
+      actionsToday: actionsToday
     }
   }, [user, users, auctions])
 
@@ -41,66 +52,121 @@ const UserProfile = ({ user, auctions, onUpdateUser, users, setUsers }) => {
   })
   const [photoPreview, setPhotoPreview] = useState('')
 
-  useEffect(() => {
-    if (!user) return
+  // Update form values when user changes
+  useEffect(function() {
+    if (!user) {
+      return
+    }
+    // Set form values from user data
     setFormValues({
       name: user.name || '',
       address: user.address || '',
       phone: user.phone || '',
       profilePhoto: user.profilePhoto || ''
     })
+    // Set photo preview
     setPhotoPreview(user.profilePhoto || '')
   }, [user])
 
-  useEffect(() => {
-    if (!user || !auctions) return
+  useEffect(function() {
+    // Check if user and auctions exist
+    if (!user || !auctions) {
+      return
+    }
 
-    const compute = () => {
-      // Get auctions where user has placed bids
-      const userBidAuctions = auctions.filter(auction =>
-        user.bids && user.bids.includes(auction.id)
-      )
-
-      // Separate active and ended auctions
-      const now = Date.now()
-      const active = userBidAuctions.filter(auction => (auction.endTime - now) > 0)
-
-      const ended = userBidAuctions.filter(auction => {
-        const timeLeft = auction.endTime - now
-        if (timeLeft <= 0 && auction.bids.length > 0) {
-          const highestBid = auction.bids[auction.bids.length - 1]
-          return highestBid.bidder === user.name
+    // Function to compute user data
+    function compute() {
+      // Step 1: Get all auctions where user has placed bids
+      const userBidAuctions = []
+      for (let i = 0; i < auctions.length; i++) {
+        const auction = auctions[i]
+        if (user.bids && user.bids.includes(auction.id)) {
+          userBidAuctions.push(auction)
         }
-        return false
-      })
+      }
 
+      // Step 2: Separate active and ended auctions
+      const now = Date.now()
+      const active = []
+      const ended = []
+      
+      for (let i = 0; i < userBidAuctions.length; i++) {
+        const auction = userBidAuctions[i]
+        const timeLeft = auction.endTime - now
+        
+        if (timeLeft > 0) {
+          // Auction is still active
+          active.push(auction)
+        } else {
+          // Auction has ended, check if user won
+          if (auction.bids.length > 0) {
+            const highestBid = auction.bids[auction.bids.length - 1]
+            if (highestBid.bidder === user.name) {
+              ended.push(auction)
+            }
+          }
+        }
+      }
+
+      // Step 3: Update active bids and won items
       setActiveBids(active)
       setWonItems(ended)
 
-      // Calculate total bidding amount
-      const total = userBidAuctions.reduce((sum, auction) => {
-        const userBid = auction.bids.find(bid => bid.bidder === user.name)
-        return sum + (userBid ? userBid.amount : 0)
-      }, 0)
+      // Step 4: Calculate total bidding amount
+      let total = 0
+      for (let i = 0; i < userBidAuctions.length; i++) {
+        const auction = userBidAuctions[i]
+        // Find user's bid in this auction
+        let userBid = null
+        for (let j = 0; j < auction.bids.length; j++) {
+          if (auction.bids[j].bidder === user.name) {
+            userBid = auction.bids[j]
+            break
+          }
+        }
+        // Add bid amount to total if found
+        if (userBid) {
+          total = total + userBid.amount
+        }
+      }
       setTotalBiddingAmount(total)
 
       // Recent activity (only render if exists)
-      const activities = auctions
-        .flatMap(a => a.bids.map(b => ({ auction: a, bid: b })))
-        .filter(x => x.bid.bidder === user.name)
-        .sort((a, b) => new Date(b.bid.time) - new Date(a.bid.time))
-        .slice(0, 10)
+      const allBids = []
+      for (let i = 0; i < auctions.length; i++) {
+        const auction = auctions[i]
+        for (let j = 0; j < auction.bids.length; j++) {
+          allBids.push({ auction: auction, bid: auction.bids[j] })
+        }
+      }
+      const userBids = allBids.filter(function(x) { return x.bid.bidder === user.name })
+      userBids.sort(function(a, b) {
+        return new Date(b.bid.time) - new Date(a.bid.time)
+      })
+      const activities = userBids.slice(0, 10)
       setRecentActivity(activities)
 
       // Update user's wonItems if needed
-      const wonItemIds = ended.map(auction => auction.id)
-      if (
-        onUpdateUser && user.wonItems && JSON.stringify([...user.wonItems].sort()) !== JSON.stringify([...wonItemIds].sort())
-      ) {
-        onUpdateUser({
-          ...user,
-          wonItems: wonItemIds
-        })
+      const wonItemIds = ended.map(function(auction) { return auction.id })
+      if (onUpdateUser && user.wonItems) {
+        const sortedWonItems = user.wonItems.slice().sort()
+        const sortedWonItemIds = wonItemIds.slice().sort()
+        if (JSON.stringify(sortedWonItems) !== JSON.stringify(sortedWonItemIds)) {
+          const updatedUser = {
+            name: user.name,
+            email: user.email,
+            bids: user.bids,
+            wonItems: wonItemIds,
+            address: user.address,
+            phone: user.phone,
+            profilePhoto: user.profilePhoto,
+            status: user.status,
+            role: user.role,
+            isValidated: user.isValidated,
+            isAdmin: user.isAdmin
+          }
+          onUpdateUser(updatedUser)
+        }
       }
     }
 
@@ -183,19 +249,19 @@ const UserProfile = ({ user, auctions, onUpdateUser, users, setUsers }) => {
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-2xl p-6 text-center">
-                      <div className="text-3xl font-bold mb-2">{adminStats?.totalUsers || 0}</div>
+                      <div className="text-3xl font-bold mb-2">{adminStats && adminStats.totalUsers ? adminStats.totalUsers : 0}</div>
                       <div className="text-purple-100 text-sm">Total Users</div>
                     </div>
                     <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-2xl p-6 text-center">
-                      <div className="text-3xl font-bold mb-2">{adminStats?.pendingValidations || 0}</div>
+                      <div className="text-3xl font-bold mb-2">{adminStats && adminStats.pendingValidations ? adminStats.pendingValidations : 0}</div>
                       <div className="text-yellow-100 text-sm">Pending Validations</div>
                     </div>
                     <div className="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-2xl p-6 text-center">
-                      <div className="text-3xl font-bold mb-2">{adminStats?.activeAuctions || 0}</div>
+                      <div className="text-3xl font-bold mb-2">{adminStats && adminStats.activeAuctions ? adminStats.activeAuctions : 0}</div>
                       <div className="text-green-100 text-sm">Active Auctions</div>
                     </div>
                     <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl p-6 text-center">
-                      <div className="text-3xl font-bold mb-2">${Math.round(adminStats?.totalRevenue || 0).toLocaleString()}</div>
+                      <div className="text-3xl font-bold mb-2">${Math.round(adminStats && adminStats.totalRevenue ? adminStats.totalRevenue : 0).toLocaleString()}</div>
                       <div className="text-indigo-100 text-sm">Total Revenue</div>
                     </div>
                   </div>
@@ -282,10 +348,17 @@ const UserProfile = ({ user, auctions, onUpdateUser, users, setUsers }) => {
                             const file = e.target.files && e.target.files[0]
                             if (!file) return
                             const reader = new FileReader()
-                            reader.onloadend = () => {
+                            reader.onloadend = function() {
                               const dataUrl = reader.result
                               setPhotoPreview(dataUrl)
-                              setFormValues(prev => ({ ...prev, profilePhoto: dataUrl }))
+                              setFormValues(function(prev) {
+                                return {
+                                  name: prev.name,
+                                  address: prev.address,
+                                  phone: prev.phone,
+                                  profilePhoto: dataUrl
+                                }
+                              })
                             }
                             reader.readAsDataURL(file)
                           }}
@@ -299,7 +372,16 @@ const UserProfile = ({ user, auctions, onUpdateUser, users, setUsers }) => {
                       <input
                         type="text"
                         value={formValues.name}
-                        onChange={(e) => setFormValues(prev => ({ ...prev, name: e.target.value }))}
+                        onChange={function(e) {
+                          setFormValues(function(prev) {
+                            return {
+                              name: e.target.value,
+                              address: prev.address,
+                              phone: prev.phone,
+                              profilePhoto: prev.profilePhoto
+                            }
+                          })
+                        }}
                         className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="Enter your full name"
                       />
@@ -321,7 +403,16 @@ const UserProfile = ({ user, auctions, onUpdateUser, users, setUsers }) => {
                       <input
                         type="text"
                         value={formValues.address}
-                        onChange={(e) => setFormValues(prev => ({ ...prev, address: e.target.value }))}
+                        onChange={function(e) {
+                          setFormValues(function(prev) {
+                            return {
+                              name: prev.name,
+                              address: e.target.value,
+                              phone: prev.phone,
+                              profilePhoto: prev.profilePhoto
+                            }
+                          })
+                        }}
                         className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="Street, City, Country"
                       />

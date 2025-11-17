@@ -1,17 +1,21 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const AuctionGrid = ({ auctions, currentUser, onAdminRemove }) => {
+function AuctionGrid(props) {
+  const auctions = props.auctions
+  const currentUser = props.currentUser
+  const onAdminRemove = props.onAdminRemove
   const [filter, setFilter] = useState('all')
   const [sortBy, setSortBy] = useState('ending')
 
   const categories = ['all', 'Watches', 'Art', 'Collectibles', 'Furniture', 'Electronics', 'Jewelry']
 
-  const filteredAuctions = auctions.filter(auction =>
-    filter === 'all' || auction.category === filter
-  )
+  const filteredAuctions = auctions.filter(function(auction) {
+    return filter === 'all' || auction.category === filter
+  })
 
-  const sortedAuctions = [...filteredAuctions].sort((a, b) => {
+  const sortedAuctions = filteredAuctions.slice()
+  sortedAuctions.sort(function(a, b) {
     if (sortBy === 'ending') {
       return a.endTime - b.endTime
     } else if (sortBy === 'price') {
@@ -73,7 +77,10 @@ const AuctionGrid = ({ auctions, currentUser, onAdminRemove }) => {
   )
 }
 
-const AuctionCard = ({ auction, currentUser, onAdminRemove }) => {
+function AuctionCard(props) {
+  const auction = props.auction
+  const currentUser = props.currentUser
+  const onAdminRemove = props.onAdminRemove
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
 
   function calculateTimeLeft() {
@@ -122,9 +129,15 @@ const AuctionCard = ({ auction, currentUser, onAdminRemove }) => {
               <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">LIVE</span>
             )}
           </div>
-          {currentUser?.isAdmin && (
+          {currentUser && currentUser.isAdmin && (
             <button
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAdminRemove && onAdminRemove(auction.id) }}
+              onClick={function(e) {
+                e.preventDefault()
+                e.stopPropagation()
+                if (onAdminRemove) {
+                  onAdminRemove(auction.id)
+                }
+              }}
               className="absolute top-4 left-4 bg-white/90 text-red-600 hover:bg-white px-2 py-1 rounded text-xs font-bold shadow"
               title="Remove auction"
             >

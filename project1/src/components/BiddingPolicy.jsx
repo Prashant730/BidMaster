@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
-const BiddingPolicy = () => {
+function BiddingPolicy() {
   const navigate = useNavigate()
   const [activeSection, setActiveSection] = useState('overview')
 
@@ -58,7 +58,7 @@ const BiddingPolicy = () => {
     }
   ]
 
-  const renderContent = () => {
+  function renderContent() {
     switch (activeSection) {
       case 'overview':
         return (
@@ -827,7 +827,7 @@ const BiddingPolicy = () => {
           </div>
           <div>
             <button
-              onClick={() => navigate('/')}
+              onClick={function() { navigate('/') }}
               className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 mb-4 transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -844,20 +844,29 @@ const BiddingPolicy = () => {
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-4 sticky top-24 transition-colors duration-200">
               <h2 className="font-bold text-gray-800 dark:text-gray-100 mb-4">Policy Sections</h2>
               <nav className="space-y-1">
-                {policySections.map((section) => (
-                  <button
-                    key={section.id}
-                    onClick={() => setActiveSection(section.id)}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
-                      activeSection === section.id
-                        ? 'bg-purple-600 text-white shadow-md'
-                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    <span className="mr-2">{section.icon}</span>
-                    {section.title}
-                  </button>
-                ))}
+                {policySections.map(function(section) {
+                  function handleSectionClick() {
+                    setActiveSection(section.id)
+                  }
+                  
+                  let buttonClass = 'w-full text-left px-4 py-3 rounded-lg transition-all duration-200 '
+                  if (activeSection === section.id) {
+                    buttonClass += 'bg-purple-600 text-white shadow-md'
+                  } else {
+                    buttonClass += 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
+                  }
+                  
+                  return (
+                    <button
+                      key={section.id}
+                      onClick={handleSectionClick}
+                      className={buttonClass}
+                    >
+                      <span className="mr-2">{section.icon}</span>
+                      {section.title}
+                    </button>
+                  )
+                })}
               </nav>
             </div>
           </div>

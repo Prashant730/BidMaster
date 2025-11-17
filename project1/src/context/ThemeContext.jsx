@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 
 const ThemeContext = createContext()
 
-export const useTheme = () => {
+export function useTheme() {
   const context = useContext(ThemeContext)
   if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider')
@@ -10,15 +10,19 @@ export const useTheme = () => {
   return context
 }
 
-export const ThemeProvider = ({ children }) => {
-  const [isDark, setIsDark] = useState(() => {
+export function ThemeProvider(props) {
+  const children = props.children
+  
+  function getInitialTheme() {
     // Check localStorage first, then system preference
     const saved = localStorage.getItem('theme')
     if (saved) {
       return saved === 'dark'
     }
     return window.matchMedia('(prefers-color-scheme: dark)').matches
-  })
+  }
+  
+  const [isDark, setIsDark] = useState(getInitialTheme)
 
   useEffect(() => {
     // Update document class and localStorage
@@ -31,8 +35,10 @@ export const ThemeProvider = ({ children }) => {
     }
   }, [isDark])
 
-  const toggleTheme = () => {
-    setIsDark(prev => !prev)
+  function toggleTheme() {
+    setIsDark(function(prev) {
+      return !prev
+    })
   }
 
   const value = {

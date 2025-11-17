@@ -2,12 +2,13 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BeginnerGuide from './BeginnerGuide.jsx'
 
-const Hero = ({ user }) => {
+function Hero(props) {
+  const user = props.user
   const navigate = useNavigate()
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showBeginnerGuide, setShowBeginnerGuide] = useState(false)
 
-  const handleStartBidding = () => {
+  function handleStartBidding() {
     // Scroll to auctions section
     window.scrollTo({
       top: window.innerHeight,
@@ -15,7 +16,7 @@ const Hero = ({ user }) => {
     })
   }
 
-  const handleHowItWorks = () => {
+  function handleHowItWorks() {
     setShowHowItWorks(!showHowItWorks)
   }
 
@@ -30,7 +31,7 @@ const Hero = ({ user }) => {
           Join thousands of bidders in our live auctions. From luxury items to unique collectibles, find what you love and bid to win!
         </p>
         <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 md:gap-4 justify-center items-center px-3 sm:px-4 max-w-md sm:max-w-none mx-auto">
-          {!user?.isAdmin && (
+          {(!user || !user.isAdmin) && (
             <>
               <button
                 onClick={handleStartBidding}
@@ -48,10 +49,10 @@ const Hero = ({ user }) => {
           )}
         </div>
 
-        {!user?.isAdmin && showHowItWorks && (
-          <div className="mt-5 sm:mt-6 md:mt-8 max-w-3xl mx-auto bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 text-left animate-fadeIn mx-2 sm:mx-4">
+        {(!user || !user.isAdmin) && showHowItWorks && (
+          <div className="mt-5 sm:mt-6 md:mt-8 max-w-3xl mx-auto bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 text-left animate-fadeIn">
             <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 text-center">How BidMaster Works</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
+            <div className=" grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
               <div className="text-center">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 text-xl sm:text-2xl font-bold">1</div>
                 <h4 className="font-bold mb-1.5 sm:mb-2 text-sm sm:text-base">Browse Auctions</h4>
@@ -88,7 +89,7 @@ const Hero = ({ user }) => {
           </div>
         )}
 
-        {!user?.isAdmin && showBeginnerGuide && <BeginnerGuide onClose={() => setShowBeginnerGuide(false)} />}
+        {(!user || !user.isAdmin) && showBeginnerGuide && <BeginnerGuide onClose={function() { setShowBeginnerGuide(false) }} />}
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mt-8 sm:mt-12 md:mt-16 max-w-4xl mx-auto px-3 sm:px-4">

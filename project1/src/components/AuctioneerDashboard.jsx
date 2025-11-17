@@ -1,8 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
+import { useTheme } from '../context/ThemeContext.jsx'
 
-const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
+function AuctioneerDashboard(props) {
+  const currentUser = props.currentUser
+  const auctionsProp = props.auctions
+  const { isDark } = useTheme()
   const {
     auctions: contextAuctions,
     updateAuction: updateContextAuction,
@@ -19,20 +23,44 @@ const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
   const [threeMinuteRuleEnabled, setThreeMinuteRuleEnabled] = useState(true)
 
   // Filter auctions by current user (auctioneer)
-  const myAuctions = useMemo(() => {
-    return auctions.filter(a => a.seller === currentUser?.name || a.seller?.toLowerCase().includes(currentUser?.email?.split('@')[0]?.toLowerCase() || ''))
+  const myAuctions = useMemo(function() {
+    return auctions.filter(function(a) {
+      let sellerMatches = false
+      if (currentUser && currentUser.name && a.seller === currentUser.name) {
+        sellerMatches = true
+      }
+      if (!sellerMatches && currentUser && currentUser.email && a.seller) {
+        const emailPrefix = currentUser.email.split('@')[0]
+        if (emailPrefix) {
+          const lowerEmailPrefix = emailPrefix.toLowerCase()
+          const lowerSeller = a.seller.toLowerCase()
+          if (lowerSeller.includes(lowerEmailPrefix)) {
+            sellerMatches = true
+          }
+        }
+      }
+      return sellerMatches
+    })
   }, [auctions, currentUser])
 
   // Stats calculation
-  const stats = useMemo(() => {
+  const stats = useMemo(function() {
     const now = Date.now()
-    const active = myAuctions.filter(a => (a.endTime - now) > 0)
-    const ended = myAuctions.filter(a => (a.endTime - now) <= 0)
-    const totalBids = myAuctions.reduce((sum, a) => sum + a.bids.length, 0)
-    const totalRevenue = ended
-      .filter(a => a.bids.length > 0)
-      .reduce((sum, a) => sum + a.currentPrice, 0)
-    const pending = myAuctions.filter(a => {
+    const active = myAuctions.filter(function(a) { return (a.endTime - now) > 0 })
+    const ended = myAuctions.filter(function(a) { return (a.endTime - now) <= 0 })
+
+    let totalBids = 0
+    for (let i = 0; i < myAuctions.length; i++) {
+      totalBids += myAuctions[i].bids.length
+    }
+
+    const endedWithBids = ended.filter(function(a) { return a.bids.length > 0 })
+    let totalRevenue = 0
+    for (let i = 0; i < endedWithBids.length; i++) {
+      totalRevenue += endedWithBids[i].currentPrice
+    }
+
+    const pending = myAuctions.filter(function(a) {
       const timeLeft = a.endTime - now
       return timeLeft > 0 && timeLeft < 3 * 60 * 1000 // Less than 3 minutes
     })
@@ -41,49 +69,52 @@ const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
       total: myAuctions.length,
       active: active.length,
       ended: ended.length,
-      totalBids,
-      totalRevenue,
+      totalBids: totalBids,
+      totalRevenue: totalRevenue,
       pending: pending.length
     }
   }, [myAuctions])
 
   // Filtered auctions
-  const filteredAuctions = useMemo(() => {
+  const filteredAuctions = useMemo(function() {
     let filtered = myAuctions
 
     // Search filter
     if (searchTerm) {
       const search = searchTerm.toLowerCase()
-      filtered = filtered.filter(a =>
-        a.title.toLowerCase().includes(search) ||
-        a.description.toLowerCase().includes(search) ||
-        a.category.toLowerCase().includes(search)
-      )
+      filtered = filtered.filter(function(a) {
+        return a.title.toLowerCase().includes(search) ||
+               a.description.toLowerCase().includes(search) ||
+               a.category.toLowerCase().includes(search)
+      })
     }
 
     // Status filter
     const now = Date.now()
     if (filterStatus === 'active') {
-      filtered = filtered.filter(a => (a.endTime - now) > 0)
+      filtered = filtered.filter(function(a) { return (a.endTime - now) > 0 })
     } else if (filterStatus === 'ended') {
-      filtered = filtered.filter(a => (a.endTime - now) <= 0)
+      filtered = filtered.filter(function(a) { return (a.endTime - now) <= 0 })
     } else if (filterStatus === 'pending') {
-      filtered = filtered.filter(a => {
+      filtered = filtered.filter(function(a) {
         const timeLeft = a.endTime - now
         return timeLeft > 0 && timeLeft < 3 * 60 * 1000
       })
     }
 
-    return filtered.sort((a, b) => b.endTime - a.endTime)
+    filtered.sort(function(a, b) {
+      return b.endTime - a.endTime
+    })
+    return filtered
   }, [myAuctions, searchTerm, filterStatus])
 
   // Check if user is validated auctioneer
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Please Login</h2>
-          <p className="text-gray-600 mb-4">You need to be logged in to access the Auctioneer Dashboard.</p>
+          <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Please Login</h2>
+          <p className={`mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>You need to be logged in to access the Auctioneer Dashboard.</p>
           <button onClick={() => navigate('/')} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
             Go Home
           </button>
@@ -94,10 +125,10 @@ const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
 
   if (currentUser.role !== 'auctioneer' && !currentUser.isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Access Denied</h2>
-          <p className="text-gray-600 mb-4">You must be an auctioneer to view this page.</p>
+          <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Access Denied</h2>
+          <p className={`mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>You must be an auctioneer to view this page.</p>
           <button onClick={() => navigate('/')} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
             Go Home
           </button>
@@ -108,14 +139,14 @@ const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
 
   if (currentUser.role === 'auctioneer' && !currentUser.isValidated) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center max-w-md">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-4">
-            <svg className="w-16 h-16 text-yellow-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className={`border rounded-lg p-6 mb-4 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-yellow-50 border-yellow-200'}`}>
+            <svg className={`w-16 h-16 mx-auto mb-4 ${isDark ? 'text-yellow-500' : 'text-yellow-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Account Pending Validation</h2>
-            <p className="text-gray-600">
+            <h2 className={`text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>Account Pending Validation</h2>
+            <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
               Your auctioneer account is pending admin approval. Once validated, you'll be able to manage auctions and access all features.
             </p>
           </div>
@@ -212,20 +243,20 @@ const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className={`min-h-screen py-8 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <div className={`rounded-2xl shadow-lg p-6 mb-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Auctioneer Dashboard</h1>
-              <p className="text-gray-500 mt-1">Manage your auctions, track bids, and finalize sales</p>
+              <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>Auctioneer Dashboard</h1>
+              <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Manage your auctions, track bids, and finalize sales</p>
             </div>
             <div className="flex space-x-2">
               <button
                 onClick={() => setActiveTab('dashboard')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  activeTab === 'dashboard' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  activeTab === 'dashboard' ? 'bg-purple-600 text-white' : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 Dashboard
@@ -233,7 +264,7 @@ const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
               <button
                 onClick={() => setActiveTab('auctions')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  activeTab === 'auctions' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  activeTab === 'auctions' ? 'bg-purple-600 text-white' : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 My Auctions
@@ -241,7 +272,7 @@ const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
               <button
                 onClick={() => setActiveTab('bids')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  activeTab === 'bids' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  activeTab === 'bids' ? 'bg-purple-600 text-white' : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 Bid Management
@@ -288,59 +319,72 @@ const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
+            <div className={`rounded-2xl shadow-lg p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+              <h2 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Quick Actions</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button
                   onClick={() => navigate('/create')}
-                  className="p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-all text-left"
+                  className={`p-6 border-2 border-dashed rounded-xl hover:border-purple-500 transition-all text-left ${isDark ? 'border-gray-600 bg-gray-700 hover:bg-purple-900/20' : 'border-gray-300 hover:bg-purple-50'}`}
                 >
                   <div className="text-3xl mb-2">➕</div>
-                  <h3 className="font-semibold text-gray-800 mb-1">Create New Auction</h3>
-                  <p className="text-sm text-gray-600">List a new item for auction</p>
+                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>Create New Auction</h3>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>List a new item for auction</p>
                 </button>
                 <button
                   onClick={() => setActiveTab('auctions')}
-                  className="p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left"
+                  className={`p-6 border-2 border-dashed rounded-xl hover:border-blue-500 transition-all text-left ${isDark ? 'border-gray-600 bg-gray-700 hover:bg-blue-900/20' : 'border-gray-300 hover:bg-blue-50'}`}
                 >
                   <div className="text-3xl mb-2">📋</div>
-                  <h3 className="font-semibold text-gray-800 mb-1">Manage Auctions</h3>
-                  <p className="text-sm text-gray-600">View and edit your auctions</p>
+                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>Manage Auctions</h3>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>View and edit your auctions</p>
                 </button>
                 <button
                   onClick={() => setActiveTab('bids')}
                   className="p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all text-left"
                 >
                   <div className="text-3xl mb-2">🎯</div>
-                  <h3 className="font-semibold text-gray-800 mb-1">Track Bids</h3>
-                  <p className="text-sm text-gray-600">Monitor all bids on your auctions</p>
+                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>Track Bids</h3>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Monitor all bids on your auctions</p>
                 </button>
               </div>
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Recent Activity</h2>
+            <div className={`rounded-2xl shadow-lg p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+              <h2 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Recent Activity</h2>
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {myAuctions
-                  .flatMap(a => a.bids.map(b => ({ auction: a, bid: b })))
-                  .sort((a, b) => new Date(b.bid.time) - new Date(a.bid.time))
-                  .slice(0, 10)
-                  .map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <span className="font-medium text-gray-800">{item.bid.bidder}</span>
-                        <span className="text-gray-600"> bid </span>
-                        <span className="font-semibold text-purple-600">${item.bid.amount.toLocaleString()}</span>
-                        <span className="text-gray-600"> on </span>
-                        <span className="font-medium">{item.auction.title}</span>
+                {function() {
+                  const allBids = []
+                  for (let i = 0; i < myAuctions.length; i++) {
+                    const auction = myAuctions[i]
+                    for (let j = 0; j < auction.bids.length; j++) {
+                      allBids.push({ auction: auction, bid: auction.bids[j] })
+                    }
+                  }
+                  allBids.sort(function(a, b) {
+                    return new Date(b.bid.time) - new Date(a.bid.time)
+                  })
+                  const recentBids = allBids.slice(0, 10)
+
+                  if (allBids.length === 0) {
+                    return <p className="text-center text-gray-500 py-8">No recent activity</p>
+                  }
+
+                  return recentBids.map(function(item, idx) {
+                    return (
+                      <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-gray-800">{item.bid.bidder}</span>
+                          <span className="text-gray-600"> bid </span>
+                          <span className="font-semibold text-purple-600">${item.bid.amount.toLocaleString()}</span>
+                          <span className="text-gray-600"> on </span>
+                          <span className="font-medium">{item.auction.title}</span>
+                        </div>
+                        <span className="text-sm text-gray-500">{new Date(item.bid.time).toLocaleString()}</span>
                       </div>
-                      <span className="text-sm text-gray-500">{new Date(item.bid.time).toLocaleString()}</span>
-                    </div>
-                  ))}
-                {myAuctions.reduce((sum, a) => sum + a.bids.length, 0) === 0 && (
-                  <p className="text-center text-gray-500 py-8">No recent activity</p>
-                )}
+                    )
+                  })
+                }()}
               </div>
             </div>
 
@@ -541,11 +585,13 @@ const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
                 </div>
               ) : (
                 myAuctions
-                  .filter(a => a.bids.length > 0)
-                  .map(auction => {
+                  .filter(function(a) { return a.bids.length > 0 })
+                  .map(function(auction) {
                     const now = Date.now()
                     const isActive = (auction.endTime - now) > 0
-                    const sortedBids = [...auction.bids].sort((a, b) => new Date(b.time) - new Date(a.time))
+                    const sortedBids = auction.bids.slice().sort(function(a, b) {
+                      return new Date(b.time) - new Date(a.time)
+                    })
 
                     return (
                       <div key={auction.id} className="border border-gray-200 rounded-xl p-6">
@@ -644,17 +690,24 @@ const AuctioneerDashboard = ({ currentUser, auctions: auctionsProp }) => {
   )
 }
 
-const StatCard = ({ title, value, color, icon }) => (
-  <div className={`rounded-2xl p-6 text-white bg-gradient-to-r ${color} shadow-lg`}>
-    <div className="flex items-center justify-between">
-      <div>
-        <div className="text-sm text-white/80 mb-1">{title}</div>
-        <div className="text-3xl font-bold">{value}</div>
+function StatCard(props) {
+  const title = props.title
+  const value = props.value
+  const color = props.color
+  const icon = props.icon
+
+  return (
+    <div className={'rounded-2xl p-6 text-white bg-gradient-to-r ' + color + ' shadow-lg'}>
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-sm text-white/80 mb-1">{title}</div>
+          <div className="text-3xl font-bold">{value}</div>
+        </div>
+        <div className="text-4xl opacity-80">{icon}</div>
       </div>
-      <div className="text-4xl opacity-80">{icon}</div>
     </div>
-  </div>
-)
+  )
+}
 
 export default AuctioneerDashboard
 

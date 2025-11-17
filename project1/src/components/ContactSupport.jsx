@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const ContactSupport = () => {
+function ContactSupport() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
@@ -13,21 +13,29 @@ const ContactSupport = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null)
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
+  function handleChange(e) {
+    const name = e.target.name
+    const value = e.target.value
+    setFormData(function(prev) {
+      const newFormData = {
+        name: prev.name,
+        email: prev.email,
+        subject: prev.subject,
+        category: prev.category,
+        message: prev.message
+      }
+      newFormData[name] = value
+      return newFormData
+    })
   }
 
-  const handleSubmit = async (e) => {
+  function handleSubmit(e) {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus(null)
 
     // Simulate form submission
-    setTimeout(() => {
+    setTimeout(function() {
       setIsSubmitting(false)
       setSubmitStatus('success')
       setFormData({
@@ -39,7 +47,9 @@ const ContactSupport = () => {
       })
 
       // Reset success message after 5 seconds
-      setTimeout(() => setSubmitStatus(null), 5000)
+      setTimeout(function() {
+        setSubmitStatus(null)
+      }, 5000)
     }, 1500)
   }
 
@@ -94,7 +104,7 @@ const ContactSupport = () => {
               </p>
             </div>
             <button
-              onClick={() => navigate('/')}
+              onClick={function() { navigate('/') }}
               className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,13 +206,13 @@ const ContactSupport = () => {
               <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-3">Helpful Resources</h3>
               <div className="space-y-2">
                 <button
-                  onClick={() => navigate('/policy')}
+                  onClick={function() { navigate('/policy') }}
                   className="block w-full text-left text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:underline"
                 >
                   📜 Bidding Policy
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={function() {
                     // This would open the beginner guide
                     window.scrollTo({ top: 0, behavior: 'smooth' })
                   }}
@@ -284,11 +294,13 @@ const ContactSupport = () => {
                     required
                     className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
-                    {supportCategories.map(cat => (
-                      <option key={cat.value} value={cat.value}>
-                        {cat.icon} {cat.label}
-                      </option>
-                    ))}
+                    {supportCategories.map(function(cat) {
+                      return (
+                        <option key={cat.value} value={cat.value}>
+                          {cat.icon} {cat.label}
+                        </option>
+                      )
+                    })}
                   </select>
                 </div>
 
@@ -348,12 +360,14 @@ const ContactSupport = () => {
             <div id="faq" className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 transition-colors duration-200">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Frequently Asked Questions</h2>
               <div className="space-y-4">
-                {faqItems.map((faq, index) => (
-                  <div key={index} className="border-b border-gray-200 dark:border-slate-700 pb-4 last:border-0">
-                    <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">{faq.question}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{faq.answer}</p>
-                  </div>
-                ))}
+                {faqItems.map(function(faq, index) {
+                  return (
+                    <div key={index} className="border-b border-gray-200 dark:border-slate-700 pb-4 last:border-0">
+                      <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">{faq.question}</h3>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm">{faq.answer}</p>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>

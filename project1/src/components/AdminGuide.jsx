@@ -1,6 +1,6 @@
 import React from 'react'
 
-const AdminGuide = () => {
+function AdminGuide() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 transition-colors duration-200">
       <div className="container mx-auto px-4 max-w-4xl">

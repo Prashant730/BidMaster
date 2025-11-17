@@ -1,7 +1,12 @@
 import axios from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+// Get the API URL from environment variables, or use default localhost URL
+let API_URL = 'http://localhost:5000/api'
+if (import.meta.env && import.meta.env.VITE_API_URL) {
+  API_URL = import.meta.env.VITE_API_URL
+}
 
+// Create an axios instance with base configuration
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -9,47 +14,85 @@ const api = axios.create({
   }
 })
 
-// Add token to requests if available
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
+// Function to add authentication token to requests
+function addTokenToRequest(config) {
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = 'Bearer ' + token
   }
-)
-
-// Handle token expiration
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      window.location.href = '/'
-    }
-    return Promise.reject(error)
-  }
-)
-
-// Auth API
-export const authAPI = {
-  register: (userData) => api.post('/auth/register', userData),
-  login: (credentials) => api.post('/auth/login', credentials),
-  getMe: () => api.get('/auth/me')
+  return config
 }
 
-// Auctions API
+// Function to handle request errors
+function handleRequestError(error) {
+  return Promise.reject(error)
+}
+
+// Add interceptor to automatically add token to every request
+api.interceptors.request.use(addTokenToRequest, handleRequestError)
+
+// Function to handle successful responses
+function handleResponseSuccess(response) {
+  return response
+}
+
+// Function to handle response errors (like token expiration)
+function handleResponseError(error) {
+  // Check if error status is 401 (unauthorized)
+  if (error.response && error.response.status === 401) {
+    // Remove token and user data from localStorage
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    // Redirect to home page
+    window.location.href = '/'
+  }
+  return Promise.reject(error)
+}
+
+// Add interceptor to handle response errors
+api.interceptors.response.use(handleResponseSuccess, handleResponseError)
+
+// Auth API - Functions for user authentication
+export const authAPI = {
+  // Register a new user
+  register: function(userData) {
+    return api.post('/auth/register', userData)
+  },
+  // Login an existing user
+  login: function(credentials) {
+    return api.post('/auth/login', credentials)
+  },
+  // Get current user information
+  getMe: function() {
+    return api.get('/auth/me')
+  }
+}
+
+// Auctions API - Functions for auction operations
 export const auctionsAPI = {
-  getAll: (params = {}) => api.get('/auctions', { params }),
-  getById: (id) => api.get(`/auctions/${id}`),
-  create: (auctionData) => api.post('/auctions', auctionData),
-  placeBid: (id, amount) => api.post(`/auctions/${id}/bid`, { amount }),
-  getUserAuctions: (userId) => api.get(`/auctions/user/${userId}`)
+  // Get all auctions with optional filters
+  getAll: function(params) {
+    if (params === undefined) {
+      params = {}
+    }
+    return api.get('/auctions', { params: params })
+  },
+  // Get a single auction by ID
+  getById: function(id) {
+    return api.get('/auctions/' + id)
+  },
+  // Create a new auction
+  create: function(auctionData) {
+    return api.post('/auctions', auctionData)
+  },
+  // Place a bid on an auction
+  placeBid: function(id, amount) {
+    return api.post('/auctions/' + id + '/bid', { amount: amount })
+  },
+  // Get all auctions created by a specific user
+  getUserAuctions: function(userId) {
+    return api.get('/auctions/user/' + userId)
+  }
 }
 
 export default api
