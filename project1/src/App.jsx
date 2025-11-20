@@ -12,6 +12,7 @@ import ContactSupport from './components/ContactSupport.jsx'
 import Admin from './components/Admin.jsx'
 import AdminGuide from './components/AdminGuide.jsx'
 import AuctioneerDashboard from './components/AuctioneerDashboard.jsx'
+import SellerApproval from './components/SellerApproval.jsx'
 import { AuctionProvider } from './context/AuctionContext.jsx'
 import { ThemeProvider } from './context/ThemeContext.jsx'
 import { AppProvider, useApp } from './context/AppContext.jsx'
@@ -213,40 +214,44 @@ function AppContent() {
   const removeAuction = appContext.removeAuction
   const addUser = appContext.addUser
   const createAuction = appContext.createAuction
-  
+
   // State for showing login modal
   const [showLogin, setShowLogin] = useState(false)
   // State for current logged in user
   const [user, setUser] = useState(null)
 
   // Function to handle when user logs in
-  function handleLogin(email, password, name) {
+  function handleLogin(email, password, name, requestSeller) {
     // Note: In a real app, this would be an API call to verify login
-    
+
     // Step 1: Check if email ends with @admin.com to determine if user is admin
     let isAdmin = false
     if (email && email.endsWith('@admin.com')) {
       isAdmin = true
     }
-    
-    // Step 2: Check if email ends with @seller.com to determine if user is seller
+
+    // Step 2: Check if email ends with @seller.com OR user requested seller status
     let isSeller = false
     if (email && email.endsWith('@seller.com')) {
       isSeller = true
+    } else if (requestSeller === true) {
+      isSeller = true
     }
 
-    // Step 3: Determine user role based on email
+    // Step 3: Determine user role based on email and request
     let userRole = 'bidder'
     if (isAdmin) {
       userRole = 'admin'
     } else if (isSeller) {
-      userRole = 'auctioneer'
+      userRole = 'seller'
     }
 
-    // Step 4: Determine if user is validated (sellers need validation, others don't)
+    // Step 4: Determine if user is validated (sellers need admin approval, others don't)
     let isValidated = true
+    let sellerStatus = null
     if (isSeller) {
       isValidated = false
+      sellerStatus = 'pending' // pending, approved, rejected
     }
 
     // Step 5: Set user name, use provided name or default to 'Demo User'
@@ -267,9 +272,10 @@ function AppContent() {
       status: 'active',
       role: userRole,
       isValidated: isValidated,
-      isAdmin: isAdmin
+      isAdmin: isAdmin,
+      sellerStatus: sellerStatus
     }
-    
+
     // Set the current user
     setUser(newUser)
     // Add user to shared context (will emit socket event)
@@ -291,25 +297,25 @@ function AppContent() {
       if (!prev) {
         return prev
       }
-      
+
       // Check if user already has this auction in their bids
       let alreadyHasBid = false
       if (prev.bids && prev.bids.includes(auctionId)) {
         alreadyHasBid = true
       }
-      
+
       // If already has bid, return previous state unchanged
       if (alreadyHasBid) {
         return prev
       }
-      
+
       // Add auction ID to user's bids list
       let userBids = []
       if (prev.bids) {
         userBids = prev.bids.slice()
       }
       userBids.push(auctionId)
-      
+
       // Return updated user object
       return {
         name: prev.name,
@@ -379,32 +385,32 @@ function AppContent() {
               </>
             }
           />
-          
+
           {/* Auction detail page - shows single auction details */}
-          <Route 
-            path="/auction/:id" 
+          <Route
+            path="/auction/:id"
             element={
-              <AuctionDetail 
-                auctions={auctions} 
-                user={user} 
-                onUpdateAuction={onUpdateAuction} 
-                onUserBid={onUserBid} 
-                onAdminRemove={removeAuction} 
+              <AuctionDetail
+                auctions={auctions}
+                user={user}
+                onUpdateAuction={onUpdateAuction}
+                onUserBid={onUserBid}
+                onAdminRemove={removeAuction}
               />
-            } 
+            }
           />
-          
+
           {/* Create auction page - form to create new auction */}
-          <Route 
-            path="/create" 
+          <Route
+            path="/create"
             element={
-              <CreateAuction 
-                user={user} 
-                onAddAuction={handleCreateAuction} 
+              <CreateAuction
+                user={user}
+                onAddAuction={handleCreateAuction}
               />
-            } 
+            }
           />
-          
+
           {/* Admin page - admin dashboard */}
           <Route
             path="/admin"
@@ -417,7 +423,7 @@ function AppContent() {
               />
             }
           />
-          
+
           {/* User profile page - shows user information */}
           <Route
             path="/profile"
@@ -430,16 +436,16 @@ function AppContent() {
               />
             }
           />
-          
+
           {/* Bidding policy page */}
           <Route path="/policy" element={<BiddingPolicy />} />
-          
+
           {/* Contact support page */}
           <Route path="/contact" element={<ContactSupport />} />
-          
+
           {/* Admin guide page */}
           <Route path="/admin-guide" element={<AdminGuide />} />
-          
+
           {/* Auctioneer dashboard page */}
           <Route
             path="/auctioneer"
@@ -447,6 +453,16 @@ function AppContent() {
               <AuctioneerDashboard
                 currentUser={user}
                 auctions={auctions}
+              />
+            }
+          />
+
+          {/* Seller approval page */}
+          <Route
+            path="/seller-approval"
+            element={
+              <SellerApproval
+                currentUser={user}
               />
             }
           />

@@ -28,6 +28,74 @@ function CreateAuction(props) {
     )
   }
 
+  // Check if user is an approved seller
+  const isApprovedSeller = user.isAdmin || (user.role === 'seller' && user.isValidated && user.sellerStatus === 'approved')
+  const isPendingSeller = user.role === 'seller' && !user.isValidated && user.sellerStatus === 'pending'
+  const isRejectedSeller = user.sellerStatus === 'rejected'
+
+  if (!isApprovedSeller) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center transition-colors duration-200 p-4">
+        <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8 text-center">
+          <div className="mb-6">
+            {isPendingSeller ? (
+              <>
+                <div className="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Seller Request Pending</h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Your request to become a seller is currently being reviewed by our administrators.
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  You'll be able to create auctions once your request is approved. This usually takes 24-48 hours.
+                </p>
+              </>
+            ) : isRejectedSeller ? (
+              <>
+                <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Seller Request Rejected</h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Unfortunately, your seller request was not approved at this time.
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Please contact support if you have questions or would like to reapply.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Seller Approval Required</h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  You need to be an approved seller to create auctions.
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Please register as a seller and wait for admin approval to start creating auctions.
+                </p>
+              </>
+            )}
+          </div>
+          <button
+            onClick={() => navigate('/seller-approval')}
+            className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            Become a Seller
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   function handleSubmit(e) {
     e.preventDefault()
 

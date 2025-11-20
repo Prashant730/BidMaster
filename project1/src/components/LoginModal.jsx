@@ -7,7 +7,8 @@ function LoginModal(props) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    name: ''
+    name: '',
+    requestSeller: false
   })
 
   function handleSubmit(e) {
@@ -23,14 +24,15 @@ function LoginModal(props) {
       return
     }
 
-    // Call onLogin with email, password, and name (if registering)
-    onLogin(formData.email, formData.password, isLogin ? null : formData.name)
+    // Call onLogin with email, password, name, and seller request (if registering)
+    onLogin(formData.email, formData.password, isLogin ? null : formData.name, isLogin ? null : formData.requestSeller)
 
     // Reset form
     setFormData({
       email: '',
       password: '',
-      name: ''
+      name: '',
+      requestSeller: false
     })
   }
 
@@ -58,7 +60,8 @@ function LoginModal(props) {
                     const newFormData = {
                       name: e.target.value,
                       email: formData.email,
-                      password: formData.password
+                      password: formData.password,
+                      requestSeller: formData.requestSeller
                     }
                     setFormData(newFormData)
                   }}
@@ -75,7 +78,8 @@ function LoginModal(props) {
                 const newFormData = {
                   name: formData.name,
                   email: e.target.value,
-                  password: formData.password
+                  password: formData.password,
+                  requestSeller: formData.requestSeller
                 }
                 setFormData(newFormData)
               }} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter your email" required />
@@ -87,11 +91,31 @@ function LoginModal(props) {
                 const newFormData = {
                   name: formData.name,
                   email: formData.email,
-                  password: e.target.value
+                  password: e.target.value,
+                  requestSeller: formData.requestSeller
                 }
                 setFormData(newFormData)
               }} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter your password" required />
             </div>
+
+            {!isLogin && (
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <label className="flex items-start space-x-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.requestSeller}
+                    onChange={(e) => setFormData({ ...formData, requestSeller: e.target.checked })}
+                    className="mt-1 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                  />
+                  <div>
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Request Seller Account</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                      Check this box to request permission to create and sell items at auctions. Your request will be reviewed by an administrator.
+                    </div>
+                  </div>
+                </label>
+              </div>
+            )}
 
             <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg">{isLogin ? 'Sign In' : 'Create Account'}</button>
           </form>
@@ -104,7 +128,8 @@ function LoginModal(props) {
                 setFormData({
                   email: '',
                   password: '',
-                  name: ''
+                  name: '',
+                  requestSeller: false
                 })
               }}
               className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium"

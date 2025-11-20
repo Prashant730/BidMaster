@@ -89,10 +89,13 @@ function Admin(props) {
     // Step 1: Count total users
     const totalUsers = users.length
 
-    // Step 2: Count pending validations (auctioneers waiting for approval)
+    // Step 2: Count pending validations (sellers waiting for approval)
     let pendingValidations = 0
     for (let i = 0; i < users.length; i++) {
-      if (users[i].role === 'auctioneer' && !users[i].isValidated) {
+      if ((users[i].role === 'auctioneer' || users[i].role === 'seller') && !users[i].isValidated) {
+        pendingValidations = pendingValidations + 1
+      }
+      if (users[i].sellerStatus === 'pending') {
         pendingValidations = pendingValidations + 1
       }
     }
@@ -247,7 +250,11 @@ function Admin(props) {
   }
 
   function approveUser(email) {
-    updateContextUser(email, { isValidated: true })
+    updateContextUser(email, { isValidated: true, sellerStatus: 'approved' })
+  }
+
+  function rejectSellerRequest(email) {
+    updateContextUser(email, { role: 'bidder', sellerStatus: 'rejected', isValidated: true })
   }
 
   function suspendUser(email) {
@@ -495,6 +502,7 @@ function Admin(props) {
               <div className={`rounded-2xl shadow p-6 lg:col-span-2 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
                 <h2 className={`text-lg font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Quick Access</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <QuickLink label="Seller Approvals" onClick={() => navigate('/seller-approval')} />
                   <QuickLink label="Approve Users" onClick={() => setActiveTab('users')} />
                   <QuickLink label="Reported Items" onClick={() => setActiveTab('moderation')} />
                   <QuickLink label="All Auctions" onClick={() => setActiveTab('auctions')} />
@@ -610,13 +618,31 @@ function Admin(props) {
                           <div className="text-sm text-gray-600">{u.email}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            u.role === 'admin' || u.isAdmin ? 'bg-purple-100 text-purple-800' :
-                            u.role === 'auctioneer' ? 'bg-blue-100 text-blue-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {u.role === 'admin' || u.isAdmin ? 'Admin' : (u.role || 'Bidder')}
-                          </span>
+                          <div className="flex flex-col gap-1">
+                            <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              u.role === 'admin' || u.isAdmin ? 'bg-purple-100 text-purple-800' :
+                              u.role === 'auctioneer' ? 'bg-blue-100 text-blue-800' :
+                              u.role === 'seller' ? 'bg-indigo-100 text-indigo-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {u.role === 'admin' || u.isAdmin ? 'Admin' : (u.role === 'seller' ? 'Seller' : (u.role || 'Bidder'))}
+                            </span>
+                            {u.sellerStatus === 'pending' && (
+                              <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                Seller Request Pending
+                              </span>
+                            )}
+                            {u.sellerStatus === 'approved' && (
+                              <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Seller Approved
+                              </span>
+                            )}
+                            {u.sellerStatus === 'rejected' && (
+                              <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                Seller Rejected
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -647,18 +673,57 @@ function Admin(props) {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex flex-wrap gap-2">
-                            {!u.isValidated && u.role === 'auctioneer' && (
-                              <button
-                                onClick={() => {
-                                  if (window.confirm(`Approve ${u.name} as an auctioneer?`)) {
-                                    approveUser(u.email)
-                                  }
-                                }}
-                                className="px-3 py-1.5 rounded-md bg-green-600 text-white text-xs font-medium hover:bg-green-700 transition-colors shadow-sm"
-                                title="Approve auctioneer"
-                              >
-                                Approve
-                              </button>
+                            {!u.isValidated && (u.role === 'auctioneer' || u.role === 'seller') && (
+                              <>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`Approve ${u.name} as a seller?`)) {
+                                      approveUser(u.email)
+                                    }
+                                  }}
+                                  className="px-3 py-1.5 rounded-md bg-green-600 text-white text-xs font-medium hover:bg-green-700 transition-colors shadow-sm"
+                                  title="Approve seller"
+                                >
+                                  Approve Seller
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`Reject ${u.name}'s seller request?`)) {
+                                      rejectSellerRequest(u.email)
+                                    }
+                                  }}
+                                  className="px-3 py-1.5 rounded-md bg-red-600 text-white text-xs font-medium hover:bg-red-700 transition-colors shadow-sm"
+                                  title="Reject seller request"
+                                >
+                                  Reject
+                                </button>
+                              </>
+                            )}
+                            {u.sellerStatus === 'pending' && (
+                              <>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`Approve ${u.name} as a seller?`)) {
+                                      approveUser(u.email)
+                                    }
+                                  }}
+                                  className="px-3 py-1.5 rounded-md bg-green-600 text-white text-xs font-medium hover:bg-green-700 transition-colors shadow-sm"
+                                  title="Approve seller"
+                                >
+                                  Approve Seller
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`Reject ${u.name}'s seller request?`)) {
+                                      rejectSellerRequest(u.email)
+                                    }
+                                  }}
+                                  className="px-3 py-1.5 rounded-md bg-red-600 text-white text-xs font-medium hover:bg-red-700 transition-colors shadow-sm"
+                                  title="Reject seller request"
+                                >
+                                  Reject
+                                </button>
+                              </>
                             )}
                             {u.status === 'suspended' && (
                               <button
@@ -900,7 +965,7 @@ function Admin(props) {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Commission Rate (0.00 to 1.00)
                       </label>
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-3 text-gray-800">
                         <input
                           type="number"
                           min="0"
@@ -1020,7 +1085,7 @@ function Admin(props) {
                       {activeAuctionsWithBids.length} active auction{activeAuctionsWithBids.length !== 1 ? 's' : ''}
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-gray-800">
                     {activeAuctionsWithBids.slice(0, 6).map(auction => {
                       const potentialCommission = auction.currentPrice * commissionRate
                       return (
@@ -1057,9 +1122,9 @@ function Admin(props) {
         {/* Configuration */}
         {activeTab === 'config' && (
           <div className="bg-white rounded-2xl shadow p-6 space-y-6">
-            <h2 className="text-xl font-bold text-gray-800">Platform Configuration</h2>
+            <h2 className="text-xl font-bold text-gray-800 ">Platform Configuration</h2>
             <div>
-              <div className="font-semibold mb-2">Categories</div>
+              <div className="font-semibold mb-2  text-gray-800">Categories</div>
               <div className="flex space-x-2 mb-3">
                 <input
                   value={categoryInput}
@@ -1107,7 +1172,7 @@ function Admin(props) {
             </div>
 
             <div>
-              <div className="font-semibold mb-3">Site-wide Rules</div>
+              <div className="font-semibold mb-3  text-gray-800">Site-wide Rules</div>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -1247,10 +1312,10 @@ function Admin(props) {
             </div>
 
             <div>
-              <div className="font-semibold mb-3">Announcements</div>
+              <div className="font-semibold mb-3  text-gray-800">Announcements</div>
               <div className="space-y-4">
                 <div className="border rounded-lg p-4 bg-gray-50">
-                  <h4 className="font-medium mb-3">Create New Announcement</h4>
+                  <h4 className="font-medium mb-3  text-gray-800">Create New Announcement</h4>
                   <div className="space-y-3">
                     <input
                       type="text"
@@ -1270,9 +1335,9 @@ function Admin(props) {
                       <select
                         value={newAnnouncement.priority}
                         onChange={(e) => setNewAnnouncement(prev => ({ ...prev, priority: e.target.value }))}
-                        className="border rounded px-3 py-2"
+                        className="border rounded px-3 py-2  text-gray-800"
                       >
-                        <option value="low">Low</option>
+                        <option value="low ">Low</option>
                         <option value="medium">Medium</option>
                         <option value="high">High</option>
                       </select>
@@ -1284,7 +1349,7 @@ function Admin(props) {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="font-medium">Active Announcements ({announcements.filter(a => a.active).length})</h4>
+                  <h4 className="font-medium  text-gray-800">Active Announcements ({announcements.filter(a => a.active).length})</h4>
                   {announcements.length === 0 ? (
                     <p className="text-gray-500 text-sm">No announcements yet</p>
                   ) : (

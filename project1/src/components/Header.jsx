@@ -128,6 +128,24 @@ function Header(props) {
 								>
 									My Profile
 								</Link>
+							{user.isAdmin && (
+								<Link
+									to="/seller-approval"
+									onClick={() => setIsUserMenuOpen(false)}
+									className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700"
+								>
+									Seller Approvals
+								</Link>
+							)}
+							{(!user.isAdmin && user.role !== 'seller' && !user.sellerStatus) && (
+								<Link
+									to="/seller-approval"
+									onClick={() => setIsUserMenuOpen(false)}
+									className="block px-4 py-2 text-sm text-purple-600 dark:text-purple-400 hover:bg-gray-100 dark:hover:bg-slate-700 font-medium"
+								>
+									Become a Seller
+								</Link>
+							)}
 							{(!user || !user.isAdmin) && (
 								<>
 									<Link
@@ -199,7 +217,22 @@ function Header(props) {
 										My Profile
 									</Link>
 									{user.isAdmin && (
-										<Link to="/admin" className="font-medium text-base text-purple-600 dark:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+										<>
+											<Link to="/admin" className="font-medium text-base text-purple-600 dark:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+												Admin Dashboard
+											</Link>
+											<Link to="/seller-approval" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+												Seller Approvals
+											</Link>
+										</>
+									)}
+									{(!user.isAdmin && user.role !== 'seller' && !user.sellerStatus) && (
+										<Link to="/seller-approval" className="font-medium text-base text-purple-600 dark:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+											Become a Seller
+										</Link>
+									)}
+									{user.isAdmin && (
+										<Link to="/admin" className="font-medium text-base text-purple-600 dark:text-purple-400 py-2 hidden" onClick={() => setIsMenuOpen(false)}>
 											Admin Panel
 										</Link>
 									)}

@@ -21,7 +21,7 @@ function UserProfile(props) {
     const totalUsers = users.length
     const pendingValidations = users.filter(function(u) { return u.role === 'auctioneer' && !u.isValidated }).length
     const activeAuctions = auctions.filter(function(a) { return (a.endTime - now) > 0 }).length
-    
+
     const endedWithBids = auctions.filter(function(a) {
       return (a.endTime - now) <= 0 && a.bids.length > 0
     })
@@ -29,7 +29,7 @@ function UserProfile(props) {
     for (let i = 0; i < endedWithBids.length; i++) {
       totalRevenue += endedWithBids[i].currentPrice * 0.05
     }
-    
+
     const actionsToday = users.filter(function(u) {
       // Mock: count users modified today (in real app, track action timestamps)
       return u.status === 'suspended' || u.status === 'banned'
@@ -89,11 +89,11 @@ function UserProfile(props) {
       const now = Date.now()
       const active = []
       const ended = []
-      
+
       for (let i = 0; i < userBidAuctions.length; i++) {
         const auction = userBidAuctions[i]
         const timeLeft = auction.endTime - now
-        
+
         if (timeLeft > 0) {
           // Auction is still active
           active.push(auction)
@@ -507,6 +507,101 @@ function UserProfile(props) {
                     <div className="text-orange-100">Success Rate</div>
                   </div>
                 </div>
+
+                {/* Seller Status Card */}
+                {(user.role === 'seller' || user.sellerStatus) ? (
+                  <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 transition-colors duration-200">
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Seller Status</h2>
+                    <div className="space-y-4">
+                      {user.sellerStatus === 'pending' && (
+                        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                          <div className="flex items-start space-x-3">
+                            <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                              <h3 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">Seller Request Pending</h3>
+                              <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                                Your request to become a seller is being reviewed by our administrators. You'll be notified once your request is approved.
+                              </p>
+                              <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-2">
+                                Typical review time: 24-48 hours
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {user.sellerStatus === 'approved' && user.isValidated && (
+                        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                          <div className="flex items-start space-x-3">
+                            <svg className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                              <h3 className="font-semibold text-green-900 dark:text-green-100 mb-1">Seller Account Approved</h3>
+                              <p className="text-sm text-green-800 dark:text-green-200">
+                                Congratulations! You're now an approved seller. You can create and manage auctions.
+                              </p>
+                              <button
+                                onClick={() => navigate('/create')}
+                                className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors"
+                              >
+                                Create Your First Auction
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {user.sellerStatus === 'rejected' && (
+                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                          <div className="flex items-start space-x-3">
+                            <svg className="w-6 h-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                              <h3 className="font-semibold text-red-900 dark:text-red-100 mb-1">Seller Request Rejected</h3>
+                              <p className="text-sm text-red-800 dark:text-red-200">
+                                Unfortunately, your seller request was not approved. Please contact support for more information or to reapply.
+                              </p>
+                              <button
+                                onClick={() => navigate('/contact')}
+                                className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition-colors"
+                              >
+                                Contact Support
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 transition-colors duration-200">
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Become a Seller</h2>
+                    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-6">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                          <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">Start Selling on BidMaster</h3>
+                          <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">
+                            Want to sell your items through auctions? Request seller approval and start creating your own auctions once approved by our admin team.
+                          </p>
+                          <button
+                            onClick={() => navigate('/seller-approval')}
+                            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                          >
+                            Request Seller Approval
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {recentActivity.length > 0 && (
                   <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 transition-colors duration-200">
                     <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">Recent Activity</h2>
