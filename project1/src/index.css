@@ -1,4 +1,4 @@
-/* 
+/*
    index.css - Main CSS file for the application
    This file imports Tailwind CSS and defines custom styles
 */
@@ -112,7 +112,7 @@
     transition: transform .18s ease, box-shadow .18s ease; /* Smooth transitions */
   }
   /* Primary button hover effect - lifts up slightly */
-  .btn-primary:hover { 
+  .btn-primary:hover {
     transform: translateY(-3px) scale(1.01); /* Move up and slightly larger */
     box-shadow: 0 10px 30px rgba(99,102,241,0.18); /* Stronger shadow */
   }
@@ -147,40 +147,40 @@
   }
   /* Progress bar fill */
   .progress-soft > i {
-    display: block; 
-    height: 100%; 
+    display: block;
+    height: 100%;
     background-image: var(--accent-grad); /* Gradient fill */
     width: 40%; /* Default width */
     transition: width 1s linear; /* Smooth width change */
   }
 
   /* Utility classes */
-  .soft-shadow { 
+  .soft-shadow {
     box-shadow: 0 10px 30px rgba(16,24,40,0.06); /* Soft shadow effect */
   }
-  .muted { 
+  .muted {
     color: var(--muted); /* Muted text color */
   }
 
   /* Floating animation */
-  .floating { 
+  .floating {
     animation: float 6s ease-in-out infinite; /* Continuous floating motion */
   }
 
   /* Line clamp helpers - limit text to 2 or 3 lines with ellipsis */
-  .line-clamp-2 { 
-    display: -webkit-box; 
+  .line-clamp-2 {
+    display: -webkit-box;
     -webkit-line-clamp: 2; /* Show only 2 lines */
-    -webkit-box-orient: vertical; 
-    overflow: hidden; 
-    line-clamp: 2; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-clamp: 2;
   }
-  .line-clamp-3 { 
-    display: -webkit-box; 
+  .line-clamp-3 {
+    display: -webkit-box;
     -webkit-line-clamp: 3; /* Show only 3 lines */
-    -webkit-box-orient: vertical; 
-    overflow: hidden; 
-    line-clamp: 3; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-clamp: 3;
   }
 }
 
@@ -204,11 +204,11 @@
 
 /* Fade in animation - element fades in and slides up */
 @keyframes fadeIn {
-  from { 
+  from {
     opacity: 0; /* Invisible */
     transform: translateY(-10px); /* Slightly above */
   }
-  to { 
+  to {
     opacity: 1; /* Fully visible */
     transform: translateY(0); /* Final position */
   }
@@ -227,32 +227,32 @@
 }
 
 /* Custom scrollbar styling - only works in WebKit browsers (Chrome, Safari) */
-::-webkit-scrollbar { 
+::-webkit-scrollbar {
   width: 8px; /* Scrollbar width */
   height: 8px; /* Scrollbar height */
 }
-::-webkit-scrollbar-track { 
+::-webkit-scrollbar-track {
   background: rgba(15,23,42,0.03); /* Track background */
 }
-::-webkit-scrollbar-thumb { 
+::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #c4b5fd, #a78bfa); /* Thumb gradient */
   border-radius: 999px; /* Rounded thumb */
 }
-::-webkit-scrollbar-thumb:hover { 
+::-webkit-scrollbar-thumb:hover {
   filter: brightness(.95); /* Slightly darker on hover */
 }
 
 /* Dark mode scrollbar */
-.dark ::-webkit-scrollbar-track { 
+.dark ::-webkit-scrollbar-track {
   background: rgba(15,23,42,0.3); /* Darker track */
 }
-.dark ::-webkit-scrollbar-thumb { 
+.dark ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #6366f1, #8b5cf6); /* Different gradient */
 }
 
 /* Respect user preference for reduced motion - disable animations if user prefers */
 @media (prefers-reduced-motion: reduce) {
-  .floating, .shimmer, * { 
+  .floating, .shimmer, * {
     animation-duration: 0.001ms !important; /* Almost instant */
     animation-iteration-count: 1 !important; /* Run only once */
     transition-duration: 0.001ms !important; /* Almost instant transitions */
