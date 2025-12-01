@@ -340,7 +340,7 @@ function AuctioneerDashboard(props) {
                 </button>
                 <button
                   onClick={() => setActiveTab('bids')}
-                  className="p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all text-left"
+                  className={`p-6 border-2 border-dashed rounded-xl hover:border-green-500 transition-all text-left ${isDark ? 'border-gray-600 bg-gray-700 hover:bg-green-900/20' : 'border-gray-300 hover:bg-green-50'}`}
                 >
                   <div className="text-3xl mb-2">🎯</div>
                   <h3 className={`font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>Track Bids</h3>

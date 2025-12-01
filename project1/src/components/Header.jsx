@@ -14,13 +14,13 @@ function Header(props) {
 	const { isDark, toggleTheme } = useTheme()
 
   return (
-    <header className="bg-white dark:bg-slate-800 shadow-lg sticky top-0 z-50 transition-colors duration-200">
+    <header className="bg-white dark:bg-black shadow-lg dark:shadow-none sticky top-0 z-50 transition-colors duration-200 dark:border-b dark:border-gray-800">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm sm:text-lg">BID</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-600 to-blue-500 dark:from-yellow-500 dark:to-amber-500 rounded-lg flex items-center justify-center">
+              <span className="text-white dark:text-black font-bold text-sm sm:text-lg">BID</span>
             </div>
             <span className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">BidMaster</span>
           </Link>
@@ -30,7 +30,7 @@ function Header(props) {
             <Link
               to="/"
               className={`font-medium transition-colors duration-200 ${
-                location.pathname === '/' ? 'text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400'
+                location.pathname === '/' ? 'text-purple-600 dark:text-yellow-400' : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-yellow-400'
               }`}
             >
               Live Auctions
@@ -40,7 +40,7 @@ function Header(props) {
 						<Link
 							to="/create"
 							className={`font-medium transition-colors duration-200 ${
-								location.pathname === '/create' ? 'text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400'
+								location.pathname === '/create' ? 'text-purple-600 dark:text-yellow-400' : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-yellow-400'
 							}`}
 						>
 							Sell Item

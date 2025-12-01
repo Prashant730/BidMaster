@@ -1,0 +1,542 @@
+/* Refined Black & Gold Dark Theme */
+/* Applied selectively to elements where it looks best */
+
+/* ============================================
+   COLOR VARIABLES
+   ============================================ */
+.dark {
+  /* Gold palette */
+  --gold-light: #fde68a;
+  --gold: #fbbf24;
+  --gold-bright: #fcd34d;
+  --gold-dark: #d97706;
+  --gold-darker: #b45309;
+
+  /* Black palette */
+  --black: #000000;
+  --black-soft: #0a0a0a;
+  --black-card: #111111;
+  --black-hover: #1a1a1a;
+  --black-border: #2a2a2a;
+}
+
+/* ============================================
+   MAIN BACKGROUNDS - Black
+   ============================================ */
+.dark body,
+.dark .bg-gray-50,
+.dark .bg-slate-900 {
+  background-color: var(--black) !important;
+}
+
+/* ============================================
+   CARDS & CONTAINERS - Black with gold accents
+   ============================================ */
+.dark .bg-white,
+.dark .bg-slate-800,
+.dark .bg-gray-800,
+.dark .dark\:bg-slate-800,
+.dark .dark\:bg-gray-800 {
+  background-color: var(--black-card) !important;
+  border: 1px solid var(--black-border) !important;
+}
+
+/* Card hover effects */
+.dark .hover\:shadow-2xl:hover,
+.dark .hover\:shadow-xl:hover {
+  box-shadow: 0 20px 40px rgba(251, 191, 36, 0.2) !important;
+  border-color: var(--gold-darker) !important;
+}
+
+/* ============================================
+   HEADERS & NAVIGATION - Black with gold text
+   ============================================ */
+.dark header {
+  background-color: var(--black) !important;
+  border-bottom: 2px solid var(--gold-darker) !important;
+}
+
+/* Logo and brand text - Gold */
+.dark header .text-xl,
+.dark header .text-2xl,
+.dark header .font-bold {
+  color: var(--gold-bright) !important;
+}
+
+/* Navigation links - Gold */
+.dark nav a,
+.dark header a {
+  color: var(--gold) !important;
+}
+
+.dark nav a:hover,
+.dark header a:hover {
+  color: var(--gold-bright) !important;
+}
+
+/* ============================================
+   HEADINGS - Bright Gold
+   ============================================ */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark .text-3xl,
+.dark .text-2xl,
+.dark .text-xl {
+  color: var(--gold-bright) !important;
+}
+
+/* ============================================
+   BODY TEXT - Gold
+   ============================================ */
+.dark p,
+.dark span,
+.dark div,
+.dark .text-gray-600,
+.dark .text-gray-700,
+.dark .text-gray-800,
+.dark .dark\:text-gray-300,
+.dark .dark\:text-gray-200 {
+  color: var(--gold) !important;
+}
+
+/* Muted text - Light gold */
+.dark .text-gray-500,
+.dark .text-gray-400,
+.dark .dark\:text-gray-400 {
+  color: var(--gold-light) !important;
+}
+
+/* ============================================
+   BUTTONS - Gold gradients on black
+   ============================================ */
+/* Primary buttons - Gold gradient */
+.dark .bg-purple-600,
+.dark .bg-blue-600 {
+  background: linear-gradient(135deg, var(--gold-darker) 0%, var(--gold) 50%, var(--gold-darker) 100%) !important;
+  color: var(--black) !important;
+  font-weight: 600 !important;
+  border: 2px solid var(--gold-dark) !important;
+}
+
+.dark .bg-purple-600:hover,
+.dark .bg-blue-600:hover {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 50%, var(--gold) 100%) !important;
+  box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4) !important;
+  transform: translateY(-2px);
+}
+
+/* Secondary buttons - Black with gold border */
+.dark .bg-gray-200,
+.dark .bg-gray-700,
+.dark .dark\:bg-gray-700 {
+  background-color: var(--black-card) !important;
+  color: var(--gold) !important;
+  border: 2px solid var(--gold-darker) !important;
+}
+
+.dark .bg-gray-200:hover,
+.dark .bg-gray-700:hover {
+  background-color: var(--black-hover) !important;
+  border-color: var(--gold) !important;
+}
+
+/* Action buttons - Keep vibrant with gold accent */
+.dark .bg-green-600 {
+  background: linear-gradient(135deg, #16a34a 0%, var(--gold-dark) 100%) !important;
+}
+
+.dark .bg-red-600 {
+  background: linear-gradient(135deg, #dc2626 0%, var(--gold-dark) 100%) !important;
+}
+
+.dark .bg-yellow-600,
+.dark .bg-orange-600 {
+  background-color: var(--gold-dark) !important;
+  color: var(--black) !important;
+}
+
+/* ============================================
+   FORMS & INPUTS - Black with gold accents
+   ============================================ */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--black-soft) !important;
+  color: var(--gold) !important;
+  border: 2px solid var(--black-border) !important;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--gold-dark) !important;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2) !important;
+  outline: none !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--gold-light) !important;
+  opacity: 0.6;
+}
+
+/* ============================================
+   BADGES & TAGS - Gold on black
+   ============================================ */
+.dark .bg-purple-100,
+.dark .bg-blue-100,
+.dark .bg-green-100,
+.dark .bg-yellow-100,
+.dark .bg-red-100 {
+  background-color: rgba(251, 191, 36, 0.15) !important;
+  border: 1px solid var(--gold-darker) !important;
+}
+
+.dark .text-purple-800,
+.dark .text-blue-800,
+.dark .text-green-800,
+.dark .text-yellow-800,
+.dark .text-red-800,
+.dark .text-purple-700,
+.dark .text-blue-700 {
+  color: var(--gold-bright) !important;
+}
+
+/* Status badges */
+.dark .bg-green-100 {
+  background-color: rgba(34, 197, 94, 0.2) !important;
+  border: 1px solid #16a34a !important;
+}
+
+.dark .text-green-800 {
+  color: #4ade80 !important;
+}
+
+.dark .bg-red-100 {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+  border: 1px solid #dc2626 !important;
+}
+
+.dark .text-red-800 {
+  color: #f87171 !important;
+}
+
+/* ============================================
+   LINKS - Gold with hover
+   ============================================ */
+.dark a {
+  color: var(--gold) !important;
+}
+
+.dark a:hover {
+  color: var(--gold-bright) !important;
+  text-decoration: underline;
+}
+
+/* ============================================
+   BORDERS - Dark with gold accents
+   ============================================ */
+.dark .border,
+.dark .border-gray-200,
+.dark .border-gray-300,
+.dark .border-slate-700,
+.dark .dark\:border-slate-700 {
+  border-color: var(--black-border) !important;
+}
+
+.dark .border-t,
+.dark .border-b {
+  border-color: var(--black-border) !important;
+}
+
+/* ============================================
+   SHADOWS - Golden glow
+   ============================================ */
+.dark .shadow-lg,
+.dark .shadow-xl,
+.dark .shadow-2xl {
+  box-shadow: 0 10px 30px rgba(251, 191, 36, 0.15) !important;
+}
+
+/* ============================================
+   HERO SECTION - Special treatment
+   Only apply to section/div containers, not inline text elements
+   ============================================ */
+.dark section.bg-gradient-to-r,
+.dark section.bg-gradient-to-br,
+.dark div.bg-gradient-to-r,
+.dark div.bg-gradient-to-br {
+  background: linear-gradient(135deg, var(--black) 0%, var(--black-card) 50%, var(--black) 100%) !important;
+  position: relative;
+}
+
+.dark section.bg-gradient-to-r::before,
+.dark section.bg-gradient-to-br::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(251, 191, 36, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ============================================
+   AUCTION CARDS - Premium look
+   Only apply to actual card containers, not inline elements
+   ============================================ */
+.dark div.rounded-2xl,
+.dark article.rounded-2xl,
+.dark section.rounded-2xl,
+.dark aside.rounded-2xl {
+  background-color: var(--black-card) !important;
+  border: 2px solid var(--black-border) !important;
+  transition: all 0.3s ease;
+}
+
+.dark div.rounded-2xl:hover,
+.dark article.rounded-2xl:hover {
+  border-color: var(--gold-darker) !important;
+  box-shadow: 0 20px 40px rgba(251, 191, 36, 0.25) !important;
+}
+
+/* Auction card images - Gold border on hover */
+.dark div.rounded-2xl img {
+  border-bottom: 2px solid var(--black-border);
+  transition: border-color 0.3s ease;
+}
+
+.dark div.rounded-2xl:hover img {
+  border-bottom-color: var(--gold-darker);
+}
+
+/* ============================================
+   PRICE DISPLAYS - Bright gold
+   ============================================ */
+.dark .text-3xl.font-bold,
+.dark .text-4xl.font-bold {
+  color: var(--gold-bright) !important;
+  text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+}
+
+/* ============================================
+   TABLES - Black with gold text
+   ============================================ */
+.dark table {
+  background-color: var(--black-card) !important;
+}
+
+.dark thead {
+  background-color: var(--black-soft) !important;
+  border-bottom: 2px solid var(--gold-darker) !important;
+}
+
+.dark th {
+  color: var(--gold-bright) !important;
+  font-weight: 600;
+}
+
+.dark td {
+  color: var(--gold) !important;
+  border-color: var(--black-border) !important;
+}
+
+.dark tbody tr:hover {
+  background-color: var(--black-hover) !important;
+}
+
+/* ============================================
+   MODALS - Black with gold accents
+   ============================================ */
+.dark .fixed.inset-0 {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.dark .fixed .rounded-xl,
+.dark .fixed .rounded-2xl {
+  background-color: var(--black-card) !important;
+  border: 2px solid var(--gold-darker) !important;
+}
+
+/* ============================================
+   DROPDOWNS & MENUS - Black with gold
+   ============================================ */
+.dark .absolute {
+  background-color: var(--black-card) !important;
+  border: 2px solid var(--gold-darker) !important;
+}
+
+.dark .absolute a,
+.dark .absolute button {
+  color: var(--gold) !important;
+}
+
+.dark .absolute a:hover,
+.dark .absolute button:hover {
+  background-color: var(--black-hover) !important;
+  color: var(--gold-bright) !important;
+}
+
+/* ============================================
+   SCROLLBARS - Gold
+   ============================================ */
+.dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--black-soft);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold-dark), var(--gold-darker));
+  border-radius: 5px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+}
+
+/* ============================================
+   FOCUS STATES - Gold outline
+   ============================================ */
+.dark *:focus {
+  outline-color: var(--gold-dark) !important;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.3) !important;
+}
+
+/* ============================================
+   SELECTION - Gold highlight
+   ============================================ */
+.dark ::selection {
+  background-color: var(--gold-dark) !important;
+  color: var(--black) !important;
+}
+
+/* ============================================
+   LOADING & SKELETON - Gold shimmer
+   ============================================ */
+.dark .animate-pulse {
+  background: linear-gradient(
+    90deg,
+    var(--black-soft) 0%,
+    rgba(251, 191, 36, 0.1) 50%,
+    var(--black-soft) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ============================================
+   SPECIAL COMPONENTS
+   ============================================ */
+
+/* Live badge - Gold */
+.dark .badge-live,
+.dark .bg-red-500 {
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold)) !important;
+  color: var(--black) !important;
+  font-weight: 700;
+}
+
+/* Progress bars - Gold */
+.dark .bg-purple-600.h-2,
+.dark .bg-blue-600.h-2 {
+  background: linear-gradient(90deg, var(--gold-darker), var(--gold-bright)) !important;
+}
+
+/* Dividers - Gold accent */
+.dark hr {
+  border-color: var(--gold-darker) !important;
+  opacity: 0.3;
+}
+
+/* ============================================
+   HOVER EFFECTS - Enhanced
+   ============================================ */
+.dark .hover\:bg-gray-100:hover,
+.dark .hover\:bg-slate-700:hover {
+  background-color: var(--black-hover) !important;
+}
+
+.dark .group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+/* ============================================
+   ICONS - Gold
+   ============================================ */
+.dark svg {
+  color: var(--gold) !important;
+}
+
+.dark svg:hover {
+  color: var(--gold-bright) !important;
+}
+
+/* ============================================
+   FOOTER - Black with gold text
+   ============================================ */
+.dark footer {
+  background-color: var(--black) !important;
+  border-top: 2px solid var(--gold-darker) !important;
+  color: var(--gold) !important;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+@media (max-width: 768px) {
+  .dark div.rounded-2xl,
+  .dark article.rounded-2xl {
+    border-width: 1px;
+  }
+
+  .dark input,
+  .dark textarea,
+  .dark select {
+    border-width: 1px;
+  }
+}
+
+
+/* ============================================
+   PROGRESS BARS - Gold in dark mode
+   ============================================ */
+.dark .bg-gradient-to-r.from-purple-500.to-blue-500.h-2,
+.dark .bg-gradient-to-r.from-purple-500.to-blue-500 {
+  background: linear-gradient(to right, var(--gold-dark), var(--gold)) !important;
+}
+
+/* Progress bar track */
+.dark .bg-gray-200.rounded-full.h-2,
+.dark .bg-slate-700.rounded-full.h-2 {
+  background-color: rgba(251, 191, 36, 0.2) !important;
+}
+
+/* LIVE badge - Gold gradient */
+.dark .bg-red-500.animate-pulse,
+.dark .bg-green-100.animate-pulse {
+  background: linear-gradient(to right, var(--gold-dark), var(--gold)) !important;
+  color: var(--black) !important;
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.5) !important;
+}
+
+/* ENDED badge */
+.dark .bg-gray-500 {
+  background-color: var(--black-lighter) !important;
+  color: var(--gold) !important;
+  border: 1px solid var(--gold-darker) !important;
+}

@@ -17,6 +17,7 @@ import { AuctionProvider } from './context/AuctionContext.jsx'
 import { ThemeProvider } from './context/ThemeContext.jsx'
 import { AppProvider, useApp } from './context/AppContext.jsx'
 import './index.css'
+import './dark-theme-professional.css'
 
 // Mock data for auctions
 const mockAuctions = [

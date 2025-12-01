@@ -70,7 +70,7 @@ function AuctionDetail(props) {
   function handlePlaceBid(e) {
     // Step 1: Prevent form from submitting normally
     e.preventDefault()
-    
+
     // Step 2: Check if user is logged in
     if (!user) {
       alert('Please login to place a bid')
@@ -103,7 +103,7 @@ function AuctionDetail(props) {
 
     // Step 6: Convert bid amount to number
     const bid = parseFloat(bidAmount)
-    
+
     // Step 7: Check if bid amount is valid
     if (isNaN(bid) || bid <= 0) {
       alert('Please enter a valid bid amount')
@@ -218,9 +218,9 @@ function AuctionDetail(props) {
                     </button>
                   )}
                   {isAuctionEnded ? (
-                    <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold">ENDED</span>
+                    <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-yellow-400 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold">ENDED</span>
                   ) : (
-                    <span className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold">LIVE</span>
+                    <span className="bg-green-100 dark:bg-gradient-to-r dark:from-yellow-500 dark:to-yellow-400 text-green-600 dark:text-black px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold animate-pulse">LIVE</span>
                   )}
                 </div>
               </div>
@@ -228,24 +228,24 @@ function AuctionDetail(props) {
               <p className="text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">{auction.description}</p>
 
               <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
-                <div className="text-center p-3 sm:p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
-                  <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">${auction.currentPrice.toLocaleString()}</div>
-                  <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Current Bid</div>
+                <div className="text-center p-3 sm:p-4 bg-gray-50 dark:bg-yellow-500/10 dark:border dark:border-yellow-600/50 rounded-lg">
+                  <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-yellow-400">${auction.currentPrice.toLocaleString()}</div>
+                  <div className="text-xs sm:text-sm text-gray-500 dark:text-yellow-500/70">Current Bid</div>
                 </div>
-                <div className="text-center p-3 sm:p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
-                  <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">{auction.bids.length}</div>
-                  <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Bids</div>
+                <div className="text-center p-3 sm:p-4 bg-gray-50 dark:bg-yellow-500/10 dark:border dark:border-yellow-600/50 rounded-lg">
+                  <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-yellow-400">{auction.bids.length}</div>
+                  <div className="text-xs sm:text-sm text-gray-500 dark:text-yellow-500/70">Total Bids</div>
                 </div>
               </div>
 
               {/* Timer */}
-              <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-yellow-500/10 dark:to-yellow-600/10 dark:border dark:border-yellow-600/50 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
                 <div className="text-center mb-2">
-                  <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-1">Auction Ends In</div>
-                  <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">{timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s</div>
+                  <div className="text-xs sm:text-sm text-gray-600 dark:text-yellow-400 mb-1">Auction Ends In</div>
+                  <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-yellow-400">{timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s</div>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
-                  <div className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${((auction.endTime - new Date()) / (24 * 60 * 60 * 1000)) * 100}%` }}></div>
+                <div className="w-full bg-gray-200 dark:bg-yellow-900/30 rounded-full h-2 overflow-hidden">
+                  <div className="bg-gradient-to-r from-purple-500 to-blue-500 dark:from-yellow-500 dark:to-yellow-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, Math.max(0, ((auction.endTime - new Date()) / (24 * 60 * 60 * 1000)) * 100))}%` }}></div>
                 </div>
               </div>
 
@@ -253,21 +253,21 @@ function AuctionDetail(props) {
               {!isAuctionEnded ? (
                 <form onSubmit={handlePlaceBid} className="space-y-3 sm:space-y-4">
                   <div>
-                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Enter Your Bid</label>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-yellow-400 mb-2">Enter Your Bid</label>
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                       <input
                         type="number"
                         value={bidAmount}
                         onChange={(e) => setBidAmount(e.target.value)}
                         placeholder={`Minimum $${(auction.currentPrice + 100).toLocaleString()}`}
-                        className="flex-1 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="flex-1 border border-gray-300 dark:border-yellow-600 dark:bg-black dark:text-yellow-400 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 placeholder-gray-500 dark:placeholder-yellow-600 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 focus:border-transparent"
                         min={auction.currentPrice + 100}
                         step="100"
                       />
                       <button
                         type="submit"
                         disabled={!user || (user && user.isAdmin)}
-                        className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg"
+                        className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-500 dark:from-yellow-500 dark:to-yellow-400 hover:from-purple-700 hover:to-blue-600 dark:hover:from-yellow-400 dark:hover:to-yellow-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white dark:text-black px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg dark:shadow-yellow-500/30"
                       >
                         {user ? (user.isAdmin ? 'Admins cannot bid' : 'Place Bid') : 'Login to Bid'}
                       </button>
@@ -275,10 +275,10 @@ function AuctionDetail(props) {
                   </div>
                 </form>
               ) : (
-                <div className="bg-gray-100 dark:bg-slate-700 rounded-lg p-3 sm:p-4 text-center">
-                  <p className="text-gray-600 dark:text-gray-300 font-medium text-sm sm:text-base">This auction has ended</p>
+                <div className="bg-gray-100 dark:bg-yellow-500/10 dark:border dark:border-yellow-600/50 rounded-lg p-3 sm:p-4 text-center">
+                  <p className="text-gray-600 dark:text-yellow-400 font-medium text-sm sm:text-base">This auction has ended</p>
                   {auction.bids.length > 0 && (
-                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-yellow-500/70 mt-2">
                       Winning bid: ${auction.currentPrice.toLocaleString()} by {auction.bids[auction.bids.length - 1].bidder}
                     </p>
                   )}
@@ -317,7 +317,7 @@ function AuctionDetail(props) {
                             <div className="font-medium text-gray-800 dark:text-gray-100 text-sm sm:text-base truncate">
                               {bid.bidder}
                               {index === 0 && (
-                                <span className="ml-2 text-xs bg-green-500 text-white px-1.5 sm:px-2 py-0.5 rounded-full">Highest</span>
+                                <span className="ml-2 text-xs bg-yellow-500 dark:bg-gradient-to-r dark:from-yellow-500 dark:to-amber-500 text-black px-1.5 sm:px-2 py-0.5 rounded-full font-bold">Highest</span>
                               )}
                             </div>
                             <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{new Date(bid.time).toLocaleDateString()} at {new Date(bid.time).toLocaleTimeString()}</div>

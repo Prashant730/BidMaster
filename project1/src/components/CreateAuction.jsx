@@ -152,11 +152,11 @@ function CreateAuction(props) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-4 sm:py-6 md:py-8 transition-colors duration-200">
+    <div className="min-h-screen bg-gray-50 dark:bg-black py-4 sm:py-6 md:py-8 transition-colors duration-200">
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
-        <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Create New Auction</h1>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-6 sm:mb-8">List your item and start receiving bids from our community.</p>
+        <div className="bg-white dark:bg-black rounded-xl sm:rounded-2xl shadow-lg dark:shadow-yellow-500/10 p-4 sm:p-6 md:p-8 dark:border dark:border-yellow-600">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-yellow-400 mb-2">Create New Auction</h1>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-yellow-500/80 mb-6 sm:mb-8">List your item and start receiving bids from our community.</p>
 
           {showSuccess && (
             <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
@@ -172,7 +172,7 @@ function CreateAuction(props) {
           <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
             {/* Image URL Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Item Image URL</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-yellow-400 mb-2">Item Image URL</label>
               <input
                 type="url"
                 value={imageUrl}
@@ -180,14 +180,14 @@ function CreateAuction(props) {
                   setImageUrl(e.target.value)
                 }}
                 placeholder="https://images.unsplash.com/photo-..."
-                className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full border border-gray-300 dark:border-yellow-600 dark:bg-black dark:text-yellow-400 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-yellow-600 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 focus:border-transparent"
               />
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter an image URL for your item, or leave blank to use a default image</p>
+              <p className="text-sm text-gray-500 dark:text-yellow-500/70 mt-1">Enter an image URL for your item, or leave blank to use a default image</p>
             </div>
 
             {/* Image Upload (Optional - for local files) */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 sm:mb-4">Or Upload Images (Up to 4 images)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-yellow-400 mb-3 sm:mb-4">Or Upload Images (Up to 4 images)</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4">
                 {images.map(function(image, index) {
                   return (
