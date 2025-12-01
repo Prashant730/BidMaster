@@ -1,1 +1,161 @@
- 
+# 🎯 BidMaster - Online Auction Platform
+
+A modern, real-time auction platform built with React and Vite. Features a professional dark/light theme, live bidding, and comprehensive auction management.
+
+![React](https://img.shields.io/badge/React-19.1-blue?logo=react)
+![Vite](https://img.shields.io/badge/Vite-7.1-purple?logo=vite)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-cyan?logo=tailwindcss)
+![Socket.io](https://img.shields.io/badge/Socket.io-4.8-black?logo=socket.io)
+
+## ✨ Features
+
+### For Bidders
+
+- Browse live auctions across multiple categories (Watches, Art, Collectibles, Furniture, Electronics, Jewelry)
+- Real-time bidding with live price updates
+- Bid history tracking
+- User profile management
+- Auction countdown timers
+
+### For Auctioneers/Sellers
+
+- Create and manage auctions
+- Auctioneer dashboard with analytics
+- Three-minute rule auto-extension
+- Extend, cancel, or finalize auctions
+- Track bids across all listings
+
+### For Admins
+
+- User management and approval
+- Seller verification system
+- Commission rate configuration
+- Platform-wide auction oversight
+
+### UI/UX
+
+- Professional dark theme with 60-30-10 color rule (Black/White/Gold)
+- Fully responsive design (mobile-first)
+- Smooth animations and transitions
+- WCAG AAA accessibility compliance
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Prashant730/BidMaster.git
+
+# Navigate to project directory
+cd BidMaster/project1
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`
+
+### Build for Production
+
+```bash
+npm run build
+npm run preview
+```
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React 19, React Router DOM
+- **Build Tool**: Vite 7
+- **Styling**: TailwindCSS 3.4, Custom CSS
+- **Real-time**: Socket.io Client
+- **HTTP Client**: Axios
+- **Linting**: ESLint 9
+
+## 📁 Project Structure
+
+```
+project1/
+├── src/
+│   ├── components/          # React components
+│   │   ├── Header.jsx       # Navigation header
+│   │   ├── Hero.jsx         # Landing hero section
+│   │   ├── AuctionGrid.jsx  # Auction listings grid
+│   │   ├── AuctionDetail.jsx # Single auction view
+│   │   ├── CreateAuction.jsx # Auction creation form
+│   │   ├── LoginModal.jsx   # Authentication modal
+│   │   ├── UserProfile.jsx  # User profile page
+│   │   ├── Admin.jsx        # Admin dashboard
+│   │   ├── AuctioneerDashboard.jsx # Seller dashboard
+│   │   └── ...
+│   ├── context/             # React Context providers
+│   ├── services/            # API services
+│   ├── index.css            # Global styles
+│   └── dark-theme-professional.css # Dark theme
+├── public/                  # Static assets
+└── package.json
+```
+
+## 🎨 Theme
+
+The app features a professional dark theme following the 60-30-10 design rule:
+
+- **60% Black**: Backgrounds (#000000, #111111)
+- **30% White/Gray**: Text (#ffffff, #e5e7eb)
+- **10% Gold**: Accents (#fbbf24) - prices, badges, CTAs
+
+## 👤 User Roles
+
+| Role           | Access                                           |
+| -------------- | ------------------------------------------------ |
+| **Bidder**     | Browse auctions, place bids, view profile        |
+| **Auctioneer** | Create auctions, manage listings, track bids     |
+| **Admin**      | Full platform access, user management, approvals |
+
+### Demo Login
+
+- Regular user: `user@example.com`
+- Admin: `admin@admin.com`
+- Seller: `seller@seller.com`
+
+## 📜 Scripts
+
+| Command           | Description              |
+| ----------------- | ------------------------ |
+| `npm run dev`     | Start development server |
+| `npm run build`   | Build for production     |
+| `npm run preview` | Preview production build |
+| `npm run lint`    | Run ESLint               |
+
+## 🌐 Deployment
+
+The project includes Vercel configuration for easy deployment:
+
+```bash
+# Deploy to Vercel
+vercel --prod
+```
+
+## 📄 License
+
+MIT License
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+Built with ❤️ by [Prashant](https://github.com/Prashant730)
