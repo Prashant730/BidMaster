@@ -2,7 +2,7 @@ const https = require('https')
 
 const data = JSON.stringify({
   email: 'admin@auction.com',
-  password: 'admin123'
+  password: 'admin123',
 })
 
 const options = {
@@ -11,13 +11,13 @@ const options = {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Content-Length': data.length
-  }
+    'Content-Length': data.length,
+  },
 }
 
 const req = https.request(options, (res) => {
   let body = ''
-  res.on('data', (chunk) => body += chunk)
+  res.on('data', (chunk) => (body += chunk))
   res.on('end', () => {
     console.log('Status:', res.statusCode)
     console.log('Response:', body)

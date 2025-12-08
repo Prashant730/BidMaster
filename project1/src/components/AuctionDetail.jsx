@@ -178,13 +178,6 @@ function AuctionDetail(props) {
             <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">
               <img src={auction.image} alt={auction.title} className="w-full h-64 sm:h-80 md:h-96 object-cover" />
             </div>
-            <div className="grid grid-cols-4 gap-2">
-              {[1, 2, 3, 4].map((num) => (
-                <div key={num} className="bg-white dark:bg-slate-800 rounded-lg shadow p-1 cursor-pointer hover:shadow-md transition-shadow">
-                  <div className="w-full h-16 sm:h-20 bg-gray-200 dark:bg-slate-700 rounded"></div>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Auction Details */}
