@@ -7,9 +7,9 @@ function initializeSocket(server) {
     cors: {
       origin: [
         'http://localhost:5173',
-        'http://localhost:5174',
+        'http://localhost:5174', 
         'https://project1-steel-ten.vercel.app',
-        process.env.FRONTEND_URL,
+        process.env.FRONTEND_URL
       ].filter(Boolean),
       methods: ['GET', 'POST'],
       credentials: true,
