@@ -3,13 +3,15 @@ const cors = require('cors')
 
 const app = express()
 
-// CORS configuration - allow multiple origins for development
+// CORS configuration - allow Vercel and local origins
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
   'http://127.0.0.1:5173',
   'http://127.0.0.1:5174',
-]
+  'https://project1-steel-ten.vercel.app',
+  process.env.FRONTEND_URL,
+].filter(Boolean)
 
 app.use(
   cors({
@@ -17,10 +19,11 @@ app.use(
       // Allow requests with no origin (like mobile apps or curl)
       if (!origin) return callback(null, true)
 
-      if (allowedOrigins.indexOf(origin) !== -1) {
+      // Check if origin is in allowed list or matches vercel pattern
+      if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('.vercel.app')) {
         callback(null, true)
       } else {
-        callback(null, true) // Allow all origins in development
+        callback(null, true) // Allow all origins for now
       }
     },
     credentials: true,
