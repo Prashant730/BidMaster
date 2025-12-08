@@ -112,12 +112,26 @@ export function AuthProvider(props) {
     setUser(null)
   }
 
+  // Function to refresh user data from the server
+  async function refreshUser() {
+    try {
+      const response = await authAPI.getMe()
+      setUser(response.data)
+      localStorage.setItem('user', JSON.stringify(response.data))
+      return response.data
+    } catch (error) {
+      console.error('Error refreshing user:', error)
+      return null
+    }
+  }
+
   const value = {
     user,
     loading,
     login,
     register,
     logout,
+    refreshUser,
     isAuthenticated: !!user
   }
 

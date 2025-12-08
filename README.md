@@ -41,12 +41,55 @@ A modern, real-time auction platform built with React and Vite. Features a profe
 
 ## 🚀 Quick Start
 
+### ⚡ New User? Start Here!
+
+**For complete setup instructions, see:**
+
+- 📖 **[START_HERE.md](START_HERE.md)** - Simple explanation of what to do
+- ✅ **[SETUP_CHECKLIST.md](SETUP_CHECKLIST.md)** - Step-by-step checklist
+- 🚀 **[QUICKSTART.md](QUICKSTART.md)** - Quick commands
+- 📚 **[BACKEND_SETUP_GUIDE.md](BACKEND_SETUP_GUIDE.md)** - Detailed backend guide
+
 ### Prerequisites
 
 - Node.js 18+
+- MongoDB (Atlas or Local)
 - npm or yarn
 
-### Installation
+### Basic Setup
+
+**1. Setup MongoDB** (choose one):
+
+- **Cloud**: Create free MongoDB Atlas account at https://mongodb.com/cloud/atlas
+- **Local**: Install MongoDB Community Server
+
+**2. Backend Setup:**
+
+```bash
+cd backend
+npm install
+# Create .env file with MongoDB connection string
+npm run dev
+```
+
+**3. Frontend Setup:**
+
+```bash
+cd project1
+npm install
+npm run dev
+```
+
+**4. Seed Database (optional):**
+
+```bash
+cd backend
+node seed.js
+```
+
+**5. Open:** http://localhost:5174
+
+### Old Installation Method (Frontend Only)
 
 ```bash
 # Clone the repository

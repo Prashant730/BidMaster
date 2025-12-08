@@ -7,6 +7,8 @@ import AuctionDetail from './components/AuctionDetail.jsx'
 import CreateAuction from './components/CreateAuction.jsx'
 import UserProfile from './components/UserProfile.jsx'
 import LoginModal from './components/LoginModal.jsx'
+import Login from './components/Login.jsx'
+import Register from './components/Register.jsx'
 import BiddingPolicy from './components/BiddingPolicy.jsx'
 import ContactSupport from './components/ContactSupport.jsx'
 import Admin from './components/Admin.jsx'
@@ -14,6 +16,7 @@ import AdminGuide from './components/AdminGuide.jsx'
 import AuctioneerDashboard from './components/AuctioneerDashboard.jsx'
 import SellerApproval from './components/SellerApproval.jsx'
 import { AuctionProvider } from './context/AuctionContext.jsx'
+import { AuthProvider, useAuth } from './context/AuthContext.jsx'
 import { ThemeProvider } from './context/ThemeContext.jsx'
 import { AppProvider, useApp } from './context/AppContext.jsx'
 import './index.css'
@@ -216,10 +219,14 @@ function AppContent() {
   const addUser = appContext.addUser
   const createAuction = appContext.createAuction
 
+  // Get user from AuthContext (this is the actual logged-in user from backend)
+  const { user: authUser, isAuthenticated, logout } = useAuth()
+
   // State for showing login modal
   const [showLogin, setShowLogin] = useState(false)
-  // State for current logged in user
-  const [user, setUser] = useState(null)
+  // Use AuthContext user if available, otherwise fall back to local state
+  const [localUser, setLocalUser] = useState(null)
+  const user = authUser || localUser
 
   // Function to handle when user logs in
   function handleLogin(email, password, name, requestSeller) {
@@ -278,7 +285,7 @@ function AppContent() {
     }
 
     // Set the current user
-    setUser(newUser)
+    setLocalUser(newUser)
     // Add user to shared context (will emit socket event)
     addUser(newUser)
     // Hide login modal
@@ -293,7 +300,7 @@ function AppContent() {
 
   // Function to handle when user places a bid
   function onUserBid(auctionId) {
-    setUser(function(prev) {
+    setLocalUser(function(prev) {
       // If no user, return previous state
       if (!prev) {
         return prev
@@ -336,7 +343,11 @@ function AppContent() {
 
   // Function to handle user logout
   function handleLogout() {
-    setUser(null)
+    // Use AuthContext logout if available
+    if (logout) {
+      logout()
+    }
+    setLocalUser(null)
   }
 
   // Function to show login modal
@@ -365,7 +376,7 @@ function AppContent() {
 
   // Function to handle updating user profile
   function handleUpdateUser(updated) {
-    setUser(updated)
+    setLocalUser(updated)
   }
 
   return (
@@ -446,6 +457,12 @@ function AppContent() {
 
           {/* Admin guide page */}
           <Route path="/admin-guide" element={<AdminGuide />} />
+
+          {/* Login page */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Register page */}
+          <Route path="/register" element={<Register />} />
 
           {/* Auctioneer dashboard page */}
           <Route
@@ -665,15 +682,17 @@ function App() {
 
   return (
     <ThemeProvider>
-      <AuctionProvider>
-        <AppProvider
-          initialAuctions={mockAuctions}
-          initialUsers={[]}
-          initialCommissionRate={0.05}
-        >
-          <AppContent />
-        </AppProvider>
-      </AuctionProvider>
+      <AuthProvider>
+        <AuctionProvider>
+          <AppProvider
+            initialAuctions={mockAuctions}
+            initialUsers={[]}
+            initialCommissionRate={0.05}
+          >
+            <AppContent />
+          </AppProvider>
+        </AuctionProvider>
+      </AuthProvider>
     </ThemeProvider>
   )
 }

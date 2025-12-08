@@ -159,8 +159,7 @@ function AuctionDetail(props) {
     setBidAmount('')
   }
 
-  const endTime = auction.endTime instanceof Date ? auction.endTime.getTime() : auction.endTime
-  const isEndingSoon = !isAuctionEnded && (endTime - Date.now() < 3600000)
+  const isEndingSoon = !isAuctionEnded && (auction.endTime - Date.now() < 3600000)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-4 sm:py-6 md:py-8 transition-colors duration-200">

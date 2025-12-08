@@ -28,14 +28,14 @@ export function AppProvider(props) {
     // Step 2: Listen for when a user places a bid
     socket.on('bidPlaced', function(data) {
       console.log('Real-time bid update received:', data)
-      
+
       // Step 3: Update auctions list with new bid
       setAuctions(function(prev) {
         // Step 4: Go through each auction and find the one that was bid on
         const updatedAuctions = []
         for (let i = 0; i < prev.length; i++) {
           const auction = prev[i]
-          
+
           // Step 5: If this is the auction that was bid on, update it
           if (auction.id === data.auctionId) {
             // Step 6: Create new bid object
@@ -44,7 +44,7 @@ export function AppProvider(props) {
               amount: data.amount,
               time: new Date(data.timestamp || Date.now())
             }
-            
+
             // Step 7: Create updated auction with new bid
             const updatedAuction = {
               id: auction.id,
@@ -72,7 +72,7 @@ export function AppProvider(props) {
     // Step 9: Listen for auction updates from admin
     socket.on('auctionUpdated', function(data) {
       console.log('Real-time auction update received:', data)
-      
+
       // Step 10: Update the specific auction with new data
       setAuctions(function(prev) {
         const updatedAuctions = []
@@ -94,7 +94,7 @@ export function AppProvider(props) {
     // Step 13: Listen for auction removal from admin
     socket.on('auctionRemoved', function(data) {
       console.log('Real-time auction removal received:', data)
-      
+
       // Step 14: Remove the auction from the list
       setAuctions(function(prev) {
         const remainingAuctions = []
@@ -112,7 +112,7 @@ export function AppProvider(props) {
     // Step 15: Listen for auction creation
     socket.on('auctionCreated', function(data) {
       console.log('Real-time auction creation received:', data)
-      
+
       // Step 16: Add new auction to the beginning of the list
       setAuctions(function(prev) {
         const newAuctions = [data.auction]
@@ -126,7 +126,7 @@ export function AppProvider(props) {
     // Step 17: Listen for auction ended event (broadcasted when auction time expires)
     socket.on('auctionEnded', function(data) {
       console.log('Real-time auction ended received:', data)
-      
+
       // Step 18: Update auction status to ended
       setAuctions(function(prev) {
         const updatedAuctions = []
@@ -160,7 +160,7 @@ export function AppProvider(props) {
     // Step 21: Listen for user updates from admin
     socket.on('userUpdated', function(data) {
       console.log('Real-time user update received:', data)
-      
+
       // Step 22: Update the specific user with new data
       setUsers(function(prev) {
         const updatedUsers = []
@@ -188,7 +188,7 @@ export function AppProvider(props) {
     // Step 25: Listen for new user registration
     socket.on('userRegistered', function(data) {
       console.log('Real-time user registration received:', data)
-      
+
       // Step 26: Check if user already exists, then add if new
       setUsers(function(prev) {
         // Step 27: Check if user with this email already exists
@@ -199,7 +199,7 @@ export function AppProvider(props) {
             break
           }
         }
-        
+
         // Step 28: If user doesn't exist, add them to the list
         if (userExists) {
           return prev
@@ -236,7 +236,7 @@ export function AppProvider(props) {
         if (auction.id === auctionId) {
           // Step 2: Create updated auction by copying old data and adding updates
           const updated = Object.assign({}, auction, updates)
-          
+
           // Step 3: Emit socket event for real-time sync
           const socket = getSocket()
           socket.emit('auctionUpdate', {
@@ -272,7 +272,7 @@ export function AppProvider(props) {
       }
       return remainingAuctions
     })
-    
+
     // Step 2: Emit socket event for real-time sync
     const socket = getSocket()
     socket.emit('auctionRemove', { auctionId: auctionId })
@@ -288,7 +288,7 @@ export function AppProvider(props) {
         if (user.email === userEmail) {
           // Step 2: Create updated user by copying old data and adding updates
           const updated = Object.assign({}, user, updates)
-          
+
           // Step 3: Emit socket event for real-time sync
           const socket = getSocket()
           socket.emit('userUpdate', {
@@ -323,7 +323,7 @@ export function AppProvider(props) {
         break
       }
     }
-    
+
     // Step 2: Check if auction exists
     if (!auction) {
       return { success: false, message: 'Auction not found' }
@@ -344,7 +344,7 @@ export function AppProvider(props) {
     // Step 5: Get bidder name and amount from bid data
     const bidderName = bidData.bidderName
     const amount = bidData.amount
-    
+
     // Step 6: Create new bid object
     const newBid = {
       bidder: bidderName,
@@ -413,7 +413,7 @@ export function AppProvider(props) {
           break
         }
       }
-      
+
       // Step 2: If user exists, update them; otherwise add new user
       if (userExists) {
         // Step 3: Update existing user
@@ -435,7 +435,7 @@ export function AppProvider(props) {
         // Step 7: Emit socket event for real-time sync
         const socket = getSocket()
         socket.emit('userRegister', { user: user })
-        
+
         // Step 8: Add new user to the list
         const newUsers = []
         for (let i = 0; i < prev.length; i++) {
@@ -461,7 +461,7 @@ export function AppProvider(props) {
       }
       return remainingUsers
     })
-    
+
     // Step 2: Emit socket event for real-time sync
     const socket = getSocket()
     socket.emit('userDelete', { userEmail: userEmail })
@@ -538,7 +538,7 @@ export function AppProvider(props) {
         const updatedAuctions = []
         for (let i = 0; i < prev.length; i++) {
           const auction = prev[i]
-          
+
           // Step 3: Convert endTime to timestamp if it's a Date object
           let endTime = auction.endTime
           if (endTime instanceof Date) {

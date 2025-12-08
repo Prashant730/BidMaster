@@ -178,13 +178,21 @@ function Header(props) {
 						)}
 					</div>
             ) : (
-              <button
-                onClick={onLoginClick}
-                className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg"
-              >
-                <span className="hidden sm:inline">Login / Register</span>
-                <span className="sm:hidden">Login</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <Link
+                  to="/login"
+                  className="hidden sm:block text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg"
+                >
+                  <span className="hidden sm:inline">Sign Up</span>
+                  <span className="sm:hidden">Register</span>
+                </Link>
+              </div>
             )}
 
             {/* Mobile menu button */}
@@ -252,6 +260,16 @@ function Header(props) {
               >
                 Learn More
               </button>
+              {!user && (
+                <>
+                  <Link to="/login" className="font-medium text-base text-purple-600 dark:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+                    Login
+                  </Link>
+                  <Link to="/register" className="font-medium text-base bg-gradient-to-r from-purple-600 to-blue-500 text-white px-4 py-2 rounded-lg text-center" onClick={() => setIsMenuOpen(false)}>
+                    Sign Up
+                  </Link>
+                </>
+              )}
               {user && !user.isAdmin && (
                 <>
                   <Link to="/policy" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>

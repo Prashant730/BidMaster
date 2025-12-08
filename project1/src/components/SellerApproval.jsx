@@ -1,15 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
+import { userAPI, adminAPI } from '../services/api.js'
 
 function SellerApproval(props) {
   const currentUser = props.currentUser
   const navigate = useNavigate()
   const { isDark } = useTheme()
+  const { user: authUser, refreshUser } = useAuth()
   const appContext = useApp()
   const users = appContext.users
   const updateUser = appContext.updateUser
+
+  // Use auth user if available
+  const activeUser = authUser || currentUser
 
   const [requestForm, setRequestForm] = useState({
     businessName: '',
@@ -20,9 +26,37 @@ function SellerApproval(props) {
     phone: ''
   })
   const [showSuccess, setShowSuccess] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState(null)
+
+  // State for pending requests (admin view)
+  const [pendingRequests, setPendingRequests] = useState([])
+  const [loadingRequests, setLoadingRequests] = useState(false)
+  const [processingUser, setProcessingUser] = useState(null)
+
+  // Fetch pending requests for admin
+  useEffect(function() {
+    if (activeUser && activeUser.isAdmin) {
+      fetchPendingRequests()
+    }
+  }, [activeUser])
+
+  async function fetchPendingRequests() {
+    try {
+      setLoadingRequests(true)
+      const response = await adminAPI.getPendingSellers()
+      if (response.data && response.data.success) {
+        setPendingRequests(response.data.data)
+      }
+    } catch (err) {
+      console.error('Error fetching pending requests:', err)
+    } finally {
+      setLoadingRequests(false)
+    }
+  }
 
   // Check if user is logged in
-  if (!currentUser) {
+  if (!activeUser) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center max-w-md mx-auto p-8">
@@ -47,28 +81,36 @@ function SellerApproval(props) {
   }
 
   // Admin view - show all pending requests
-  if (currentUser.isAdmin) {
-    const pendingRequests = users.filter(u =>
-      (u.role === 'seller' || u.role === 'auctioneer') && !u.isValidated && u.sellerStatus === 'pending'
-    )
+  if (activeUser.isAdmin) {
+    async function handleApprove(userId) {
+      if (!window.confirm('Approve this seller request?')) return
 
-    function handleApprove(userEmail) {
-      if (window.confirm('Approve this seller request?')) {
-        updateUser(userEmail, {
-          isValidated: true,
-          sellerStatus: 'approved',
-          role: 'seller'
-        })
+      try {
+        setProcessingUser(userId)
+        await adminAPI.approveSeller(userId)
+        // Refresh the list
+        fetchPendingRequests()
+      } catch (err) {
+        console.error('Error approving seller:', err)
+        alert('Failed to approve seller')
+      } finally {
+        setProcessingUser(null)
       }
     }
 
-    function handleReject(userEmail) {
-      if (window.confirm('Reject this seller request?')) {
-        updateUser(userEmail, {
-          role: 'bidder',
-          sellerStatus: 'rejected',
-          isValidated: true
-        })
+    async function handleReject(userId) {
+      if (!window.confirm('Reject this seller request?')) return
+
+      try {
+        setProcessingUser(userId)
+        await adminAPI.rejectSeller(userId)
+        // Refresh the list
+        fetchPendingRequests()
+      } catch (err) {
+        console.error('Error rejecting seller:', err)
+        alert('Failed to reject seller')
+      } finally {
+        setProcessingUser(null)
       }
     }
 
@@ -93,7 +135,12 @@ function SellerApproval(props) {
           </div>
 
           {/* Pending Requests */}
-          {pendingRequests.length === 0 ? (
+          {loadingRequests ? (
+            <div className={`rounded-2xl shadow-lg p-12 text-center ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+              <div className="animate-spin w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>Loading pending requests...</p>
+            </div>
+          ) : pendingRequests.length === 0 ? (
             <div className={`rounded-2xl shadow-lg p-12 text-center ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
               <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? 'bg-green-900/30' : 'bg-green-100'}`}>
                 <svg className={`w-10 h-10 ${isDark ? 'text-green-400' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +158,7 @@ function SellerApproval(props) {
             <div className="space-y-4">
               {pendingRequests.map(user => (
                 <div
-                  key={user.email}
+                  key={user._id || user.email}
                   className={`rounded-2xl shadow-lg p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}
                 >
                   <div className="flex items-start justify-between">
@@ -119,17 +166,17 @@ function SellerApproval(props) {
                       {user.profilePhoto ? (
                         <img
                           src={user.profilePhoto}
-                          alt={user.name}
+                          alt={user.name || user.username}
                           className="w-16 h-16 rounded-full object-cover"
                         />
                       ) : (
                         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold ${isDark ? 'bg-purple-900/30 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
-                          {user.name.charAt(0)}
+                          {(user.name || user.username || 'U').charAt(0)}
                         </div>
                       )}
                       <div className="flex-1">
                         <h3 className={`text-xl font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>
-                          {user.name}
+                          {user.name || user.username}
                         </h3>
                         <p className={`text-sm mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                           {user.email}
@@ -210,16 +257,18 @@ function SellerApproval(props) {
                     {/* Action Buttons */}
                     <div className="flex flex-col gap-2 ml-4">
                       <button
-                        onClick={() => handleApprove(user.email)}
-                        className="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors font-medium whitespace-nowrap"
+                        onClick={() => handleApprove(user._id)}
+                        disabled={processingUser === user._id}
+                        className={`px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors font-medium whitespace-nowrap ${processingUser === user._id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
-                        ✓ Approve
+                        {processingUser === user._id ? '...' : '✓ Approve'}
                       </button>
                       <button
-                        onClick={() => handleReject(user.email)}
-                        className="px-6 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors font-medium whitespace-nowrap"
+                        onClick={() => handleReject(user._id)}
+                        disabled={processingUser === user._id}
+                        className={`px-6 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors font-medium whitespace-nowrap ${processingUser === user._id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
-                        ✗ Reject
+                        {processingUser === user._id ? '...' : '✗ Reject'}
                       </button>
                     </div>
                   </div>
@@ -233,35 +282,46 @@ function SellerApproval(props) {
   }
 
   // User view - submit seller request
-  const userSellerStatus = currentUser.sellerStatus
-  const isAlreadySeller = currentUser.role === 'seller' && currentUser.isValidated
+  const userSellerStatus = activeUser.sellerStatus
+  const isAlreadySeller = activeUser.role === 'seller' && activeUser.isValidated
 
-  function handleSubmitRequest(e) {
+  async function handleSubmitRequest(e) {
     e.preventDefault()
+    setError(null)
 
     if (!requestForm.businessName || !requestForm.businessType || !requestForm.description) {
       alert('Please fill in all required fields')
       return
     }
 
-    // Update user with seller request
-    updateUser(currentUser.email, {
-      role: 'seller',
-      sellerStatus: 'pending',
-      isValidated: false,
-      businessName: requestForm.businessName,
-      businessType: requestForm.businessType,
-      description: requestForm.description,
-      experience: requestForm.experience,
-      website: requestForm.website,
-      phone: requestForm.phone || currentUser.phone,
-      requestedAt: new Date().toISOString()
-    })
+    try {
+      setIsSubmitting(true)
 
-    setShowSuccess(true)
-    setTimeout(() => {
-      navigate('/profile')
-    }, 2000)
+      // Submit seller request to backend
+      await userAPI.submitSellerRequest({
+        businessName: requestForm.businessName,
+        businessType: requestForm.businessType,
+        description: requestForm.description,
+        experience: requestForm.experience,
+        website: requestForm.website,
+        phone: requestForm.phone || activeUser.phone
+      })
+
+      // Refresh user data if available
+      if (refreshUser) {
+        await refreshUser()
+      }
+
+      setShowSuccess(true)
+      setTimeout(() => {
+        navigate('/profile')
+      }, 2000)
+    } catch (err) {
+      console.error('Error submitting seller request:', err)
+      setError(err.response?.data?.message || 'Failed to submit request')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   // Show success message
@@ -361,10 +421,10 @@ function SellerApproval(props) {
             </svg>
           </div>
           <h2 className={`text-2xl font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-800'}`}>
-            Request Not Approved
+            Request Rejected
           </h2>
           <p className={`mb-6 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-            Your previous seller request was no. Please contact support for more information.
+            Unfortunately, your seller request was not approved by the admin. Please contact support for more information.
           </p>
           <div className="flex gap-3">
             <button
@@ -405,6 +465,13 @@ function SellerApproval(props) {
           </div>
 
           <form onSubmit={handleSubmitRequest} className="space-y-6">
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
+                {error}
+              </div>
+            )}
+
             <div>
               <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                 Business Name <span className="text-red-500">*</span>
@@ -514,13 +581,15 @@ function SellerApproval(props) {
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                disabled={isSubmitting}
+                className={`flex-1 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-medium ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                Submit Request
+                {isSubmitting ? 'Submitting...' : 'Submit Request'}
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/')}
+                disabled={isSubmitting}
                 className={`px-6 py-3 rounded-lg transition-colors font-medium ${isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
               >
                 Cancel

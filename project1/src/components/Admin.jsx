@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
+import { adminAPI, activityAPI } from '../services/api.js'
+import { io } from 'socket.io-client'
 
 function Admin(props) {
   const currentUser = props.currentUser
@@ -20,9 +22,111 @@ function Admin(props) {
   const removeContextAuction = appContext.removeAuction
   const updateContextAuction = appContext.updateAuction
 
-  // Use context values if available, otherwise fall back to props
+  // State for users fetched from backend
+  const [backendUsers, setBackendUsers] = useState([])
+  const [loadingUsers, setLoadingUsers] = useState(true)
+  const [usersError, setUsersError] = useState(null)
+
+  // State for live activities
+  const [liveActivities, setLiveActivities] = useState([])
+  const [loadingActivities, setLoadingActivities] = useState(true)
+  const [activitiesError, setActivitiesError] = useState(null)
+
+  // State for dashboard stats from backend
+  const [backendStats, setBackendStats] = useState(null)
+  const [loadingStats, setLoadingStats] = useState(true)
+
+  // Fetch users from backend on component mount
+  useEffect(function() {
+    fetchUsers()
+    fetchStats()
+  }, [])
+
+  async function fetchUsers() {
+    try {
+      setLoadingUsers(true)
+      setUsersError(null)
+      const response = await adminAPI.getUsers()
+      if (response.data && response.data.success) {
+        setBackendUsers(response.data.data)
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error)
+      setUsersError('Failed to load users from server')
+    } finally {
+      setLoadingUsers(false)
+    }
+  }
+
+  // Fetch dashboard stats from backend
+  async function fetchStats() {
+    try {
+      setLoadingStats(true)
+      const response = await adminAPI.getStats()
+      if (response.data && response.data.success) {
+        setBackendStats(response.data.data)
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error)
+    } finally {
+      setLoadingStats(false)
+    }
+  }
+
+  // Fetch live activities from backend
+  async function fetchActivities() {
+    try {
+      setLoadingActivities(true)
+      setActivitiesError(null)
+      const response = await activityAPI.getRecent(50)
+      if (response.data) {
+        setLiveActivities(response.data)
+      }
+    } catch (error) {
+      console.error('Error fetching activities:', error)
+      setActivitiesError('Failed to load activities')
+    } finally {
+      setLoadingActivities(false)
+    }
+  }
+
+  // Set up Socket.IO connection for real-time activity updates
+  useEffect(function() {
+    fetchActivities()
+
+    // Connect to Socket.IO server
+    const socket = io('http://localhost:5000', {
+      transports: ['websocket', 'polling'],
+    })
+
+    socket.on('connect', function() {
+      console.log('Admin connected to activity feed')
+      // Join admin room for activity updates
+      socket.emit('joinAdminRoom')
+    })
+
+    // Listen for new activities
+    socket.on('newActivity', function(activity) {
+      setLiveActivities(function(prev) {
+        // Add new activity to the front, keep only last 50
+        const updated = [activity, ...prev].slice(0, 50)
+        return updated
+      })
+    })
+
+    socket.on('disconnect', function() {
+      console.log('Admin disconnected from activity feed')
+    })
+
+    // Cleanup on unmount
+    return function() {
+      socket.disconnect()
+    }
+  }, [])
+
+  // Use backend users if available, otherwise fall back to context/props
   const auctions = contextAuctions.length > 0 ? contextAuctions : auctionsProp
-  const users = contextUsers.length > 0 ? contextUsers : usersProp
+  const users = backendUsers.length > 0 ? backendUsers : (contextUsers.length > 0 ? contextUsers : usersProp)
   const commissionRate = contextCommissionRate || commissionRateProp
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -84,8 +188,25 @@ function Admin(props) {
     )
   }
 
-  // Calculate statistics for dashboard
+  // Calculate statistics for dashboard - use backend stats if available
   const stats = useMemo(function() {
+    // If backend stats are available, use them
+    if (backendStats) {
+      return {
+        totalUsers: backendStats.totalUsers || 0,
+        pendingValidations: backendStats.pendingValidations || 0,
+        activeAuctions: backendStats.liveAuctions || 0,
+        endedAuctions: backendStats.endedAuctions || 0,
+        bidsToday: backendStats.bidsToday || 0,
+        estimatedRevenue: backendStats.estimatedRevenue || 0,
+        totalBidders: backendStats.totalBidders || 0,
+        totalAuctioneers: backendStats.totalAuctioneers || backendStats.totalSellers || 0,
+        suspendedUsers: backendStats.suspendedUsers || 0,
+        bannedUsers: backendStats.bannedUsers || 0
+      }
+    }
+
+    // Fallback: Calculate from local data if backend stats not available
     // Step 1: Count total users
     const totalUsers = users.length
 
@@ -182,7 +303,7 @@ function Admin(props) {
       suspendedUsers: suspendedUsers,
       bannedUsers: bannedUsers
     }
-  }, [users, auctions, commissionRate])
+  }, [users, auctions, commissionRate, backendStats])
 
   // Filter users based on search term, role, and status
   const filteredUsers = useMemo(function() {
@@ -510,21 +631,58 @@ function Admin(props) {
                 </div>
               </div>
               <div className={`rounded-2xl shadow p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-                <h2 className={`text-lg font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Live Activity</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>Live Activity</h2>
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Real-time</span>
+                  </div>
+                </div>
                 <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {auctions
-                    .flatMap(a => a.bids.map(b => ({ a, b })))
-                    .sort((x, y) => new Date(y.b.time) - new Date(x.b.time))
-                    .slice(0, 10)
-                    .map((x, i) => (
-                      <div key={i} className="flex items-center justify-between text-sm">
-                        <div className="flex items-center space-x-2">
-                          <span className={`px-2 py-0.5 rounded font-semibold ${isDark ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-700'}`}>Bid</span>
-                          <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>${x.b.amount.toLocaleString()} on {x.a.title}</span>
+                  {loadingActivities ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+                      <span className={`ml-2 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Loading activities...</span>
+                    </div>
+                  ) : activitiesError ? (
+                    <div className="text-center py-4">
+                      <p className="text-red-500 text-sm">{activitiesError}</p>
+                      <button onClick={fetchActivities} className="text-purple-500 text-sm mt-2 hover:underline">Retry</button>
+                    </div>
+                  ) : liveActivities.length === 0 ? (
+                    <div className="text-center py-8">
+                      <span className="text-4xl">📊</span>
+                      <p className={`text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No activities yet</p>
+                    </div>
+                  ) : (
+                    liveActivities.slice(0, 15).map(function(activity, i) {
+                      // Determine icon and color based on activity type
+                      var typeConfig = {
+                        bid: { icon: '💰', bg: isDark ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-700', label: 'Bid' },
+                        auction_created: { icon: '🎯', bg: isDark ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700', label: 'New Auction' },
+                        auction_ended: { icon: '🏁', bg: isDark ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-700', label: 'Ended' },
+                        user_registered: { icon: '👤', bg: isDark ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-700', label: 'New User' },
+                        seller_approved: { icon: '✅', bg: isDark ? 'bg-emerald-900 text-emerald-200' : 'bg-emerald-100 text-emerald-700', label: 'Approved' },
+                        seller_rejected: { icon: '❌', bg: isDark ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-700', label: 'Rejected' },
+                        user_banned: { icon: '🚫', bg: isDark ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-700', label: 'Banned' },
+                        payment: { icon: '💳', bg: isDark ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-700', label: 'Payment' },
+                      }
+                      var config = typeConfig[activity.type] || { icon: '📌', bg: isDark ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-700', label: activity.type }
+
+                      return (
+                        <div key={activity._id || i} className={`flex items-center justify-between text-sm p-2 rounded-lg transition-all ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                          <div className="flex items-center space-x-2 flex-1 min-w-0">
+                            <span className="text-lg">{config.icon}</span>
+                            <span className={`px-2 py-0.5 rounded font-semibold text-xs whitespace-nowrap ${config.bg}`}>{config.label}</span>
+                            <span className={`truncate ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{activity.message}</span>
+                          </div>
+                          <span className={`text-xs whitespace-nowrap ml-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                            {new Date(activity.createdAt).toLocaleTimeString()}
+                          </span>
                         </div>
-                        <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{new Date(x.b.time).toLocaleTimeString()}</span>
-                      </div>
-                    ))}
+                      )
+                    })
+                  )}
                 </div>
               </div>
             </div>
@@ -599,23 +757,23 @@ function Admin(props) {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                   {filteredUsers.length === 0 ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-12 text-center">
-                        <div className="text-gray-400 text-4xl mb-3">👤</div>
-                        <p className="text-gray-500 font-medium">No users found</p>
-                        <p className="text-sm text-gray-400 mt-1">Try adjusting your search or filters</p>
+                        <div className="text-gray-400 dark:text-gray-500 text-4xl mb-3">👤</div>
+                        <p className="text-gray-500 dark:text-gray-400 font-medium">No users found</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try adjusting your search or filters</p>
                       </td>
                     </tr>
                   ) : (
                     filteredUsers.map(u => (
-                      <tr key={u.email} className="hover:bg-gray-50 transition-colors">
+                      <tr key={u._id || u.email} className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="font-medium text-gray-900">{u.name}</div>
+                          <div className="font-medium text-gray-900 dark:text-white">{u.name || u.username || 'N/A'}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{u.email}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-300">{u.email}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex flex-col gap-1">
