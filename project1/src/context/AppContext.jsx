@@ -386,6 +386,7 @@ export function AppProvider(props) {
     const timestamp = Date.now()
     socket.emit('bidPlace', {
       auctionId: auctionId,
+      auctionTitle: auction.title,
       bidderName: bidderName,
       amount: amount,
       timestamp: timestamp
@@ -393,6 +394,7 @@ export function AppProvider(props) {
     // Step 11: Also broadcast to all clients (server should handle this, but we emit for consistency)
     socket.emit('broadcastBidPlace', {
       auctionId: auctionId,
+      auctionTitle: auction.title,
       bidderName: bidderName,
       amount: amount,
       timestamp: timestamp

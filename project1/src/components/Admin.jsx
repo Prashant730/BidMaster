@@ -125,6 +125,7 @@ function Admin(props) {
         message: 'Bid placed: $' + data.amount,
         userName: data.bidderName,
         auctionId: data.auctionId,
+        auctionTitle: data.auctionTitle || 'Unknown Auction',
         amount: data.amount,
         timestamp: data.timestamp || new Date()
       }

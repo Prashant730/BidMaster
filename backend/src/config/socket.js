@@ -52,9 +52,10 @@ function initializeSocket(server) {
       // Also emit to admin room for live activity
       io.to('admin_room').emit('newActivity', {
         type: 'bid',
-        message: `Bid of $${data.amount} placed`,
+        message: 'Bid of $' + data.amount + ' placed',
         userName: data.bidderName,
         auctionId: data.auctionId,
+        auctionTitle: data.auctionTitle || 'Unknown Auction',
         amount: data.amount,
         timestamp: data.timestamp || new Date(),
       })
@@ -89,7 +90,7 @@ function initializeSocket(server) {
       // Also emit to admin room for live activity
       io.to('admin_room').emit('newActivity', {
         type: 'auction_created',
-        message: `New auction: ${data.auction.title}`,
+        message: 'New auction: ' + data.auction.title,
         userName: data.auction.seller,
         auctionId: data.auction.id,
         auctionTitle: data.auction.title,
@@ -109,7 +110,7 @@ function initializeSocket(server) {
       // Also emit to admin room for live activity
       io.to('admin_room').emit('newActivity', {
         type: 'auction_ended',
-        message: `Auction ended`,
+        message: 'Auction ended',
         auctionId: data.auctionId,
         timestamp: data.endTime || new Date(),
       })
@@ -126,7 +127,7 @@ function initializeSocket(server) {
       // Also emit to admin room for live activity
       io.to('admin_room').emit('newActivity', {
         type: 'user_registered',
-        message: `New user: ${data.user.name}`,
+        message: 'New user: ' + data.user.name,
         userName: data.user.name,
         userEmail: data.user.email,
         timestamp: new Date(),
