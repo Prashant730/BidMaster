@@ -108,10 +108,76 @@ function Admin(props) {
       socket.emit('joinAdminRoom')
     })
 
-    // Listen for new activities
+    // Listen for new activities from admin room
     socket.on('newActivity', function(activity) {
       setLiveActivities(function(prev) {
         // Add new activity to the front, keep only last 50
+        const updated = [activity, ...prev].slice(0, 50)
+        return updated
+      })
+    })
+
+    // Also listen for direct bid events
+    socket.on('bidPlaced', function(data) {
+      console.log('Bid placed event received:', data)
+      const activity = {
+        type: 'bid',
+        message: 'Bid placed: $' + data.amount,
+        userName: data.bidderName,
+        auctionId: data.auctionId,
+        amount: data.amount,
+        timestamp: data.timestamp || new Date()
+      }
+      setLiveActivities(function(prev) {
+        const updated = [activity, ...prev].slice(0, 50)
+        return updated
+      })
+    })
+
+    // Listen for auction created events
+    socket.on('auctionCreated', function(data) {
+      console.log('Auction created event received:', data)
+      const activity = {
+        type: 'auction_created',
+        message: 'New auction: ' + (data.auction ? data.auction.title : 'Unknown'),
+        userName: data.auction ? data.auction.seller : 'Unknown',
+        auctionId: data.auction ? data.auction.id : null,
+        auctionTitle: data.auction ? data.auction.title : 'Unknown',
+        amount: data.auction ? data.auction.startingPrice : 0,
+        timestamp: new Date()
+      }
+      setLiveActivities(function(prev) {
+        const updated = [activity, ...prev].slice(0, 50)
+        return updated
+      })
+    })
+
+    // Listen for auction ended events
+    socket.on('auctionEnded', function(data) {
+      console.log('Auction ended event received:', data)
+      const activity = {
+        type: 'auction_ended',
+        message: 'Auction ended',
+        auctionId: data.auctionId,
+        timestamp: data.endTime || new Date()
+      }
+      setLiveActivities(function(prev) {
+        const updated = [activity, ...prev].slice(0, 50)
+        return updated
+      })
+    })
+
+    // Listen for user registered events
+    socket.on('userRegistered', function(data) {
+      console.log('User registered event received:', data)
+      const activity = {
+        type: 'user_registered',
+        message: 'New user registered: ' + (data.user ? data.user.name : 'Unknown'),
+        userName: data.user ? data.user.name : 'Unknown',
+        userEmail: data.user ? data.user.email : '',
+        timestamp: new Date()
+      }
+      setLiveActivities(function(prev) {
         const updated = [activity, ...prev].slice(0, 50)
         return updated
       })
