@@ -106,7 +106,8 @@ function Register() {
         formData.username,
         formData.email,
         formData.password,
-        role
+        role,
+        formData.name
       )
 
       if (result.success) {

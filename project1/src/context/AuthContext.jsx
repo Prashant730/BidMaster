@@ -69,12 +69,12 @@ export function AuthProvider(props) {
     }
   }
 
-  async function register(username, email, password, role) {
+  async function register(username, email, password, role, name) {
     if (role === undefined) {
       role = 'bidder'
     }
     try {
-      const response = await authAPI.register({ username: username, email: email, password: password, role: role })
+      const response = await authAPI.register({ username: username, email: email, password: password, role: role, name: name || username })
       const responseData = response.data
       const newToken = responseData.token
       const userData = {}
