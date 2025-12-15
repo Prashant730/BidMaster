@@ -77,10 +77,28 @@ function UserProfile(props) {
     // Function to compute user data
     function compute() {
       // Step 1: Get all auctions where user has placed bids
+      // Check by looking at the auction's bids array for user's name or ID
       const userBidAuctions = []
       for (let i = 0; i < auctions.length; i++) {
         const auction = auctions[i]
-        if (user.bids && user.bids.includes(auction.id)) {
+        // Check if user has bid on this auction by checking bids array
+        let userHasBid = false
+        if (auction.bids && auction.bids.length > 0) {
+          for (let j = 0; j < auction.bids.length; j++) {
+            const bid = auction.bids[j]
+            // Match by bidder name or bidderId
+            if (bid.bidder === user.name || bid.bidderId === user._id || bid.bidderId === user.id) {
+              userHasBid = true
+              break
+            }
+          }
+        }
+        // Also check legacy user.bids array (for backward compatibility)
+        const auctionId = auction._id || auction.id
+        if (!userHasBid && user.bids && (user.bids.includes(auction.id) || user.bids.includes(auctionId))) {
+          userHasBid = true
+        }
+        if (userHasBid) {
           userBidAuctions.push(auction)
         }
       }
@@ -92,16 +110,17 @@ function UserProfile(props) {
 
       for (let i = 0; i < userBidAuctions.length; i++) {
         const auction = userBidAuctions[i]
-        const timeLeft = auction.endTime - now
+        const endTime = auction.endTime instanceof Date ? auction.endTime.getTime() : auction.endTime
+        const timeLeft = endTime - now
 
-        if (timeLeft > 0) {
+        if (timeLeft > 0 && auction.status !== 'ended') {
           // Auction is still active
           active.push(auction)
         } else {
           // Auction has ended, check if user won
           if (auction.bids.length > 0) {
             const highestBid = auction.bids[auction.bids.length - 1]
-            if (highestBid.bidder === user.name) {
+            if (highestBid.bidder === user.name || highestBid.bidderId === user._id || highestBid.bidderId === user.id) {
               ended.push(auction)
             }
           }
@@ -116,34 +135,35 @@ function UserProfile(props) {
       let total = 0
       for (let i = 0; i < userBidAuctions.length; i++) {
         const auction = userBidAuctions[i]
-        // Find user's bid in this auction
-        let userBid = null
+        // Find user's highest bid in this auction
+        let userHighestBid = 0
         for (let j = 0; j < auction.bids.length; j++) {
-          if (auction.bids[j].bidder === user.name) {
-            userBid = auction.bids[j]
-            break
+          const bid = auction.bids[j]
+          if (bid.bidder === user.name || bid.bidderId === user._id || bid.bidderId === user.id) {
+            if (bid.amount > userHighestBid) {
+              userHighestBid = bid.amount
+            }
           }
         }
-        // Add bid amount to total if found
-        if (userBid) {
-          total = total + userBid.amount
-        }
+        total = total + userHighestBid
       }
       setTotalBiddingAmount(total)
 
-      // Recent activity (only render if exists)
-      const allBids = []
+      // Recent activity - get all user's bids across all auctions
+      const allUserBids = []
       for (let i = 0; i < auctions.length; i++) {
         const auction = auctions[i]
         for (let j = 0; j < auction.bids.length; j++) {
-          allBids.push({ auction: auction, bid: auction.bids[j] })
+          const bid = auction.bids[j]
+          if (bid.bidder === user.name || bid.bidderId === user._id || bid.bidderId === user.id) {
+            allUserBids.push({ auction: auction, bid: bid })
+          }
         }
       }
-      const userBids = allBids.filter(function(x) { return x.bid.bidder === user.name })
-      userBids.sort(function(a, b) {
+      allUserBids.sort(function(a, b) {
         return new Date(b.bid.time) - new Date(a.bid.time)
       })
-      const activities = userBids.slice(0, 10)
+      const activities = allUserBids.slice(0, 10)
       setRecentActivity(activities)
 
       // Update user's wonItems if needed
@@ -630,33 +650,47 @@ function UserProfile(props) {
                 <div className="space-y-4">
                   {activeBids.length > 0 ? (
                     activeBids.map(auction => {
-                      const userBid = auction.bids.find(bid => bid.bidder === user.name)
-                      const isHighestBidder = auction.bids.length > 0 && auction.bids[auction.bids.length - 1].bidder === user.name
-                      const timeLeft = auction.endTime - new Date()
-                      const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60))
+                      const auctionId = auction._id || auction.id
+                      // Find user's bid - check by name or ID
+                      const userBid = auction.bids.find(bid =>
+                        bid.bidder === user.name || bid.bidderId === user._id || bid.bidderId === user.id
+                      )
+                      // Check if user is highest bidder
+                      const highestBid = auction.bids.length > 0 ? auction.bids[auction.bids.length - 1] : null
+                      const isHighestBidder = highestBid && (
+                        highestBid.bidder === user.name || highestBid.bidderId === user._id || highestBid.bidderId === user.id
+                      )
+                      const endTime = auction.endTime instanceof Date ? auction.endTime.getTime() : auction.endTime
+                      const timeLeft = endTime - Date.now()
+                      const hoursLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60 * 60)))
+                      const minutesLeft = Math.max(0, Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)))
 
                       return (
                         <div
-                          key={auction.id}
+                          key={auctionId}
                           className="flex items-center space-x-4 p-4 border border-gray-100 dark:border-slate-700 rounded-lg hover:border-purple-200 dark:hover:border-purple-700 transition-colors cursor-pointer"
-                          onClick={() => navigate(`/auction/${auction.id}`)}
+                          onClick={() => navigate(`/auction/${auctionId}`)}
                         >
                           <img src={auction.image} alt={auction.title} className="w-16 h-16 object-cover rounded-lg" />
                           <div className="flex-1">
                             <h3 className="font-semibold text-gray-800 dark:text-gray-100">{auction.title}</h3>
                             <p className="text-sm text-gray-600 dark:text-gray-300">Your Bid: ${userBid ? userBid.amount.toLocaleString() : 'N/A'} | Current: ${auction.currentPrice.toLocaleString()}</p>
-                            {isHighestBidder && (
+                            {isHighestBidder ? (
                               <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full mt-1 inline-block">You're winning!</span>
+                            ) : (
+                              <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 px-2 py-0.5 rounded-full mt-1 inline-block">Outbid</span>
                             )}
                           </div>
                           <div className="text-right">
                             <div className="text-sm font-semibold text-purple-600 dark:text-purple-400">LIVE</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">{hoursLeft}h left</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">{hoursLeft}h {minutesLeft}m left</div>
                           </div>
                         </div>
                       )
                     })
-                  ) : null}
+                  ) : (
+                    <p className="text-gray-500 dark:text-gray-400 text-center py-4">No active bids. Start bidding on auctions!</p>
+                  )}
                 </div>
               </div>
             )}
@@ -666,25 +700,31 @@ function UserProfile(props) {
                 <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">Items Won</h2>
                 <div className="space-y-4">
                   {wonItems.length > 0 ? (
-                    wonItems.map(auction => (
-                      <div
-                        key={auction.id}
-                        className="flex items-center space-x-4 p-4 border border-gray-100 dark:border-slate-700 rounded-lg hover:border-green-200 dark:hover:border-green-700 transition-colors cursor-pointer"
-                        onClick={() => navigate(`/auction/${auction.id}`)}
-                      >
-                        <img src={auction.image} alt={auction.title} className="w-16 h-16 object-cover rounded-lg" />
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-800 dark:text-gray-100">{auction.title}</h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-300">Winning Bid: ${auction.currentPrice.toLocaleString()}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Ended: {auction.endTime.toLocaleDateString()}</p>
+                    wonItems.map(auction => {
+                      const auctionId = auction._id || auction.id
+                      const endDate = auction.endTime instanceof Date ? auction.endTime : new Date(auction.endTime)
+                      return (
+                        <div
+                          key={auctionId}
+                          className="flex items-center space-x-4 p-4 border border-gray-100 dark:border-slate-700 rounded-lg hover:border-green-200 dark:hover:border-green-700 transition-colors cursor-pointer"
+                          onClick={() => navigate(`/auction/${auctionId}`)}
+                        >
+                          <img src={auction.image} alt={auction.title} className="w-16 h-16 object-cover rounded-lg" />
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-800 dark:text-gray-100">{auction.title}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">Winning Bid: ${auction.currentPrice.toLocaleString()}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Ended: {endDate.toLocaleDateString()}</p>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-semibold text-green-600 dark:text-green-400">WON</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">Completed</div>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm font-semibold text-green-600 dark:text-green-400">WON</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">Completed</div>
-                        </div>
-                      </div>
-                    ))
-                  ) : null}
+                      )
+                    })
+                  ) : (
+                    <p className="text-gray-500 dark:text-gray-400 text-center py-4">No items won yet. Keep bidding!</p>
+                  )}
                 </div>
               </div>
             )}
