@@ -85,12 +85,14 @@ function CreateAuction(props) {
               </>
             )}
           </div>
-          <button
-            onClick={() => navigate('/seller-approval')}
-            className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
-          >
-            Become a Seller
-          </button>
+          {!user.isAdmin && (
+            <button
+              onClick={() => navigate('/seller-approval')}
+              className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Become a Seller
+            </button>
+          )}
         </div>
       </div>
     )

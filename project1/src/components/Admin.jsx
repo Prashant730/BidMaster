@@ -94,8 +94,11 @@ function Admin(props) {
   useEffect(function() {
     fetchActivities()
 
+    // Get socket URL from environment or default to localhost
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+
     // Connect to Socket.IO server
-    const socket = io('http://localhost:5000', {
+    const socket = io(socketUrl, {
       transports: ['websocket', 'polling'],
     })
 
@@ -176,19 +179,8 @@ function Admin(props) {
   const [selectedTicket, setSelectedTicket] = useState(null)
   const [ticketResponse, setTicketResponse] = useState('')
 
-  if (!currentUser || !currentUser.isAdmin) {
-    return (
-      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="text-center">
-          <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Access Denied</h2>
-          <p className={`mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>You must be an administrator to view this page.</p>
-          <button onClick={function() { navigate('/') }} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">Go Home</button>
-        </div>
-      </div>
-    )
-  }
-
   // Calculate statistics for dashboard - use backend stats if available
+  // NOTE: This useMemo must be BEFORE any early returns to follow React hooks rules
   const stats = useMemo(function() {
     // If backend stats are available, use them
     if (backendStats) {
@@ -582,6 +574,19 @@ function Admin(props) {
     })
   }, [allBids, bidSearchTerm])
 
+  // Access check - must be AFTER all hooks
+  if (!currentUser || !currentUser.isAdmin) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className="text-center">
+          <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Access Denied</h2>
+          <p className={`mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>You must be an administrator to view this page.</p>
+          <button onClick={function() { navigate('/') }} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">Go Home</button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={`min-h-screen py-8 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="container mx-auto px-4 max-w-7xl">
@@ -669,14 +674,49 @@ function Admin(props) {
                       }
                       var config = typeConfig[activity.type] || { icon: '📌', bg: isDark ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-700', label: activity.type }
 
-                      return (
-                        <div key={activity._id || i} className={`flex items-center justify-between text-sm p-2 rounded-lg transition-all ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                          <div className="flex items-center space-x-2 flex-1 min-w-0">
-                            <span className="text-lg">{config.icon}</span>
-                            <span className={`px-2 py-0.5 rounded font-semibold text-xs whitespace-nowrap ${config.bg}`}>{config.label}</span>
-                            <span className={`truncate ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{activity.message}</span>
+                      // Build detailed display based on activity type
+                      var displayContent = null
+                      if (activity.type === 'bid' && activity.amount) {
+                        displayContent = (
+                          <div className="flex flex-col flex-1 min-w-0">
+                            <div className="flex items-center space-x-2">
+                              <span className={`font-semibold ${isDark ? 'text-green-400' : 'text-green-600'}`}>${activity.amount.toLocaleString()}</span>
+                              <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>by</span>
+                              <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-800'}`}>{activity.userName || 'Unknown'}</span>
+                            </div>
+                            {activity.auctionTitle && (
+                              <span className={`text-xs truncate ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>on {activity.auctionTitle}</span>
+                            )}
                           </div>
-                          <span className={`text-xs whitespace-nowrap ml-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                        )
+                      } else if (activity.type === 'auction_created' && activity.auctionTitle) {
+                        displayContent = (
+                          <div className="flex flex-col flex-1 min-w-0">
+                            <span className={`font-medium truncate ${isDark ? 'text-white' : 'text-gray-800'}`}>{activity.auctionTitle}</span>
+                            <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>by {activity.userName || 'Unknown'}</span>
+                          </div>
+                        )
+                      } else if (activity.type === 'auction_ended' && activity.auctionTitle) {
+                        displayContent = (
+                          <div className="flex flex-col flex-1 min-w-0">
+                            <span className={`font-medium truncate ${isDark ? 'text-white' : 'text-gray-800'}`}>{activity.auctionTitle}</span>
+                            {activity.amount && (
+                              <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Final: ${activity.amount.toLocaleString()}</span>
+                            )}
+                          </div>
+                        )
+                      } else {
+                        displayContent = (
+                          <span className={`truncate flex-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{activity.message}</span>
+                        )
+                      }
+
+                      return (
+                        <div key={activity._id || i} className={`flex items-start space-x-2 text-sm p-2 rounded-lg transition-all ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                          <span className="text-lg mt-0.5">{config.icon}</span>
+                          <span className={`px-2 py-0.5 rounded font-semibold text-xs whitespace-nowrap ${config.bg}`}>{config.label}</span>
+                          {displayContent}
+                          <span className={`text-xs whitespace-nowrap ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                             {new Date(activity.createdAt).toLocaleTimeString()}
                           </span>
                         </div>
@@ -1065,16 +1105,16 @@ function Admin(props) {
           return (
             <div className="space-y-6">
               {/* Page Header with Description */}
-              <div className="bg-white rounded-2xl shadow p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-3">Financials & Transactions</h2>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <h3 className="font-semibold text-blue-900 mb-2">📊 What This Page Does</h3>
-                  <p className="text-sm text-blue-800 mb-2">
+              <div className={`rounded-2xl shadow p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+                <h2 className={`text-2xl font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-800'}`}>Financials & Transactions</h2>
+                <div className={`rounded-lg p-4 mb-4 border ${isDark ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50 border-blue-200'}`}>
+                  <h3 className={`font-semibold mb-2 ${isDark ? 'text-blue-300' : 'text-blue-900'}`}>📊 What This Page Does</h3>
+                  <p className={`text-sm mb-2 ${isDark ? 'text-blue-200' : 'text-blue-800'}`}>
                     This page provides a comprehensive overview of your platform's financial performance and transaction management.
                     Here you can monitor revenue, adjust commission rates, and track all completed auction transactions.
                   </p>
-                  <h3 className="font-semibold text-blue-900 mb-2 mt-3">💡 How It Works</h3>
-                  <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                  <h3 className={`font-semibold mb-2 mt-3 ${isDark ? 'text-blue-300' : 'text-blue-900'}`}>💡 How It Works</h3>
+                  <ul className={`text-sm space-y-1 list-disc list-inside ${isDark ? 'text-blue-200' : 'text-blue-800'}`}>
                     <li><strong>Commission Rate:</strong> Set the percentage you earn from each completed auction (e.g., 0.05 = 5%)</li>
                     <li><strong>Revenue:</strong> Automatically calculated from ended auctions with winning bids</li>
                     <li><strong>Transactions:</strong> View detailed records of all completed auction sales</li>
@@ -1108,22 +1148,22 @@ function Admin(props) {
               </div>
 
               {/* Commission Rate Configuration */}
-              <div className="bg-white rounded-2xl shadow p-6">
+              <div className={`rounded-2xl shadow p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-1">Commission Rate Configuration</h3>
-                    <p className="text-sm text-gray-600">
+                    <h3 className={`text-lg font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>Commission Rate Configuration</h3>
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                       Adjust the percentage you earn from each completed auction. This rate applies to all future transactions.
                     </p>
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className={`rounded-lg p-4 border ${isDark ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
                   <div className="flex items-center space-x-4">
                     <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                         Commission Rate (0.00 to 1.00)
                       </label>
-                      <div className="flex items-center space-x-3 text-gray-800">
+                      <div className={`flex items-center space-x-3 ${isDark ? 'text-white' : 'text-gray-800'}`}>
                         <input
                           type="number"
                           min="0"
@@ -1136,14 +1176,14 @@ function Admin(props) {
                               setContextCommissionRate(val)
                             }
                           }}
-                          className="border border-gray-300 rounded-lg px-4 py-2 w-32 focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg font-semibold"
+                          className={`border rounded-lg px-4 py-2 w-32 focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg font-semibold ${isDark ? 'bg-gray-600 border-gray-500 text-white' : 'border-gray-300'}`}
                         />
                         <div className="flex flex-col">
                           <span className="text-2xl font-bold text-purple-600">{Math.round(commissionRate * 100)}%</span>
-                          <span className="text-xs text-gray-500">Percentage</span>
+                          <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Percentage</span>
                         </div>
                       </div>
-                      <p className="text-xs text-gray-500 mt-2">
+                      <p className={`text-xs mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                         💡 Example: A rate of 0.05 (5%) means you earn $50 from a $1,000 auction sale.
                       </p>
                     </div>
@@ -1152,30 +1192,30 @@ function Admin(props) {
               </div>
 
               {/* Transaction History */}
-              <div className="bg-white rounded-2xl shadow p-6">
+              <div className={`rounded-2xl shadow p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-1">Transaction History</h3>
-                    <p className="text-sm text-gray-600">
+                    <h3 className={`text-lg font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>Transaction History</h3>
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                       Complete list of all finished auctions with winning bids. Each transaction shows the sale amount, commission earned, and auction details.
                     </p>
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                     {endedAuctionsWithBids.length} completed transaction{endedAuctionsWithBids.length !== 1 ? 's' : ''}
                   </div>
                 </div>
 
                 {endedAuctionsWithBids.length === 0 ? (
-                  <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="text-gray-400 text-4xl mb-3">💰</div>
-                    <p className="text-gray-600 font-medium mb-1">No transactions yet</p>
-                    <p className="text-sm text-gray-500">Transactions will appear here once auctions end with winning bids</p>
+                  <div className={`text-center py-12 rounded-lg border ${isDark ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="text-4xl mb-3">💰</div>
+                    <p className={`font-medium mb-1 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>No transactions yet</p>
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Transactions will appear here once auctions end with winning bids</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="min-w-full">
                       <thead>
-                        <tr className="text-left text-sm text-gray-500 border-b-2 border-gray-200">
+                        <tr className={`text-left text-sm border-b-2 ${isDark ? 'text-gray-400 border-gray-600' : 'text-gray-500 border-gray-200'}`}>
                           <th className="py-3 pr-4">Auction</th>
                           <th className="py-3 pr-4">Winner</th>
                           <th className="py-3 pr-4">Sale Price</th>
@@ -1190,37 +1230,37 @@ function Admin(props) {
                           const commission = auction.currentPrice * commissionRate
                           const sellerReceives = auction.currentPrice - commission
                           return (
-                            <tr key={auction.id} className="border-b hover:bg-gray-50 transition-colors">
+                            <tr key={auction.id} className={`border-b transition-colors ${isDark ? 'border-gray-700 hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
                               <td className="py-4 pr-4">
-                                <div className="font-medium text-gray-800">{auction.title}</div>
-                                <div className="text-xs text-gray-500">ID: {auction.id}</div>
+                                <div className={`font-medium ${isDark ? 'text-white' : 'text-gray-800'}`}>{auction.title}</div>
+                                <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>ID: {auction.id}</div>
                               </td>
                               <td className="py-4 pr-4">
-                                <span className="text-gray-700">{winningBid && winningBid.bidder ? winningBid.bidder : 'N/A'}</span>
+                                <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>{winningBid && winningBid.bidder ? winningBid.bidder : 'N/A'}</span>
                               </td>
                               <td className="py-4 pr-4">
-                                <span className="font-semibold text-gray-800">${auction.currentPrice.toLocaleString()}</span>
+                                <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>${auction.currentPrice.toLocaleString()}</span>
                               </td>
                               <td className="py-4 pr-4">
-                                <span className="font-semibold text-purple-600">${Math.round(commission).toLocaleString()}</span>
+                                <span className="font-semibold text-purple-500">${Math.round(commission).toLocaleString()}</span>
                               </td>
                               <td className="py-4 pr-4">
-                                <span className="text-gray-700">${Math.round(sellerReceives).toLocaleString()}</span>
+                                <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>${Math.round(sellerReceives).toLocaleString()}</span>
                               </td>
                               <td className="py-4 pr-4">
-                                <span className="text-sm text-gray-600">{new Date(auction.endTime).toLocaleDateString()}</span>
-                                <div className="text-xs text-gray-500">{new Date(auction.endTime).toLocaleTimeString()}</div>
+                                <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{new Date(auction.endTime).toLocaleDateString()}</span>
+                                <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{new Date(auction.endTime).toLocaleTimeString()}</div>
                               </td>
                             </tr>
                           )
                         })}
                       </tbody>
-                      <tfoot className="bg-gray-50 font-semibold">
+                      <tfoot className={`font-semibold ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
                         <tr>
-                          <td colSpan="2" className="py-4 pr-4 text-gray-800">Total</td>
-                          <td className="py-4 pr-4 text-gray-800">${Math.round(totalTransactionValue).toLocaleString()}</td>
-                          <td className="py-4 pr-4 text-purple-600">${Math.round(totalRevenue).toLocaleString()}</td>
-                          <td className="py-4 pr-4 text-gray-700">${Math.round(totalTransactionValue - totalRevenue).toLocaleString()}</td>
+                          <td colSpan="2" className={`py-4 pr-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Total</td>
+                          <td className={`py-4 pr-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>${Math.round(totalTransactionValue).toLocaleString()}</td>
+                          <td className="py-4 pr-4 text-purple-500">${Math.round(totalRevenue).toLocaleString()}</td>
+                          <td className={`py-4 pr-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>${Math.round(totalTransactionValue - totalRevenue).toLocaleString()}</td>
                           <td className="py-4 pr-4"></td>
                         </tr>
                       </tfoot>
@@ -1231,15 +1271,15 @@ function Admin(props) {
 
               {/* Active Auctions Preview */}
               {activeAuctionsWithBids.length > 0 && (
-                <div className="bg-white rounded-2xl shadow p-6">
+                <div className={`rounded-2xl shadow p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-800 mb-1">Active Auctions (Potential Revenue)</h3>
-                      <p className="text-sm text-gray-600">
+                      <h3 className={`text-lg font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>Active Auctions (Potential Revenue)</h3>
+                      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                         These auctions are currently live and have bids. Revenue will be calculated when they end.
                       </p>
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                       {activeAuctionsWithBids.length} active auction{activeAuctionsWithBids.length !== 1 ? 's' : ''}
                     </div>
                   </div>
@@ -1507,31 +1547,31 @@ function Admin(props) {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="font-medium  text-gray-800">Active Announcements ({announcements.filter(a => a.active).length})</h4>
+                  <h4 className={`font-medium ${isDark ? 'text-white' : 'text-gray-800'}`}>Active Announcements ({announcements.filter(a => a.active).length})</h4>
                   {announcements.length === 0 ? (
-                    <p className="text-gray-500 text-sm">No announcements yet</p>
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No announcements yet</p>
                   ) : (
                     announcements.map(announcement => (
-                      <div key={announcement.id} className={`border rounded-lg p-4 ${announcement.active ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'}`}>
+                      <div key={announcement.id} className={`border rounded-lg p-4 ${announcement.active ? (isDark ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50 border-blue-200') : (isDark ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200')}`}>
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h5 className="font-semibold text-gray-800">{announcement.title}</h5>
+                              <h5 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>{announcement.title}</h5>
                               <span className={`px-2 py-0.5 rounded text-xs ${
-                                announcement.priority === 'high' ? 'bg-red-100 text-red-700' :
-                                announcement.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                'bg-gray-100 text-gray-700'
+                                announcement.priority === 'high' ? (isDark ? 'bg-red-900/50 text-red-300' : 'bg-red-100 text-red-700') :
+                                announcement.priority === 'medium' ? (isDark ? 'bg-yellow-900/50 text-yellow-300' : 'bg-yellow-100 text-yellow-700') :
+                                (isDark ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-700')
                               }`}>
                                 {announcement.priority}
                               </span>
                               {announcement.active ? (
-                                <span className="px-2 py-0.5 rounded bg-green-100 text-green-700 text-xs">Active</span>
+                                <span className={`px-2 py-0.5 rounded text-xs ${isDark ? 'bg-green-900/50 text-green-300' : 'bg-green-100 text-green-700'}`}>Active</span>
                               ) : (
-                                <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs">Inactive</span>
+                                <span className={`px-2 py-0.5 rounded text-xs ${isDark ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>Inactive</span>
                               )}
                             </div>
-                            <p className="text-gray-600 text-sm mb-2">{announcement.message}</p>
-                            <p className="text-xs text-gray-500">Created: {new Date(announcement.createdAt).toLocaleString()}</p>
+                            <p className={`text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{announcement.message}</p>
+                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Created: {new Date(announcement.createdAt).toLocaleString()}</p>
                           </div>
                           <div className="flex gap-2 ml-4">
                             <button
@@ -1564,16 +1604,16 @@ function Admin(props) {
         {/* Moderation */}
         {activeTab === 'moderation' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow p-6">
+            <div className={`rounded-2xl shadow p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-800">Content Moderation</h2>
+                <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>Content Moderation</h2>
                 <div className="flex gap-2 flex-wrap">
                   <button
                     onClick={() => setModerationView('bids')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       moderationView === 'bids'
                         ? 'bg-purple-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
                     Manage Bids ({allBids.length})
@@ -1583,7 +1623,7 @@ function Admin(props) {
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       moderationView === 'users'
                         ? 'bg-purple-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
                     Manage Users ({users.length})
@@ -1593,7 +1633,7 @@ function Admin(props) {
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       moderationView === 'reports'
                         ? 'bg-purple-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
                     Reports ({reports.filter(r => r.status === 'pending').length})
@@ -1603,7 +1643,7 @@ function Admin(props) {
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       moderationView === 'tickets'
                         ? 'bg-purple-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
                     Support Tickets ({supportTickets.filter(t => t.status === 'open').length})

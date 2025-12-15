@@ -122,6 +122,14 @@ async function submitSellerRequest(req, res, next) {
 
     const user = await User.findById(req.user._id)
 
+    // Admins cannot become sellers
+    if (user.isAdmin || user.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Administrators cannot become sellers',
+      })
+    }
+
     if (user.role === 'seller' && user.isValidated) {
       return res.status(400).json({
         success: false,

@@ -128,7 +128,7 @@
   /* Live badge - shows "LIVE" status with gradient */
   .badge-live {
     background: linear-gradient(90deg,#ef4444,#f97316); /* Red to orange gradient */
-    color: white; /* White text */
+    color: rgb(0, 0, 0); /* White text */
     padding: .25rem .5rem; /* Padding */
     border-radius: 999px; /* Fully rounded (pill shape) */
     font-weight: 700; /* Bold text */

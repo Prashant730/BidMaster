@@ -282,6 +282,64 @@ async function seedDatabase() {
       ],
     })
 
+    // Create sample activities for live activity feed
+    console.log('Creating sample activities...')
+    const Activity = require('./src/models/Activity')
+    await Activity.deleteMany({})
+
+    await Activity.create([
+      {
+        type: 'user_registered',
+        message: 'New user registered: seller1',
+        userId: seller1._id,
+        userName: seller1.name,
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      },
+      {
+        type: 'seller_approved',
+        message: 'Seller approved: John Seller',
+        userId: seller1._id,
+        userName: seller1.name,
+        createdAt: new Date(Date.now() - 1.5 * 60 * 60 * 1000),
+      },
+      {
+        type: 'auction_created',
+        message: 'New auction: Vintage Rolex Submariner Watch',
+        userId: seller1._id,
+        userName: seller1.name,
+        auctionId: auction1._id,
+        auctionTitle: auction1.title,
+        createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
+      },
+      {
+        type: 'bid',
+        message: 'Bid placed: $6000 on Vintage Rolex Submariner Watch',
+        userId: bidder1._id,
+        userName: bidder1.name,
+        auctionId: auction1._id,
+        auctionTitle: auction1.title,
+        amount: 6000,
+        createdAt: new Date(Date.now() - 45 * 60 * 1000),
+      },
+      {
+        type: 'bid',
+        message: 'Bid placed: $7500 on Vintage Rolex Submariner Watch',
+        userId: bidder2._id,
+        userName: bidder2.name,
+        auctionId: auction1._id,
+        auctionTitle: auction1.title,
+        amount: 7500,
+        createdAt: new Date(Date.now() - 30 * 60 * 1000),
+      },
+      {
+        type: 'user_registered',
+        message: 'New user registered: bidder2',
+        userId: bidder2._id,
+        userName: bidder2.name,
+        createdAt: new Date(Date.now() - 20 * 60 * 1000),
+      },
+    ])
+
     console.log('\n✅ Database seeded successfully!')
     console.log('\n📝 Test Accounts:')
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')

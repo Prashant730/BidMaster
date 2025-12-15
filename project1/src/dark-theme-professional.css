@@ -229,7 +229,6 @@
 
 /* Status badges - Keep semantic colors */
 .dark .bg-green-100 {
-  background-color: rgba(34, 197, 94, 0.15) !important;
   border: 1px solid #16a34a !important;
 }
 

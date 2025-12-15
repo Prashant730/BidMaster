@@ -508,8 +508,8 @@ function UserProfile(props) {
                   </div>
                 </div>
 
-                {/* Seller Status Card */}
-                {(user.role === 'seller' || user.sellerStatus) ? (
+                {/* Seller Status Card - Hide for admins */}
+                {(user.isAdmin ? null : (user.role === 'seller' || user.sellerStatus) ? (
                   <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 transition-colors duration-200">
                     <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Seller Status</h2>
                     <div className="space-y-4">
@@ -600,7 +600,7 @@ function UserProfile(props) {
                       </div>
                     </div>
                   </div>
-                )}
+                ))}
 
                 {recentActivity.length > 0 && (
                   <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 transition-colors duration-200">

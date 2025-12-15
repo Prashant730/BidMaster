@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
 import AuctionGrid from './components/AuctionGrid.jsx'
@@ -15,6 +15,7 @@ import Admin from './components/Admin.jsx'
 import AdminGuide from './components/AdminGuide.jsx'
 import AuctioneerDashboard from './components/AuctioneerDashboard.jsx'
 import SellerApproval from './components/SellerApproval.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { AuctionProvider } from './context/AuctionContext.jsx'
 import { AuthProvider, useAuth } from './context/AuthContext.jsx'
 import { ThemeProvider } from './context/ThemeContext.jsx'
@@ -41,16 +42,17 @@ const mockAuctions = [
   },
   {
     id: 2,
-    title: 'Abstract Painting - Modern Art',
-    description: 'Stunning abstract painting by contemporary artist, perfect for modern interiors.',
-    currentPrice: 3200,
-    startingPrice: 2500,
-    image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800',
-    endTime: new Date(Date.now() + 12 * 60 * 60 * 1000), // 12 hours from now
+    title: 'Renaissance Oil Portrait – 19th Century',
+    description: 'Exquisite oil portrait from the late 1800s. Gilt wood frame, museum quality restoration.',
+    currentPrice: 4500,
+    startingPrice: 3500,
+    image: 'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=800',
+    endTime: new Date(Date.now() + 12 * 60 * 60 * 1000),
     bids: [
-      { bidder: 'Art Lover', amount: 3200, time: new Date(Date.now() - 1800000) }
+      { bidder: 'Art Historian', amount: 4500, time: new Date(Date.now() - 1800000) },
+      { bidder: 'Museum Curator', amount: 4200, time: new Date(Date.now() - 3600000) }
     ],
-    seller: 'Gallery Modern',
+    seller: 'Classical Art Gallery',
     category: 'Art'
   },
   {
@@ -134,7 +136,7 @@ const mockAuctions = [
     currentPrice: 2800,
     startingPrice: 2200,
     image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800',
-    endTime: new Date(Date.now() + 20 * 60 * 60 * 1000), // 20 hours from now
+    endTime: new Date(Date.now() + 20 * 60 * 60 * 1000),
     bids: [
       { bidder: 'Elegance Seeker', amount: 2800, time: new Date(Date.now() - 1800000) },
       { bidder: 'Classic Style', amount: 2600, time: new Date(Date.now() - 3600000) }
@@ -144,69 +146,88 @@ const mockAuctions = [
   },
   {
     id: 9,
-    title: 'iPhone 15 Pro Max 1TB',
-    description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
-    currentPrice: 1400,
-    startingPrice: 1200,
-    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
-    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000), // 15 hours from now
+    title: 'Mid-Century Modern Walnut Dining Table',
+    description: 'Authentic 1960s Danish walnut dining table. Seats 8, extendable leaves included. Excellent condition.',
+    currentPrice: 2800,
+    startingPrice: 2000,
+    image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800',
+    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000),
     bids: [
-      { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
-      { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
-      { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+      { bidder: 'Vintage Collector', amount: 2800, time: new Date(Date.now() - 1500000) },
+      { bidder: 'Interior Designer', amount: 2500, time: new Date(Date.now() - 3000000) }
     ],
-    seller: 'Mobile Tech Store',
+    seller: 'Retro Furnishings Co',
     category: 'Furniture'
   },
   {
     id: 10,
-    title: 'iPhone 15 Pro Max 1TB',
-    description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+    title: 'Limited Edition iPhone 15 Pro Max – Collector Box',
+    description: 'Limited edition iPhone 15 Pro Max 1TB in sealed collector packaging. Rare production batch.',
     currentPrice: 1400,
     startingPrice: 1200,
     image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
-    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000), // 15 hours from now
+    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000),
     bids: [
-      { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
-      { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
-      { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+      { bidder: 'Tech Collector', amount: 1400, time: new Date(Date.now() - 1500000) },
+      { bidder: 'Gadget Archivist', amount: 1350, time: new Date(Date.now() - 3000000) }
     ],
-    seller: 'Mobile Tech Store',
+    seller: 'RareTech Vault',
     category: 'Collectibles'
   },
   {
     id: 11,
-    title: 'iPhone 15 Pro Max 1TB',
-    description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+    title: 'Abstract Acrylic Painting – Modern Expression',
+    description: 'Original hand-painted abstract artwork on canvas. Signed by the artist, one of a kind.',
     currentPrice: 1400,
     startingPrice: 1200,
-    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
-    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000), // 15 hours from now
+    image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800',
+    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000),
     bids: [
-      { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
-      { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
-      { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+      { bidder: 'Art Investor', amount: 1400, time: new Date(Date.now() - 1500000) },
+      { bidder: 'Gallery Buyer', amount: 1350, time: new Date(Date.now() - 3000000) }
     ],
-    seller: 'Mobile Tech Store',
+    seller: 'Urban Canvas Studio',
     category: 'Art'
   },
   {
     id: 12,
-    title: 'iPhone 15 Pro Max 1TB',
-    description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
-    currentPrice: 1400,
-    startingPrice: 1200,
-    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
-    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000), // 15 hours from now
+    title: 'Omega Speedmaster Professional Moonwatch',
+    description: 'Iconic Omega Speedmaster Professional with manual-wind movement. The watch worn on the moon. Complete set with box and papers.',
+    currentPrice: 5800,
+    startingPrice: 4500,
+    image: 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=800',
+    endTime: new Date(Date.now() + 15 * 60 * 60 * 1000),
     bids: [
-      { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
-      { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
-      { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+      { bidder: 'Space Enthusiast', amount: 5800, time: new Date(Date.now() - 1500000) },
+      { bidder: 'Vintage Watch Lover', amount: 5500, time: new Date(Date.now() - 3000000) }
     ],
-    seller: 'Mobile Tech Store',
+    seller: 'Chronograph Masters',
     category: 'Watches'
   }
 ]
+
+// Component to redirect to home on page reload
+function RedirectToHome() {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(function() {
+    // Check if this is a fresh page load (not navigation within app)
+    const isPageReload = !sessionStorage.getItem('app_loaded')
+
+    if (isPageReload && location.pathname !== '/') {
+      // Use window.location for hard redirect to avoid React Router issues
+      sessionStorage.setItem('app_loaded', 'true')
+      window.location.href = '/'
+      return
+    }
+
+    // Mark that app has loaded
+    sessionStorage.setItem('app_loaded', 'true')
+  }, [location.pathname, navigate])
+
+  return null
+}
 
 function AppContent() {
   // Get data and functions from AppContext
@@ -220,7 +241,7 @@ function AppContent() {
   const createAuction = appContext.createAuction
 
   // Get user from AuthContext (this is the actual logged-in user from backend)
-  const { user: authUser, isAuthenticated, logout } = useAuth()
+  const { user: authUser, isAuthenticated, logout, loading } = useAuth()
 
   // State for showing login modal
   const [showLogin, setShowLogin] = useState(false)
@@ -381,6 +402,7 @@ function AppContent() {
 
   return (
     <Router>
+      <RedirectToHome />
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200">
         {/* Header component - shows navigation and user menu */}
         <Header user={user} onLoginClick={handleShowLogin} onLogout={handleLogout} />
@@ -513,16 +535,17 @@ function App() {
     },
     {
       id: 2,
-      title: 'Abstract Painting - Modern Art',
-      description: 'Stunning abstract painting by contemporary artist, perfect for modern interiors.',
-      currentPrice: 3200,
-      startingPrice: 2500,
-      image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800',
-      endTime: new Date(Date.now() + 12 * 60 * 60 * 1000).getTime(), // 12 hours from now
+      title: 'Renaissance Oil Portrait – 19th Century',
+      description: 'Exquisite oil portrait from the late 1800s. Gilt wood frame, museum quality restoration.',
+      currentPrice: 4500,
+      startingPrice: 3500,
+      image: 'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=800',
+      endTime: new Date(Date.now() + 12 * 60 * 60 * 1000).getTime(),
       bids: [
-        { bidder: 'Art Lover', amount: 3200, time: new Date(Date.now() - 1800000) }
+        { bidder: 'Art Historian', amount: 4500, time: new Date(Date.now() - 1800000) },
+        { bidder: 'Museum Curator', amount: 4200, time: new Date(Date.now() - 3600000) }
       ],
-      seller: 'Gallery Modern',
+      seller: 'Classical Art Gallery',
       category: 'Art'
     },
     {
@@ -616,84 +639,82 @@ function App() {
     },
     {
       id: 9,
-      title: 'iPhone 15 Pro Max 1TB',
-      description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
-      currentPrice: 1400,
-      startingPrice: 1200,
-      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
-      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(), // 15 hours from now
+      title: 'Mid-Century Modern Walnut Dining Table',
+      description: 'Authentic 1960s Danish walnut dining table. Seats 8, extendable leaves included. Excellent condition.',
+      currentPrice: 2800,
+      startingPrice: 2000,
+      image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800',
+      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(),
       bids: [
-        { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
-        { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
-        { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+        { bidder: 'Vintage Collector', amount: 2800, time: new Date(Date.now() - 1500000) },
+        { bidder: 'Interior Designer', amount: 2500, time: new Date(Date.now() - 3000000) }
       ],
-      seller: 'Mobile Tech Store',
+      seller: 'Retro Furnishings Co',
       category: 'Furniture'
     },
     {
       id: 10,
-      title: 'iPhone 15 Pro Max 1TB',
-      description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+      title: 'Limited Edition iPhone 15 Pro Max – Collector Box',
+      description: 'Limited edition iPhone 15 Pro Max 1TB in sealed collector packaging. Rare production batch.',
       currentPrice: 1400,
       startingPrice: 1200,
       image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
-      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(), // 15 hours from now
+      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(),
       bids: [
-        { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
-        { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
-        { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+        { bidder: 'Tech Collector', amount: 1400, time: new Date(Date.now() - 1500000) },
+        { bidder: 'Gadget Archivist', amount: 1350, time: new Date(Date.now() - 3000000) }
       ],
-      seller: 'Mobile Tech Store',
+      seller: 'RareTech Vault',
       category: 'Collectibles'
     },
     {
       id: 11,
-      title: 'iPhone 15 Pro Max 1TB',
-      description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
+      title: 'Abstract Acrylic Painting – Modern Expression',
+      description: 'Original hand-painted abstract artwork on canvas. Signed by the artist, one of a kind.',
       currentPrice: 1400,
       startingPrice: 1200,
-      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
-      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(), // 15 hours from now
+      image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800',
+      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(),
       bids: [
-        { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
-        { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
-        { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+        { bidder: 'Art Investor', amount: 1400, time: new Date(Date.now() - 1500000) },
+        { bidder: 'Gallery Buyer', amount: 1350, time: new Date(Date.now() - 3000000) }
       ],
-      seller: 'Mobile Tech Store',
+      seller: 'Urban Canvas Studio',
       category: 'Art'
     },
     {
       id: 12,
-      title: 'iPhone 15 Pro Max 1TB',
-      description: 'Brand new iPhone 15 Pro Max with 1TB storage, Titanium finish. Unlocked, sealed in original box with all accessories.',
-      currentPrice: 1400,
-      startingPrice: 1200,
-      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
-      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(), // 15 hours from now
+      title: 'Omega Speedmaster Professional Moonwatch',
+      description: 'Iconic Omega Speedmaster Professional with manual-wind movement. The watch worn on the moon. Complete set with box and papers.',
+      currentPrice: 5800,
+      startingPrice: 4500,
+      image: 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=800',
+      endTime: new Date(Date.now() + 15 * 60 * 60 * 1000).getTime(),
       bids: [
-        { bidder: 'Tech Buyer', amount: 1400, time: new Date(Date.now() - 1500000) },
-        { bidder: 'Mobile Enthusiast', amount: 1350, time: new Date(Date.now() - 3000000) },
-        { bidder: 'Smartphone Collector', amount: 1300, time: new Date(Date.now() - 4500000) }
+        { bidder: 'Space Enthusiast', amount: 5800, time: new Date(Date.now() - 1500000) },
+        { bidder: 'Vintage Watch Lover', amount: 5500, time: new Date(Date.now() - 3000000) }
       ],
-      seller: 'Mobile Tech Store',
+      seller: 'Chronograph Masters',
       category: 'Watches'
     }
   ]
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <AuctionProvider>
-          <AppProvider
-            initialAuctions={mockAuctions}
-            initialUsers={[]}
-            initialCommissionRate={0.05}
-          >
-            <AppContent />
-          </AppProvider>
-        </AuctionProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <AuctionProvider>
+            <AppProvider
+              initialAuctions={mockAuctions}
+              initialUsers={[]}
+              initialCommissionRate={0.05}
+            >
+              <AppContent />
+            </AppProvider>
+          </AuctionProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   )
 }
 
