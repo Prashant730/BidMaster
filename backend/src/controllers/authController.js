@@ -137,6 +137,15 @@ async function login(req, res, next) {
     // Return user data without password
     const userData = user.toPublicJSON()
 
+    // Log login activity
+    await logAndEmitActivity({
+      type: 'user_login',
+      message: `User logged in: ${user.username}`,
+      userId: user._id,
+      userName: user.username || user.name,
+      metadata: { email: user.email, role: user.role },
+    })
+
     res.json({
       success: true,
       token,

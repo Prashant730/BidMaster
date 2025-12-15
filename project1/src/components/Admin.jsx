@@ -730,12 +730,22 @@ function Admin(props) {
                       var typeConfig = {
                         bid: { icon: '💰', bg: isDark ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-700', label: 'Bid' },
                         auction_created: { icon: '🎯', bg: isDark ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700', label: 'New Auction' },
+                        auction_updated: { icon: '✏️', bg: isDark ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700', label: 'Updated' },
                         auction_ended: { icon: '🏁', bg: isDark ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-700', label: 'Ended' },
+                        auction_deleted: { icon: '🗑️', bg: isDark ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-700', label: 'Deleted' },
                         user_registered: { icon: '👤', bg: isDark ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-700', label: 'New User' },
+                        user_login: { icon: '🔑', bg: isDark ? 'bg-cyan-900 text-cyan-200' : 'bg-cyan-100 text-cyan-700', label: 'Login' },
+                        user_updated: { icon: '✏️', bg: isDark ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700', label: 'Updated' },
+                        seller_request: { icon: '📝', bg: isDark ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-700', label: 'Seller Request' },
                         seller_approved: { icon: '✅', bg: isDark ? 'bg-emerald-900 text-emerald-200' : 'bg-emerald-100 text-emerald-700', label: 'Approved' },
                         seller_rejected: { icon: '❌', bg: isDark ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-700', label: 'Rejected' },
+                        user_suspended: { icon: '⏸️', bg: isDark ? 'bg-orange-900 text-orange-200' : 'bg-orange-100 text-orange-700', label: 'Suspended' },
                         user_banned: { icon: '🚫', bg: isDark ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-700', label: 'Banned' },
+                        user_reactivated: { icon: '▶️', bg: isDark ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-700', label: 'Reactivated' },
+                        user_deleted: { icon: '🗑️', bg: isDark ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-700', label: 'Deleted' },
                         payment: { icon: '💳', bg: isDark ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-700', label: 'Payment' },
+                        commission_updated: { icon: '💹', bg: isDark ? 'bg-indigo-900 text-indigo-200' : 'bg-indigo-100 text-indigo-700', label: 'Commission' },
+                        admin_action: { icon: '⚙️', bg: isDark ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-700', label: 'Admin' },
                       }
                       var config = typeConfig[activity.type] || { icon: '📌', bg: isDark ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-700', label: activity.type }
 

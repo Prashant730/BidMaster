@@ -1,5 +1,6 @@
 const User = require('../models/User')
 const { getIO } = require('../config/socket')
+const { logAndEmitActivity } = require('./activityController')
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -73,6 +74,44 @@ async function updateUser(req, res, next) {
       // Socket not initialized, continue without emitting
     }
 
+    // Log user update activity based on what changed
+    if (status === 'banned') {
+      await logAndEmitActivity({
+        type: 'user_banned',
+        message: `User banned: ${user.username || user.name}`,
+        userId: user._id,
+        userName: user.username || user.name,
+        metadata: { bannedBy: req.user._id },
+      })
+    } else if (status === 'suspended') {
+      await logAndEmitActivity({
+        type: 'user_suspended',
+        message: `User suspended: ${user.username || user.name}`,
+        userId: user._id,
+        userName: user.username || user.name,
+        metadata: { suspendedBy: req.user._id },
+      })
+    } else if (status === 'active') {
+      await logAndEmitActivity({
+        type: 'user_reactivated',
+        message: `User reactivated: ${user.username || user.name}`,
+        userId: user._id,
+        userName: user.username || user.name,
+        metadata: { reactivatedBy: req.user._id },
+      })
+    } else {
+      await logAndEmitActivity({
+        type: 'user_updated',
+        message: `User updated: ${user.username || user.name}`,
+        userId: user._id,
+        userName: user.username || user.name,
+        metadata: {
+          updatedBy: req.user._id,
+          changes: { status, role, isValidated, sellerStatus },
+        },
+      })
+    }
+
     res.json({
       success: true,
       data: user.toPublicJSON(),
@@ -94,6 +133,15 @@ async function deleteUser(req, res, next) {
         message: 'User not found',
       })
     }
+
+    // Log user deletion activity before deleting
+    await logAndEmitActivity({
+      type: 'user_deleted',
+      message: `User deleted: ${user.username || user.name}`,
+      userId: user._id,
+      userName: user.username || user.name,
+      metadata: { deletedBy: req.user._id, email: user.email },
+    })
 
     await User.findByIdAndDelete(req.params.id)
 
@@ -157,6 +205,15 @@ async function submitSellerRequest(req, res, next) {
     user.requestedAt = new Date()
 
     await user.save()
+
+    // Log seller request activity
+    await logAndEmitActivity({
+      type: 'seller_request',
+      message: `Seller request submitted by ${user.username || user.name}`,
+      userId: user._id,
+      userName: user.username || user.name,
+      metadata: { businessName, businessType },
+    })
 
     res.json({
       success: true,
@@ -228,6 +285,15 @@ async function approveSeller(req, res, next) {
       // Socket not initialized
     }
 
+    // Log seller approval activity
+    await logAndEmitActivity({
+      type: 'seller_approved',
+      message: `Seller approved: ${user.username || user.name}`,
+      userId: user._id,
+      userName: user.username || user.name,
+      metadata: { approvedBy: req.user._id },
+    })
+
     res.json({
       success: true,
       message: 'Seller approved successfully',
@@ -278,6 +344,15 @@ async function rejectSeller(req, res, next) {
     } catch (socketError) {
       // Socket not initialized
     }
+
+    // Log seller rejection activity
+    await logAndEmitActivity({
+      type: 'seller_rejected',
+      message: `Seller request rejected: ${user.username || user.name}`,
+      userId: user._id,
+      userName: user.username || user.name,
+      metadata: { rejectedBy: req.user._id },
+    })
 
     res.json({
       success: true,
