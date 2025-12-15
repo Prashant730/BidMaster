@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
 import { adminAPI, activityAPI } from '../services/api.js'
-import { io } from 'socket.io-client'
+import { getSocket } from '../services/socket.js'
 
 function Admin(props) {
   const currentUser = props.currentUser
@@ -94,19 +94,12 @@ function Admin(props) {
   useEffect(function() {
     fetchActivities()
 
-    // Get socket URL from environment or default to localhost
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+    // Use shared socket connection
+    const socket = getSocket()
 
-    // Connect to Socket.IO server
-    const socket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
-    })
-
-    socket.on('connect', function() {
-      console.log('Admin connected to activity feed')
-      // Join admin room for activity updates
-      socket.emit('joinAdminRoom')
-    })
+    // Join admin room for activity updates
+    socket.emit('joinAdminRoom')
+    console.log('Admin joined admin room for activity feed')
 
     // Listen for new activities from admin room
     socket.on('newActivity', function(activity) {
@@ -188,9 +181,14 @@ function Admin(props) {
       console.log('Admin disconnected from activity feed')
     })
 
-    // Cleanup on unmount
+    // Cleanup on unmount - leave admin room but don't disconnect shared socket
     return function() {
-      socket.disconnect()
+      socket.emit('leaveAdminRoom')
+      socket.off('newActivity')
+      socket.off('bidPlaced')
+      socket.off('auctionCreated')
+      socket.off('auctionEnded')
+      socket.off('userRegistered')
     }
   }, [])
 
