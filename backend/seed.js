@@ -71,6 +71,30 @@ async function seedDatabase() {
       name: 'Bob Collector',
     })
 
+    const bidder3 = await User.create({
+      username: 'bidder3',
+      email: 'bidder3@auction.com',
+      password: 'bidder123',
+      role: 'bidder',
+      name: 'Charlie Buyer',
+    })
+
+    const bidder4 = await User.create({
+      username: 'bidder4',
+      email: 'bidder4@auction.com',
+      password: 'bidder123',
+      role: 'bidder',
+      name: 'Diana Collector',
+    })
+
+    const bidder5 = await User.create({
+      username: 'bidder5',
+      email: 'bidder5@auction.com',
+      password: 'bidder123',
+      role: 'bidder',
+      name: 'Edward Enthusiast',
+    })
+
     // Create pending seller
     console.log('Creating pending seller...')
     await User.create({
@@ -290,17 +314,66 @@ async function seedDatabase() {
     await Activity.create([
       {
         type: 'user_registered',
-        message: 'New user registered: seller1',
+        message: 'New user registered: John Seller',
         userId: seller1._id,
         userName: seller1.name,
-        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+        createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
       },
       {
         type: 'seller_approved',
         message: 'Seller approved: John Seller',
         userId: seller1._id,
         userName: seller1.name,
+        createdAt: new Date(Date.now() - 4.5 * 60 * 60 * 1000),
+      },
+      {
+        type: 'user_registered',
+        message: 'New user registered: Jane Art Dealer',
+        userId: seller2._id,
+        userName: seller2.name,
+        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
+      },
+      {
+        type: 'seller_approved',
+        message: 'Seller approved: Jane Art Dealer',
+        userId: seller2._id,
+        userName: seller2.name,
+        createdAt: new Date(Date.now() - 3.5 * 60 * 60 * 1000),
+      },
+      {
+        type: 'user_registered',
+        message: 'New user registered: Alice Bidder',
+        userId: bidder1._id,
+        userName: bidder1.name,
+        createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+      },
+      {
+        type: 'user_registered',
+        message: 'New user registered: Bob Collector',
+        userId: bidder2._id,
+        userName: bidder2.name,
+        createdAt: new Date(Date.now() - 2.5 * 60 * 60 * 1000),
+      },
+      {
+        type: 'user_registered',
+        message: 'New user registered: Charlie Buyer',
+        userId: bidder3._id,
+        userName: bidder3.name,
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      },
+      {
+        type: 'user_registered',
+        message: 'New user registered: Diana Collector',
+        userId: bidder4._id,
+        userName: bidder4.name,
         createdAt: new Date(Date.now() - 1.5 * 60 * 60 * 1000),
+      },
+      {
+        type: 'user_registered',
+        message: 'New user registered: Edward Enthusiast',
+        userId: bidder5._id,
+        userName: bidder5.name,
+        createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
       },
       {
         type: 'auction_created',
@@ -309,7 +382,7 @@ async function seedDatabase() {
         userName: seller1.name,
         auctionId: auction1._id,
         auctionTitle: auction1.title,
-        createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        createdAt: new Date(Date.now() - 55 * 60 * 1000),
       },
       {
         type: 'bid',
@@ -332,11 +405,11 @@ async function seedDatabase() {
         createdAt: new Date(Date.now() - 30 * 60 * 1000),
       },
       {
-        type: 'user_registered',
-        message: 'New user registered: bidder2',
-        userId: bidder2._id,
-        userName: bidder2.name,
-        createdAt: new Date(Date.now() - 20 * 60 * 1000),
+        type: 'seller_request',
+        message: 'Seller request submitted by Charlie Pending',
+        userId: null,
+        userName: 'Charlie Pending',
+        createdAt: new Date(Date.now() - 15 * 60 * 1000),
       },
     ])
 
@@ -352,10 +425,12 @@ async function seedDatabase() {
     console.log('  Email: seller2@auction.com')
     console.log('  Password: seller123')
     console.log('\nBidders:')
-    console.log('  Email: bidder1@auction.com')
-    console.log('  Password: bidder123')
-    console.log('  Email: bidder2@auction.com')
-    console.log('  Password: bidder123')
+    console.log('  Email: bidder1@auction.com (Alice Bidder)')
+    console.log('  Email: bidder2@auction.com (Bob Collector)')
+    console.log('  Email: bidder3@auction.com (Charlie Buyer)')
+    console.log('  Email: bidder4@auction.com (Diana Collector)')
+    console.log('  Email: bidder5@auction.com (Edward Enthusiast)')
+    console.log('  Password for all: bidder123')
     console.log('\nPending Seller (needs approval):')
     console.log('  Email: pending@auction.com')
     console.log('  Password: pending123')
