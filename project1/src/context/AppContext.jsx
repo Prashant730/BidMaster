@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { getSocket } from '../services/socket.js'
+import { auctionsAPI } from '../services/api.js'
 
 const AppContext = createContext()
 
@@ -19,49 +20,113 @@ export function AppProvider(props) {
   const [auctions, setAuctions] = useState(initialAuctions)
   const [users, setUsers] = useState(initialUsers)
   const [commissionRate, setCommissionRate] = useState(initialCommissionRate)
+  const [loading, setLoading] = useState(true)
 
-  // Set up real-time updates when component loads
+  // Load auctions from database on mount
+  async function loadAuctionsFromDB() {
+    try {
+      setLoading(true)
+      const response = await auctionsAPI.getAll({ status: 'active' })
+      // Backend returns { success: true, count: X, data: auctions }
+      const auctionsData = response.data.data || response.data
+      if (auctionsData && auctionsData.length > 0) {
+        // Transform API data to match local format
+        const dbAuctions = auctionsData.map(function(auction) {
+          return {
+            id: auction._id,
+            _id: auction._id,
+            title: auction.title,
+            description: auction.description,
+            category: auction.category,
+            startingPrice: auction.startingPrice,
+            currentPrice: auction.currentPrice,
+            image: auction.images && auction.images.length > 0 ? auction.images[0] : auction.image || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800',
+            endTime: new Date(auction.endTime).getTime(),
+            bids: (auction.bids || []).map(function(bid) {
+              return {
+                bidder: bid.bidderName,
+                bidderId: bid.bidderId,
+                amount: bid.amount,
+                time: new Date(bid.timestamp)
+              }
+            }),
+            seller: auction.seller ? (auction.seller.username || auction.seller.name || auction.sellerName) : (auction.sellerName || 'Unknown'),
+            sellerId: auction.seller ? auction.seller._id : null,
+            status: auction.status
+          }
+        })
+        setAuctions(dbAuctions)
+      }
+    } catch (error) {
+      console.error('Error loading auctions from database:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Set up when component loads - load from DB and set up socket listeners
   useEffect(function() {
-    // Step 1: Get socket connection for real-time updates
+    // Load auctions from database first
+    loadAuctionsFromDB()
+
+    // Get socket connection for real-time updates
     const socket = getSocket()
 
-    // Step 2: Listen for when a user places a bid
-    socket.on('bidPlaced', function(data) {
+    // Listen for bid updates from backend (emitted when bid is placed via API)
+    socket.on('bidUpdate', function(data) {
       console.log('Real-time bid update received:', data)
 
-      // Step 3: Update auctions list with new bid
       setAuctions(function(prev) {
-        // Step 4: Go through each auction and find the one that was bid on
         const updatedAuctions = []
         for (let i = 0; i < prev.length; i++) {
           const auction = prev[i]
 
-          // Step 5: If this is the auction that was bid on, update it
-          if (auction.id === data.auctionId) {
-            // Step 6: Create new bid object
+          // Match by _id (MongoDB ID) or id
+          const auctionId = auction._id || auction.id
+          if (auctionId === data.auctionId || auction.id === data.auctionId) {
+            const newBid = {
+              bidder: data.bidderName,
+              bidderId: data.bidderId,
+              amount: data.newPrice,
+              time: new Date(data.timestamp || Date.now())
+            }
+
+            const updatedAuction = Object.assign({}, auction, {
+              currentPrice: data.newPrice,
+              bids: auction.bids.concat([newBid])
+            })
+            updatedAuctions.push(updatedAuction)
+          } else {
+            updatedAuctions.push(auction)
+          }
+        }
+        return updatedAuctions
+      })
+    })
+
+    // Also listen for bidPlaced (legacy event)
+    socket.on('bidPlaced', function(data) {
+      console.log('Real-time bidPlaced received:', data)
+
+      setAuctions(function(prev) {
+        const updatedAuctions = []
+        for (let i = 0; i < prev.length; i++) {
+          const auction = prev[i]
+          const auctionId = auction._id || auction.id
+
+          if (auctionId === data.auctionId || auction.id === data.auctionId) {
             const newBid = {
               bidder: data.bidderName,
               amount: data.amount,
               time: new Date(data.timestamp || Date.now())
             }
 
-            // Step 7: Create updated auction with new bid
-            const updatedAuction = {
-              id: auction.id,
-              title: auction.title,
-              description: auction.description,
-              category: auction.category,
-              startingPrice: auction.startingPrice,
+            const updatedAuction = Object.assign({}, auction, {
               currentPrice: data.amount,
-              image: auction.image,
-              endTime: auction.endTime,
-              bids: auction.bids.concat([newBid]),
-              seller: auction.seller,
-              status: auction.status
-            }
+              bids: auction.bids.concat([newBid])
+            })
             updatedAuctions.push(updatedAuction)
           } else {
-            // Step 8: Keep other auctions unchanged
             updatedAuctions.push(auction)
           }
         }
@@ -215,6 +280,7 @@ export function AppProvider(props) {
     })
 
     return function() {
+      socket.off('bidUpdate')
       socket.off('bidPlaced')
       socket.off('auctionUpdated')
       socket.off('auctionRemoved')
@@ -313,13 +379,14 @@ export function AppProvider(props) {
     socket.emit('commissionRateUpdate', { commissionRate: newRate })
   }
 
-  // Function to place a bid on an auction
-  function placeBid(auctionId, bidData) {
-    // Step 1: Find the auction by ID
+  // Function to place a bid on an auction - calls API to persist to database
+  async function placeBid(auctionId, bidData) {
+    // Step 1: Find the auction by ID (check both id and _id)
     let auction = null
     for (let i = 0; i < auctions.length; i++) {
-      if (auctions[i].id === auctionId) {
-        auction = auctions[i]
+      const a = auctions[i]
+      if (a.id === auctionId || a._id === auctionId) {
+        auction = a
         break
       }
     }
@@ -337,71 +404,71 @@ export function AppProvider(props) {
     const now = Date.now()
 
     // Step 4: Check if auction has ended
-    if (endTime <= now) {
+    if (endTime <= now || auction.status === 'ended') {
       return { success: false, message: 'This auction has ended' }
     }
 
-    // Step 5: Get bidder name and amount from bid data
-    const bidderName = bidData.bidderName
+    // Step 5: Get amount from bid data
     const amount = bidData.amount
 
-    // Step 6: Create new bid object
-    const newBid = {
-      bidder: bidderName,
-      amount: amount,
-      time: new Date()
-    }
+    try {
+      // Step 6: Call API to place bid - this saves to MongoDB and emits socket event
+      const mongoId = auction._id || auction.id
+      const response = await auctionsAPI.placeBid(mongoId, amount)
 
-    // Step 7: Update the auction with new bid
-    setAuctions(function(prev) {
-      const updatedAuctions = []
-      for (let i = 0; i < prev.length; i++) {
-        const currentAuction = prev[i]
-        if (currentAuction.id === auctionId) {
-          // Step 8: Create updated auction with new bid
-          const updatedAuction = {
-            id: currentAuction.id,
-            title: currentAuction.title,
-            description: currentAuction.description,
-            category: currentAuction.category,
-            startingPrice: currentAuction.startingPrice,
-            currentPrice: amount,
-            image: currentAuction.image,
-            endTime: currentAuction.endTime,
-            bids: currentAuction.bids.concat([newBid]),
-            seller: currentAuction.seller,
-            status: currentAuction.status
+      if (response.data && response.data.success !== false) {
+        const updatedAuction = response.data.data || response.data
+
+        // Step 7: Update local state with response from server
+        setAuctions(function(prev) {
+          const updatedAuctions = []
+          for (let i = 0; i < prev.length; i++) {
+            const currentAuction = prev[i]
+            const currentId = currentAuction._id || currentAuction.id
+            if (currentId === mongoId || currentAuction.id === auctionId) {
+              // Transform the updated auction from API
+              const transformed = {
+                id: updatedAuction._id || currentAuction.id,
+                _id: updatedAuction._id || currentAuction._id,
+                title: updatedAuction.title || currentAuction.title,
+                description: updatedAuction.description || currentAuction.description,
+                category: updatedAuction.category || currentAuction.category,
+                startingPrice: updatedAuction.startingPrice || currentAuction.startingPrice,
+                currentPrice: updatedAuction.currentPrice,
+                image: currentAuction.image,
+                endTime: currentAuction.endTime,
+                bids: (updatedAuction.bids || []).map(function(bid) {
+                  return {
+                    bidder: bid.bidderName,
+                    bidderId: bid.bidderId,
+                    amount: bid.amount,
+                    time: new Date(bid.timestamp)
+                  }
+                }),
+                seller: currentAuction.seller,
+                sellerId: currentAuction.sellerId,
+                status: updatedAuction.status || currentAuction.status
+              }
+              updatedAuctions.push(transformed)
+            } else {
+              updatedAuctions.push(currentAuction)
+            }
           }
-          updatedAuctions.push(updatedAuction)
-        } else {
-          // Step 9: Keep other auctions unchanged
-          updatedAuctions.push(currentAuction)
-        }
+          return updatedAuctions
+        })
+
+        return { success: true }
+      } else {
+        return { success: false, message: response.data.message || 'Failed to place bid' }
       }
-      return updatedAuctions
-    })
-
-    // Step 10: Emit socket event for real-time sync
-    const socket = getSocket()
-    const timestamp = Date.now()
-    socket.emit('bidPlace', {
-      auctionId: auctionId,
-      auctionTitle: auction.title,
-      bidderName: bidderName,
-      amount: amount,
-      timestamp: timestamp
-    })
-    // Step 11: Also broadcast to all clients (server should handle this, but we emit for consistency)
-    socket.emit('broadcastBidPlace', {
-      auctionId: auctionId,
-      auctionTitle: auction.title,
-      bidderName: bidderName,
-      amount: amount,
-      timestamp: timestamp
-    })
-
-    // Step 12: Return success
-    return { success: true }
+    } catch (error) {
+      console.error('Error placing bid:', error)
+      let errorMessage = 'Failed to place bid'
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message
+      }
+      return { success: false, message: errorMessage }
+    }
   }
 
   // Function to add a new user or update existing user
@@ -610,7 +677,9 @@ export function AppProvider(props) {
     placeBid,
     addUser,
     deleteUser,
-    createAuction
+    createAuction,
+    loadAuctionsFromDB,
+    loading
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

@@ -11,8 +11,11 @@ function AuctionDetail(props) {
   const { placeBid: placeBidContext } = useApp()
   const { id } = useParams()
   const navigate = useNavigate()
+  const [bidLoading, setBidLoading] = useState(false)
+
+  // Find auction by id (supports both numeric id and MongoDB _id)
   const auction = auctions.find(function(a) {
-    return a.id === parseInt(id)
+    return a.id === id || a._id === id || a.id === parseInt(id)
   })
   const [bidAmount, setBidAmount] = useState('')
   const [timeLeft, setTimeLeft] = useState(() => calculateTimeLeft())
@@ -67,7 +70,7 @@ function AuctionDetail(props) {
   }
 
   // Function to handle when user clicks "Place Bid" button
-  function handlePlaceBid(e) {
+  async function handlePlaceBid(e) {
     // Step 1: Prevent form from submitting normally
     e.preventDefault()
 
@@ -117,12 +120,17 @@ function AuctionDetail(props) {
       return
     }
 
-    // Step 9: Use context to place bid (will emit socket event for real-time sync)
+    // Step 9: Use context to place bid (calls API to save to database)
+    setBidLoading(true)
     const bidData = {
       bidderName: user.name,
       amount: bid
     }
-    const result = placeBidContext(auction.id, bidData)
+
+    // Use the correct auction ID (MongoDB _id or local id)
+    const auctionId = auction._id || auction.id
+    const result = await placeBidContext(auctionId, bidData)
+    setBidLoading(false)
 
     // Step 10: Check if bid was successful
     if (result && !result.success) {
@@ -142,7 +150,7 @@ function AuctionDetail(props) {
         time: new Date()
       }
       const updatedBids = auction.bids.concat([newBid])
-      onUpdateAuction(auction.id, {
+      onUpdateAuction(auctionId, {
         currentPrice: bid,
         bids: updatedBids
       })
@@ -150,7 +158,7 @@ function AuctionDetail(props) {
 
     // Update user's bid list
     if (onUserBid) {
-      onUserBid(auction.id)
+      onUserBid(auctionId)
     }
 
     // Show success message
@@ -258,10 +266,10 @@ function AuctionDetail(props) {
                       />
                       <button
                         type="submit"
-                        disabled={!user || (user && user.isAdmin)}
+                        disabled={!user || (user && user.isAdmin) || bidLoading}
                         className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-500 dark:from-yellow-500 dark:to-yellow-400 hover:from-purple-700 hover:to-blue-600 dark:hover:from-yellow-400 dark:hover:to-yellow-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white dark:text-black px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg dark:shadow-yellow-500/30"
                       >
-                        {user ? (user.isAdmin ? 'Admins cannot bid' : 'Place Bid') : 'Login to Bid'}
+                        {bidLoading ? 'Placing Bid...' : (user ? (user.isAdmin ? 'Admins cannot bid' : 'Place Bid') : 'Login to Bid')}
                       </button>
                     </div>
                   </div>

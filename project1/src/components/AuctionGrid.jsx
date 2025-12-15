@@ -61,7 +61,7 @@ function AuctionGrid(props) {
         {/* Auction Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 auto-rows-fr">
           {sortedAuctions.map(auction => (
-            <AuctionCard key={auction.id} auction={auction} currentUser={currentUser} onAdminRemove={onAdminRemove} />
+            <AuctionCard key={auction._id || auction.id} auction={auction} currentUser={currentUser} onAdminRemove={onAdminRemove} />
           ))}
         </div>
 
@@ -113,8 +113,10 @@ function AuctionCard(props) {
   const isAuctionEnded = auction.status === 'ended' || (endTime - Date.now() <= 0)
   const isEndingSoon = !isAuctionEnded && (endTime - Date.now() < 3600000) // Less than 1 hour
 
+  const auctionId = auction._id || auction.id
+
   return (
-    <Link to={`/auction/${auction.id}`} className="h-full flex">
+    <Link to={`/auction/${auctionId}`} className="h-full flex">
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-black/50 hover:shadow-2xl dark:hover:shadow-yellow-500/20 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group cursor-pointer flex flex-col h-full w-full dark:border dark:border-gray-800 dark:hover:border-yellow-600/50">
         <div className="relative overflow-hidden flex-shrink-0">
           <img
@@ -135,7 +137,7 @@ function AuctionCard(props) {
                 e.preventDefault()
                 e.stopPropagation()
                 if (onAdminRemove) {
-                  onAdminRemove(auction.id)
+                  onAdminRemove(auctionId)
                 }
               }}
               className="absolute top-4 left-4 bg-white/90 text-red-600 hover:bg-white px-2 py-1 rounded text-xs font-bold shadow"

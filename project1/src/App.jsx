@@ -239,6 +239,7 @@ function AppContent() {
   const removeAuction = appContext.removeAuction
   const addUser = appContext.addUser
   const createAuction = appContext.createAuction
+  const appLoading = appContext.loading
 
   // Get user from AuthContext (this is the actual logged-in user from backend)
   const { user: authUser, isAuthenticated, logout, loading } = useAuth()
@@ -705,7 +706,7 @@ function App() {
         <AuthProvider>
           <AuctionProvider>
             <AppProvider
-              initialAuctions={mockAuctions}
+              initialAuctions={[]}
               initialUsers={[]}
               initialCommissionRate={0.05}
             >

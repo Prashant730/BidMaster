@@ -152,6 +152,12 @@ function initializeSocket(server) {
       io.emit('commissionRateUpdated', data)
     })
 
+    // Handle bid update relay (for real-time sync across all clients)
+    socket.on('bidUpdate', (data) => {
+      console.log('Bid update relay:', data)
+      io.emit('bidUpdate', data)
+    })
+
     socket.on('disconnect', () => {
       console.log('Client disconnected:', socket.id)
     })
