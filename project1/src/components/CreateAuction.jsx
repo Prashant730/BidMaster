@@ -277,7 +277,7 @@ function CreateAuction(props) {
 
               {/* Starting Price */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Starting Price ($)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Starting Price (₹)</label>
                 <input type="number" value={formData.startingPrice} onChange={function(e) {
                   const newFormData = {
                     title: formData.title,

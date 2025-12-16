@@ -229,7 +229,7 @@ function AuctionDetail(props) {
 
               <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
                 <div className="text-center p-3 sm:p-4 bg-gray-50 dark:bg-yellow-500/10 dark:border dark:border-yellow-600/50 rounded-lg">
-                  <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-yellow-400">${auction.currentPrice.toLocaleString()}</div>
+                  <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-yellow-400">₹{auction.currentPrice.toLocaleString()}</div>
                   <div className="text-xs sm:text-sm text-gray-500 dark:text-yellow-500/70">Current Bid</div>
                 </div>
                 <div className="text-center p-3 sm:p-4 bg-gray-50 dark:bg-yellow-500/10 dark:border dark:border-yellow-600/50 rounded-lg">
@@ -259,7 +259,7 @@ function AuctionDetail(props) {
                         type="number"
                         value={bidAmount}
                         onChange={(e) => setBidAmount(e.target.value)}
-                        placeholder={`Minimum $${(auction.currentPrice + 100).toLocaleString()}`}
+                        placeholder={`Minimum ₹${(auction.currentPrice + 100).toLocaleString()}`}
                         className="flex-1 border border-gray-300 dark:border-yellow-600 dark:bg-black dark:text-yellow-400 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 placeholder-gray-500 dark:placeholder-yellow-600 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 focus:border-transparent"
                         min={auction.currentPrice + 100}
                         step="100"
@@ -279,7 +279,7 @@ function AuctionDetail(props) {
                   <p className="text-gray-600 dark:text-yellow-400 font-medium text-sm sm:text-base">This auction has ended</p>
                   {auction.bids.length > 0 && (
                     <p className="text-xs sm:text-sm text-gray-500 dark:text-yellow-500/70 mt-2">
-                      Winning bid: ${auction.currentPrice.toLocaleString()} by {auction.bids[auction.bids.length - 1].bidder}
+                      Winning bid: ₹{auction.currentPrice.toLocaleString()} by {auction.bids[auction.bids.length - 1].bidder}
                     </p>
                   )}
                 </div>
@@ -323,7 +323,7 @@ function AuctionDetail(props) {
                             <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{new Date(bid.time).toLocaleDateString()} at {new Date(bid.time).toLocaleTimeString()}</div>
                           </div>
                         </div>
-                        <div className="text-base sm:text-lg font-bold text-gray-800 dark:text-gray-100 flex-shrink-0 ml-2">${bid.amount.toLocaleString()}</div>
+                        <div className="text-base sm:text-lg font-bold text-gray-800 dark:text-gray-100 flex-shrink-0 ml-2">₹{bid.amount.toLocaleString()}</div>
                       </div>
                     )
                   })

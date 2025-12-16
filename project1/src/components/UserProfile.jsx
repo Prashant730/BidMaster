@@ -281,7 +281,7 @@ function UserProfile(props) {
                       <div className="text-green-100 text-sm">Active Auctions</div>
                     </div>
                     <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl p-6 text-center">
-                      <div className="text-3xl font-bold mb-2">${Math.round(adminStats && adminStats.totalRevenue ? adminStats.totalRevenue : 0).toLocaleString()}</div>
+                      <div className="text-3xl font-bold mb-2">₹{Math.round(adminStats && adminStats.totalRevenue ? adminStats.totalRevenue : 0).toLocaleString()}</div>
                       <div className="text-indigo-100 text-sm">Total Revenue</div>
                     </div>
                   </div>
@@ -515,7 +515,7 @@ function UserProfile(props) {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-2xl p-6 text-center">
-                    <div className="text-3xl font-bold mb-2">${totalBiddingAmount.toLocaleString()}</div>
+                    <div className="text-3xl font-bold mb-2">₹{totalBiddingAmount.toLocaleString()}</div>
                     <div className="text-purple-100">Total Bidding Amount</div>
                   </div>
                   <div className="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-2xl p-6 text-center">
@@ -631,7 +631,7 @@ function UserProfile(props) {
                           <div className="flex items-center space-x-3">
                             <img src={auction.image} alt={auction.title} className="w-10 h-10 rounded object-cover" />
                             <div>
-                              <div className="font-semibold text-gray-800 dark:text-gray-100">Bid ${bid.amount.toLocaleString()} on {auction.title}</div>
+                              <div className="font-semibold text-gray-800 dark:text-gray-100">Bid ₹{bid.amount.toLocaleString()} on {auction.title}</div>
                               <div className="text-xs text-gray-500 dark:text-gray-400">{new Date(bid.time).toLocaleString()}</div>
                             </div>
                           </div>
@@ -674,7 +674,7 @@ function UserProfile(props) {
                           <img src={auction.image} alt={auction.title} className="w-16 h-16 object-cover rounded-lg" />
                           <div className="flex-1">
                             <h3 className="font-semibold text-gray-800 dark:text-gray-100">{auction.title}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">Your Bid: ${userBid ? userBid.amount.toLocaleString() : 'N/A'} | Current: ${auction.currentPrice.toLocaleString()}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">Your Bid: ₹{userBid ? userBid.amount.toLocaleString() : 'N/A'} | Current: ₹{auction.currentPrice.toLocaleString()}</p>
                             {isHighestBidder ? (
                               <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full mt-1 inline-block">You're winning!</span>
                             ) : (
@@ -712,7 +712,7 @@ function UserProfile(props) {
                           <img src={auction.image} alt={auction.title} className="w-16 h-16 object-cover rounded-lg" />
                           <div className="flex-1">
                             <h3 className="font-semibold text-gray-800 dark:text-gray-100">{auction.title}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">Winning Bid: ${auction.currentPrice.toLocaleString()}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">Winning Bid: ₹{auction.currentPrice.toLocaleString()}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Ended: {endDate.toLocaleDateString()}</p>
                           </div>
                           <div className="text-right">

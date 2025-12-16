@@ -102,7 +102,7 @@ function Hero(props) {
             <div className="text-xs sm:text-sm md:text-base text-blue-100 dark:text-gray-400">Live Auctions</div>
           </div>
           <div className="text-center py-2 sm:py-0 dark:bg-gray-900/50 dark:rounded-xl dark:p-4 dark:border dark:border-gray-800">
-            <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 dark:text-yellow-400">$2M+</div>
+            <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 dark:text-yellow-400">₹2Cr+</div>
             <div className="text-xs sm:text-sm md:text-base text-blue-100 dark:text-yellow-300">Total Sales</div>
           </div>
         </div>

@@ -164,7 +164,7 @@ function AuctionCard(props) {
           <div className="space-y-2 sm:space-y-3 flex-grow">
             <div className="flex justify-between items-center">
               <span className="text-gray-500 dark:text-gray-500 text-xs sm:text-sm">Current Bid</span>
-              <span className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-yellow-400">${auction.currentPrice.toLocaleString()}</span>
+              <span className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-yellow-400">₹{auction.currentPrice.toLocaleString()}</span>
             </div>
 
             <div className="flex justify-between items-center text-xs sm:text-sm">

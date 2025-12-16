@@ -115,7 +115,7 @@ function Admin(props) {
       console.log('Bid placed event received:', data)
       const activity = {
         type: 'bid',
-        message: 'Bid placed: $' + data.amount,
+        message: 'Bid placed: ₹' + data.amount,
         userName: data.bidderName,
         auctionId: data.auctionId,
         auctionTitle: data.auctionTitle || 'Unknown Auction',
@@ -368,6 +368,12 @@ function Admin(props) {
 
     for (let i = 0; i < users.length; i++) {
       const u = users[i]
+
+      // Skip admin accounts - they should not appear in user management
+      if (u.role === 'admin' || u.isAdmin) {
+        continue
+      }
+
       let matchesSearch = true
       let matchesRole = true
       let matchesStatus = true
@@ -382,19 +388,15 @@ function Admin(props) {
         }
       }
 
-      // Check if user matches selected role
+      // Check if user matches selected role (removed admin option since admins are hidden)
       if (filterRole === 'all') {
         matchesRole = true
-      } else if (filterRole === 'admin') {
-        if (u.role !== 'admin' && !u.isAdmin) {
-          matchesRole = false
-        }
       } else if (filterRole === 'auctioneer') {
         if (u.role !== 'auctioneer') {
           matchesRole = false
         }
       } else if (filterRole === 'bidder') {
-        if ((u.role && u.role !== 'bidder') || u.isAdmin) {
+        if (u.role && u.role !== 'bidder') {
           matchesRole = false
         }
       }
@@ -679,7 +681,7 @@ function Admin(props) {
               <StatCard title="Pending Validations" value={stats.pendingValidations} color="from-yellow-500 to-orange-500" />
               <StatCard title="Live Auctions" value={stats.activeAuctions} color="from-green-500 to-teal-500" />
               <StatCard title="Bids Today" value={stats.bidsToday} color="from-pink-500 to-red-500" />
-              <StatCard title="Revenue (est.)" value={`$${Math.round(stats.estimatedRevenue).toLocaleString()}`} color="from-indigo-500 to-purple-500" />
+              <StatCard title="Revenue (est.)" value={`₹${Math.round(stats.estimatedRevenue).toLocaleString()}`} color="from-indigo-500 to-purple-500" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -755,7 +757,7 @@ function Admin(props) {
                         displayContent = (
                           <div className="flex flex-col flex-1 min-w-0">
                             <div className="flex items-center space-x-2">
-                              <span className={`font-semibold ${isDark ? 'text-green-400' : 'text-green-600'}`}>${activity.amount.toLocaleString()}</span>
+                              <span className={`font-semibold ${isDark ? 'text-green-400' : 'text-green-600'}`}>₹{activity.amount.toLocaleString()}</span>
                               <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>by</span>
                               <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-800'}`}>{activity.userName || 'Unknown'}</span>
                             </div>
@@ -776,7 +778,7 @@ function Admin(props) {
                           <div className="flex flex-col flex-1 min-w-0">
                             <span className={`font-medium truncate ${isDark ? 'text-white' : 'text-gray-800'}`}>{activity.auctionTitle}</span>
                             {activity.amount && (
-                              <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Final: ${activity.amount.toLocaleString()}</span>
+                              <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Final: ₹{activity.amount.toLocaleString()}</span>
                             )}
                           </div>
                         )
@@ -840,7 +842,6 @@ function Admin(props) {
                     <option value="all">All Roles</option>
                     <option value="bidder">Bidders</option>
                     <option value="auctioneer">Auctioneers</option>
-                    <option value="admin">Admins</option>
                   </select>
                 </div>
                 <div>
@@ -1024,7 +1025,8 @@ function Admin(props) {
                                 Unban
                               </button>
                             )}
-                            {u.status !== 'suspended' && u.status !== 'banned' && (
+                            {/* Don't allow suspending/banning admin accounts or self */}
+                            {u.status !== 'suspended' && u.status !== 'banned' && u.role !== 'admin' && !u.isAdmin && u.email !== currentUser?.email && (
                               <>
                                 <button
                                   onClick={() => {
@@ -1050,17 +1052,20 @@ function Admin(props) {
                                 </button>
                               </>
                             )}
-                            <button
-                              onClick={() => {
-                                if (window.confirm(`Permanently delete ${u.name}? This action cannot be undone.`)) {
-                                  deleteUser(u.email)
-                                }
-                              }}
-                              className="px-3 py-1.5 rounded-md bg-gray-200 text-gray-700 text-xs font-medium hover:bg-gray-300 transition-colors shadow-sm"
-                              title="Delete user"
-                            >
-                              Delete
-                            </button>
+                            {/* Don't allow deleting admin accounts or self */}
+                            {u.role !== 'admin' && !u.isAdmin && u.email !== currentUser?.email && (
+                              <button
+                                onClick={() => {
+                                  if (window.confirm(`Permanently delete ${u.name}? This action cannot be undone.`)) {
+                                    deleteUser(u.email)
+                                  }
+                                }}
+                                className="px-3 py-1.5 rounded-md bg-gray-200 text-gray-700 text-xs font-medium hover:bg-gray-300 transition-colors shadow-sm"
+                                title="Delete user"
+                              >
+                                Delete
+                              </button>
+                            )}
                             <button
                               onClick={() => resetPassword(u.email)}
                               className="px-3 py-1.5 rounded-md bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-colors shadow-sm"
@@ -1114,7 +1119,7 @@ function Admin(props) {
                         )}
                       </div>
                       <div className="text-sm text-gray-600 mb-2">
-                        <div>Current: <span className="font-semibold">${a.currentPrice.toLocaleString()}</span></div>
+                        <div>Current: <span className="font-semibold">₹{a.currentPrice.toLocaleString()}</span></div>
                         <div>Bids: <span className="font-semibold">{a.bids.length}</span></div>
                         <div className="text-xs text-gray-500 mt-1">Ends: {new Date(a.endTime).toLocaleString()}</div>
                       </div>
@@ -1202,17 +1207,17 @@ function Admin(props) {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl p-6 text-white">
                   <div className="text-sm text-white/80 mb-1">Total Revenue</div>
-                  <div className="text-3xl font-bold mb-2">${Math.round(totalRevenue).toLocaleString()}</div>
+                  <div className="text-3xl font-bold mb-2">₹{Math.round(totalRevenue).toLocaleString()}</div>
                   <div className="text-xs text-white/70">From {endedAuctionsWithBids.length} completed auctions</div>
                 </div>
                 <div className="bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl p-6 text-white">
                   <div className="text-sm text-white/80 mb-1">Total Transaction Value</div>
-                  <div className="text-3xl font-bold mb-2">${Math.round(totalTransactionValue).toLocaleString()}</div>
+                  <div className="text-3xl font-bold mb-2">₹{Math.round(totalTransactionValue).toLocaleString()}</div>
                   <div className="text-xs text-white/70">Total sales before commission</div>
                 </div>
                 <div className="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl p-6 text-white">
                   <div className="text-sm text-white/80 mb-1">Potential Revenue</div>
-                  <div className="text-3xl font-bold mb-2">${Math.round(potentialRevenue).toLocaleString()}</div>
+                  <div className="text-3xl font-bold mb-2">₹{Math.round(potentialRevenue).toLocaleString()}</div>
                   <div className="text-xs text-white/70">From {activeAuctionsWithBids.length} active auctions</div>
                 </div>
                 <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl p-6 text-white">
@@ -1259,7 +1264,7 @@ function Admin(props) {
                         </div>
                       </div>
                       <p className={`text-xs mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                        💡 Example: A rate of 0.05 (5%) means you earn $50 from a $1,000 auction sale.
+                        💡 Example: A rate of 0.05 (5%) means you earn ₹50 from a ₹1,000 auction sale.
                       </p>
                     </div>
                   </div>
@@ -1314,13 +1319,13 @@ function Admin(props) {
                                 <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>{winningBid && winningBid.bidder ? winningBid.bidder : 'N/A'}</span>
                               </td>
                               <td className="py-4 pr-4">
-                                <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>${auction.currentPrice.toLocaleString()}</span>
+                                <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>₹{auction.currentPrice.toLocaleString()}</span>
                               </td>
                               <td className="py-4 pr-4">
-                                <span className="font-semibold text-purple-500">${Math.round(commission).toLocaleString()}</span>
+                                <span className="font-semibold text-purple-500">₹{Math.round(commission).toLocaleString()}</span>
                               </td>
                               <td className="py-4 pr-4">
-                                <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>${Math.round(sellerReceives).toLocaleString()}</span>
+                                <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>₹{Math.round(sellerReceives).toLocaleString()}</span>
                               </td>
                               <td className="py-4 pr-4">
                                 <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{new Date(auction.endTime).toLocaleDateString()}</span>
@@ -1333,9 +1338,9 @@ function Admin(props) {
                       <tfoot className={`font-semibold ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
                         <tr>
                           <td colSpan="2" className={`py-4 pr-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Total</td>
-                          <td className={`py-4 pr-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>${Math.round(totalTransactionValue).toLocaleString()}</td>
-                          <td className="py-4 pr-4 text-purple-500">${Math.round(totalRevenue).toLocaleString()}</td>
-                          <td className={`py-4 pr-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>${Math.round(totalTransactionValue - totalRevenue).toLocaleString()}</td>
+                          <td className={`py-4 pr-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>₹{Math.round(totalTransactionValue).toLocaleString()}</td>
+                          <td className="py-4 pr-4 text-purple-500">₹{Math.round(totalRevenue).toLocaleString()}</td>
+                          <td className={`py-4 pr-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>₹{Math.round(totalTransactionValue - totalRevenue).toLocaleString()}</td>
                           <td className="py-4 pr-4"></td>
                         </tr>
                       </tfoot>
@@ -1367,11 +1372,11 @@ function Admin(props) {
                           <div className="text-sm space-y-1">
                             <div className="flex justify-between">
                               <span className="text-gray-600">Current Bid:</span>
-                              <span className="font-semibold">${auction.currentPrice.toLocaleString()}</span>
+                              <span className="font-semibold">₹{auction.currentPrice.toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-600">Potential Commission:</span>
-                              <span className="font-semibold text-green-600">${Math.round(potentialCommission).toLocaleString()}</span>
+                              <span className="font-semibold text-green-600">₹{Math.round(potentialCommission).toLocaleString()}</span>
                             </div>
                             <div className="text-xs text-gray-500 mt-2">
                               Ends: {new Date(auction.endTime).toLocaleString()}
@@ -1798,7 +1803,7 @@ function Admin(props) {
                               <div className="flex flex-col gap-2 ml-4">
                                 <button
                                   onClick={() => {
-                                    if (window.confirm(`Are you sure you want to remove this bid of $${bid.amount.toLocaleString()} by ${bid.bidder} on "${bid.auctionTitle}"? This action cannot be undone.`)) {
+                                    if (window.confirm(`Are you sure you want to remove this bid of ₹${bid.amount.toLocaleString()} by ${bid.bidder} on "${bid.auctionTitle}"? This action cannot be undone.`)) {
                                       removeBid(bid.auctionId, bid)
                                     }
                                   }}
@@ -1887,7 +1892,8 @@ function Admin(props) {
                             </div>
                           </div>
                           <div className="flex flex-wrap gap-2">
-                            {u.status !== 'suspended' && u.status !== 'banned' && (
+                            {/* Don't allow suspending admin accounts or self */}
+                            {u.status !== 'suspended' && u.status !== 'banned' && u.role !== 'admin' && !u.isAdmin && u.email !== currentUser?.email && (
                               <button
                                 onClick={() => {
                                   if (window.confirm(`Are you sure you want to suspend ${u.name}?`)) {
@@ -1899,7 +1905,8 @@ function Admin(props) {
                                 Suspend
                               </button>
                             )}
-                            {u.status !== 'banned' && (
+                            {/* Don't allow banning admin accounts or self */}
+                            {u.status !== 'banned' && u.role !== 'admin' && !u.isAdmin && u.email !== currentUser?.email && (
                               <button
                                 onClick={() => {
                                   if (window.confirm(`Are you sure you want to ban ${u.name}? This will prevent them from using the platform.`)) {
@@ -1935,16 +1942,19 @@ function Admin(props) {
                                 Unban
                               </button>
                             )}
-                            <button
-                              onClick={() => {
-                                if (window.confirm(`Are you sure you want to permanently delete ${u.name}? This action cannot be undone.`)) {
-                                  deleteUser(u.email)
-                                }
-                              }}
-                              className="flex-1 px-3 py-2 rounded-lg bg-gray-200 text-gray-700 text-xs font-medium hover:bg-gray-300 transition-colors"
-                            >
-                              Delete
-                            </button>
+                            {/* Don't allow deleting admin accounts or self */}
+                            {u.role !== 'admin' && !u.isAdmin && u.email !== currentUser?.email && (
+                              <button
+                                onClick={() => {
+                                  if (window.confirm(`Are you sure you want to permanently delete ${u.name}? This action cannot be undone.`)) {
+                                    deleteUser(u.email)
+                                  }
+                                }}
+                                className="flex-1 px-3 py-2 rounded-lg bg-gray-200 text-gray-700 text-xs font-medium hover:bg-gray-300 transition-colors"
+                              >
+                                Delete
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))

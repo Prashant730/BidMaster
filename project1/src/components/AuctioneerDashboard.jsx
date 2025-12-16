@@ -185,7 +185,7 @@ function AuctioneerDashboard(props) {
       return
     }
 
-    if (window.confirm(`Finalize auction "${auction.title}"? The winner will be ${auction.bids[auction.bids.length - 1].bidder} with a bid of $${auction.currentPrice.toLocaleString()}.`)) {
+    if (window.confirm(`Finalize auction "${auction.title}"? The winner will be ${auction.bids[auction.bids.length - 1].bidder} with a bid of ₹${auction.currentPrice.toLocaleString()}.`)) {
       updateContextAuction(auctionId, { finalized: true, winner: auction.bids[auction.bids.length - 1].bidder })
       alert('Auction finalized! The transaction can now proceed.')
     }
@@ -312,7 +312,7 @@ function AuctioneerDashboard(props) {
               />
               <StatCard
                 title="Total Revenue"
-                value={`$${Math.round(stats.totalRevenue).toLocaleString()}`}
+                value={`₹${Math.round(stats.totalRevenue).toLocaleString()}`}
                 color="from-indigo-500 to-purple-500"
                 icon="💵"
               />
@@ -376,7 +376,7 @@ function AuctioneerDashboard(props) {
                         <div>
                           <span className="font-medium text-gray-800">{item.bid.bidder}</span>
                           <span className="text-gray-600"> bid </span>
-                          <span className="font-semibold text-purple-600">${item.bid.amount.toLocaleString()}</span>
+                          <span className="font-semibold text-purple-600">₹{item.bid.amount.toLocaleString()}</span>
                           <span className="text-gray-600"> on </span>
                           <span className="font-medium">{item.auction.title}</span>
                         </div>
@@ -486,7 +486,7 @@ function AuctioneerDashboard(props) {
                       <div className="space-y-2 text-sm mb-4">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Current Price:</span>
-                          <span className="font-semibold text-gray-800">${auction.currentPrice.toLocaleString()}</span>
+                          <span className="font-semibold text-gray-800">₹{auction.currentPrice.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Total Bids:</span>
@@ -611,7 +611,7 @@ function AuctioneerDashboard(props) {
                             </div>
                             <p className="text-sm text-gray-600 mb-1">Category: {auction.category}</p>
                             <p className="text-sm text-gray-600">
-                              Current Price: <span className="font-semibold text-purple-600">${auction.currentPrice.toLocaleString()}</span>
+                              Current Price: <span className="font-semibold text-purple-600">₹{auction.currentPrice.toLocaleString()}</span>
                             </p>
                           </div>
                           <button
@@ -644,7 +644,7 @@ function AuctioneerDashboard(props) {
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <div className="font-semibold text-purple-600">${bid.amount.toLocaleString()}</div>
+                                  <div className="font-semibold text-purple-600">₹{bid.amount.toLocaleString()}</div>
                                 </div>
                               </div>
                             ))}
@@ -657,7 +657,7 @@ function AuctioneerDashboard(props) {
                               <div className="flex items-center justify-between">
                                 <div>
                                   <p className="text-sm font-medium text-blue-900">Winner: {sortedBids[0].bidder}</p>
-                                  <p className="text-sm text-blue-700">Final Price: ${auction.currentPrice.toLocaleString()}</p>
+                                  <p className="text-sm text-blue-700">Final Price: ₹{auction.currentPrice.toLocaleString()}</p>
                                 </div>
                                 <button
                                   onClick={() => finalizeAuction(auction.id)}

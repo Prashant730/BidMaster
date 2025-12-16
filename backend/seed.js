@@ -113,7 +113,7 @@ async function seedDatabase() {
     // Create sample auctions
     console.log('Creating sample auctions...')
 
-    // Active auctions
+    // Active auctions - using longer durations (7-30 days)
     const auction1 = await Auction.create({
       title: 'Vintage Rolex Submariner Watch',
       description:
@@ -123,7 +123,7 @@ async function seedDatabase() {
       currentPrice: 7500,
       image:
         'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800',
-      endTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
+      endTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
       seller: seller1._id,
       sellerName: seller1.name,
       status: 'active',
@@ -152,7 +152,7 @@ async function seedDatabase() {
       currentPrice: 1500,
       image:
         'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800',
-      endTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
+      endTime: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
       seller: seller2._id,
       sellerName: seller2.name,
       status: 'active',
@@ -166,7 +166,7 @@ async function seedDatabase() {
       startingPrice: 3000,
       currentPrice: 3500,
       image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800',
-      endTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
+      endTime: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000), // 21 days from now
       seller: seller1._id,
       sellerName: seller1.name,
       status: 'active',
@@ -188,7 +188,7 @@ async function seedDatabase() {
       startingPrice: 10000,
       currentPrice: 10000,
       image: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=800',
-      endTime: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // 1 day from now
+      endTime: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
       seller: seller2._id,
       sellerName: seller2.name,
       status: 'active',
@@ -203,7 +203,7 @@ async function seedDatabase() {
       currentPrice: 3200,
       image:
         'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800',
-      endTime: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // 4 days from now
+      endTime: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000), // 18 days from now
       seller: seller1._id,
       sellerName: seller1.name,
       status: 'active',
@@ -226,7 +226,7 @@ async function seedDatabase() {
       currentPrice: 9500,
       image:
         'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800',
-      endTime: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000), // 6 days from now
+      endTime: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000), // 25 days from now
       seller: seller2._id,
       sellerName: seller2.name,
       status: 'active',
