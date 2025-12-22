@@ -177,13 +177,14 @@ async function getAuctionsBySeller(sellerId) {
   return auctions
 }
 
-// End expired auctions
+// End expired auctions (excluding permanent demo auctions)
 async function endExpiredAuctions() {
   const now = new Date()
 
   const expiredAuctions = await Auction.find({
     status: 'active',
     endTime: { $lte: now },
+    isPermanent: { $ne: true },
   })
 
   const endedAuctions = []

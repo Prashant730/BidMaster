@@ -90,12 +90,13 @@ function AuctionCard(props) {
 
     if (difference > 0) {
       timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
         hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((difference / 1000 / 60) % 60),
         seconds: Math.floor((difference / 1000) % 60)
       }
     } else {
-      timeLeft = { hours: 0, minutes: 0, seconds: 0 }
+      timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 }
     }
 
     return timeLeft
@@ -110,8 +111,19 @@ function AuctionCard(props) {
   }, [auction.endTime, auction.status])
 
   const endTime = auction.endTime instanceof Date ? auction.endTime.getTime() : auction.endTime
-  const isAuctionEnded = auction.status === 'ended' || (endTime - Date.now() <= 0)
-  const isEndingSoon = !isAuctionEnded && (endTime - Date.now() < 3600000) // Less than 1 hour
+  const isAuctionEnded = auction.status === 'ended' || (endTime - Date.now() <= 0 && !auction.isPermanent)
+  const isEndingSoon = !isAuctionEnded && !auction.isPermanent && (endTime - Date.now() < 3600000) // Less than 1 hour
+
+  // Format time display
+  function formatTimeLeft() {
+    if (auction.isPermanent) {
+      return '∞ Always'
+    }
+    if (timeLeft.days && timeLeft.days > 0) {
+      return `${timeLeft.days}d ${timeLeft.hours}h`
+    }
+    return `${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`
+  }
 
   const auctionId = auction._id || auction.id
 
@@ -169,7 +181,7 @@ function AuctionCard(props) {
 
             <div className="flex justify-between items-center text-xs sm:text-sm">
               <span className="text-gray-500 dark:text-gray-500">Time Left</span>
-              <span className={`font-bold ${isEndingSoon ? 'text-red-500 dark:text-red-400' : 'text-gray-800 dark:text-white'}`}>{timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s</span>
+              <span className={`font-bold ${auction.isPermanent ? 'text-green-600 dark:text-green-400' : isEndingSoon ? 'text-red-500 dark:text-red-400' : 'text-gray-800 dark:text-white'}`}>{formatTimeLeft()}</span>
             </div>
 
             <div className="flex justify-between items-center text-xs sm:text-sm">

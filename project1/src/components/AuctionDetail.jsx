@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
+import { auctionsAPI } from '../services/api.js'
 
 function AuctionDetail(props) {
   const auctions = props.auctions
@@ -12,23 +13,73 @@ function AuctionDetail(props) {
   const { id } = useParams()
   const navigate = useNavigate()
   const [bidLoading, setBidLoading] = useState(false)
+  const [auction, setAuction] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  // Find auction by id (supports both numeric id and MongoDB _id)
-  const auction = auctions.find(function(a) {
-    return a.id === id || a._id === id || a.id === parseInt(id)
-  })
+  // Fetch auction from database
+  useEffect(() => {
+    async function fetchAuction() {
+      setLoading(true)
+      try {
+        const response = await auctionsAPI.getById(id)
+        if (response.data?.success && response.data?.data) {
+          const dbAuction = response.data.data
+          setAuction({
+            id: dbAuction._id,
+            _id: dbAuction._id,
+            title: dbAuction.title,
+            description: dbAuction.description,
+            category: dbAuction.category,
+            startingPrice: dbAuction.startingPrice,
+            currentPrice: dbAuction.currentPrice,
+            image: dbAuction.images?.[0] || dbAuction.image || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800',
+            endTime: new Date(dbAuction.endTime).getTime(),
+            bids: (dbAuction.bids || []).map(bid => ({
+              bidder: bid.bidderName,
+              bidderId: bid.bidderId,
+              amount: bid.amount,
+              time: new Date(bid.timestamp)
+            })),
+            seller: dbAuction.seller?.username || dbAuction.seller?.name || dbAuction.sellerName || 'Unknown',
+            sellerId: dbAuction.seller?._id || null,
+            status: dbAuction.status,
+            isPermanent: dbAuction.isPermanent || false
+          })
+        } else {
+          // Fallback to props if API fails
+          const foundAuction = auctions.find(function(a) {
+            return a.id === id || a._id === id || a.id === parseInt(id)
+          })
+          setAuction(foundAuction || null)
+        }
+      } catch (error) {
+        console.error('Error fetching auction:', error)
+        // Fallback to props if API fails
+        const foundAuction = auctions.find(function(a) {
+          return a.id === id || a._id === id || a.id === parseInt(id)
+        })
+        setAuction(foundAuction || null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchAuction()
+  }, [id]) // Only re-fetch when id changes, not when auctions change
+
   const [bidAmount, setBidAmount] = useState('')
-  const [timeLeft, setTimeLeft] = useState(() => calculateTimeLeft())
+  const [timeLeft, setTimeLeft] = useState({})
   const [showBidSuccess, setShowBidSuccess] = useState(false)
   const [isAuctionEnded, setIsAuctionEnded] = useState(false)
 
   function calculateTimeLeft() {
     if (!auction) return {}
-    const difference = auction.endTime - new Date()
+    const endTime = auction.endTime instanceof Date ? auction.endTime.getTime() : auction.endTime
+    const difference = endTime - Date.now()
     let timeLeft = {}
 
     if (difference > 0) {
       timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
         hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((difference / 1000 / 60) % 60),
         seconds: Math.floor((difference / 1000) % 60)
@@ -39,12 +90,17 @@ function AuctionDetail(props) {
   }
 
   useEffect(() => {
+    if (!auction) return
+
+    // Initial calculation
+    setTimeLeft(calculateTimeLeft())
+
     const timer = setInterval(() => {
       const newTimeLeft = calculateTimeLeft()
       setTimeLeft(newTimeLeft)
 
-      // Check if auction has ended
-      if (auction) {
+      // Check if auction has ended (but not permanent auctions)
+      if (auction && !auction.isPermanent) {
         const endTime = auction.endTime instanceof Date ? auction.endTime.getTime() : auction.endTime
         const now = Date.now()
         if (endTime <= now || auction.status === 'ended') {
@@ -57,6 +113,50 @@ function AuctionDetail(props) {
       clearInterval(timer)
     }
   }, [auction])
+
+  // Refresh auction data after successful bid
+  async function refreshAuction() {
+    try {
+      const response = await auctionsAPI.getById(id)
+      if (response.data?.success && response.data?.data) {
+        const dbAuction = response.data.data
+        setAuction({
+          id: dbAuction._id,
+          _id: dbAuction._id,
+          title: dbAuction.title,
+          description: dbAuction.description,
+          category: dbAuction.category,
+          startingPrice: dbAuction.startingPrice,
+          currentPrice: dbAuction.currentPrice,
+          image: dbAuction.images?.[0] || dbAuction.image || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800',
+          endTime: new Date(dbAuction.endTime).getTime(),
+          bids: (dbAuction.bids || []).map(bid => ({
+            bidder: bid.bidderName,
+            bidderId: bid.bidderId,
+            amount: bid.amount,
+            time: new Date(bid.timestamp)
+          })),
+          seller: dbAuction.seller?.username || dbAuction.seller?.name || dbAuction.sellerName || 'Unknown',
+          sellerId: dbAuction.seller?._id || null,
+          status: dbAuction.status,
+          isPermanent: dbAuction.isPermanent || false
+        })
+      }
+    } catch (error) {
+      console.error('Error refreshing auction:', error)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center transition-colors duration-200">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 dark:border-yellow-400 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">Loading auction details...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!auction) {
     return (
@@ -142,7 +242,10 @@ function AuctionDetail(props) {
       return
     }
 
-    // Step 11: Also update via callback for local state (if needed)
+    // Step 11: Refresh auction data from database to get updated bids
+    await refreshAuction()
+
+    // Step 12: Also update via callback for local state (if needed)
     if (onUpdateAuction) {
       const newBid = {
         bidder: user.name,
@@ -241,8 +344,18 @@ function AuctionDetail(props) {
               {/* Timer */}
               <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-yellow-500/10 dark:to-yellow-600/10 dark:border dark:border-yellow-600/50 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
                 <div className="text-center mb-2">
-                  <div className="text-xs sm:text-sm text-gray-600 dark:text-yellow-400 mb-1">Auction Ends In</div>
-                  <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-yellow-400">{timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s</div>
+                  <div className="text-xs sm:text-sm text-gray-600 dark:text-yellow-400 mb-1">
+                    {auction.isPermanent ? 'Permanent Auction' : 'Auction Ends In'}
+                  </div>
+                  <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-yellow-400">
+                    {auction.isPermanent ? (
+                      '∞ Always Available'
+                    ) : timeLeft.days && timeLeft.days > 0 ? (
+                      `${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`
+                    ) : (
+                      `${timeLeft.hours || 0}h ${timeLeft.minutes || 0}m ${timeLeft.seconds || 0}s`
+                    )}
+                  </div>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-yellow-900/30 rounded-full h-2 overflow-hidden">
                   <div className="bg-gradient-to-r from-purple-500 to-blue-500 dark:from-yellow-500 dark:to-yellow-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, Math.max(0, ((auction.endTime - new Date()) / (24 * 60 * 60 * 1000)) * 100))}%` }}></div>

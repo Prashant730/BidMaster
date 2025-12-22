@@ -83,6 +83,10 @@ const auctionSchema = new mongoose.Schema(
     winnerName: {
       type: String,
     },
+    isPermanent: {
+      type: Boolean,
+      default: false,
+    },
     bids: [bidSchema],
   },
   {

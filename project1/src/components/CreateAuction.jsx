@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { uploadAPI } from '../services/api.js'
 
 function CreateAuction(props) {
   const user = props.user
@@ -15,6 +16,8 @@ function CreateAuction(props) {
   const [images, setImages] = useState([])
   const [imageUrl, setImageUrl] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
 
   if (!user) {
     return (
@@ -98,52 +101,80 @@ function CreateAuction(props) {
     )
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
+    setError('')
 
     if (!formData.title || !formData.description || !formData.category || !formData.startingPrice) {
-      alert('Please fill in all required fields')
+      setError('Please fill in all required fields')
       return
     }
 
     if (parseFloat(formData.startingPrice) <= 0) {
-      alert('Starting price must be greater than 0')
+      setError('Starting price must be greater than 0')
       return
     }
 
-    // Use image URL if provided, otherwise use a default image
-    const finalImage = imageUrl || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800'
+    setIsSubmitting(true)
 
-    const auctionData = {
-      title: formData.title,
-      description: formData.description,
-      category: formData.category,
-      startingPrice: formData.startingPrice,
-      duration: formData.duration,
-      image: finalImage
+    try {
+      let finalImage = imageUrl || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800'
+
+      // If there are uploaded images, upload them first
+      if (images.length > 0) {
+        try {
+          const uploadResponse = await uploadAPI.uploadImages(images)
+          if (uploadResponse.data?.success && uploadResponse.data?.data?.urls?.length > 0) {
+            finalImage = uploadResponse.data.data.urls[0]
+          }
+        } catch (uploadError) {
+          console.error('Image upload failed, using URL or default:', uploadError)
+          // Continue with URL or default image if upload fails
+        }
+      }
+
+      const auctionData = {
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        startingPrice: formData.startingPrice,
+        duration: formData.duration,
+        image: finalImage
+      }
+
+      // Add the auction (now async)
+      const result = await onAddAuction(auctionData)
+
+      if (result && result.success === false) {
+        setError(result.message || 'Failed to create auction')
+        setIsSubmitting(false)
+        return
+      }
+
+      // Show success message
+      setShowSuccess(true)
+
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        category: '',
+        startingPrice: '',
+        duration: '24'
+      })
+      setImages([])
+      setImageUrl('')
+
+      // Navigate after a short delay
+      setTimeout(() => {
+        navigate('/')
+      }, 2000)
+    } catch (err) {
+      console.error('Error creating auction:', err)
+      setError(err.message || 'Failed to create auction. Please try again.')
+    } finally {
+      setIsSubmitting(false)
     }
-
-    // Add the auction
-    onAddAuction(auctionData)
-
-    // Show success message
-    setShowSuccess(true)
-
-    // Reset form
-    setFormData({
-      title: '',
-      description: '',
-      category: '',
-      startingPrice: '',
-      duration: '24'
-    })
-    setImages([])
-    setImageUrl('')
-
-    // Navigate after a short delay
-    setTimeout(() => {
-      navigate('/')
-    }, 2000)
   }
 
   function handleImageUpload(e) {
@@ -167,6 +198,17 @@ function CreateAuction(props) {
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
                 <span className="font-medium text-sm sm:text-base">Auction created successfully! Redirecting...</span>
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+              <div className="flex items-center space-x-2 text-red-700 dark:text-red-400">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span className="font-medium text-sm sm:text-base">{error}</span>
               </div>
             </div>
           )}
@@ -316,8 +358,18 @@ function CreateAuction(props) {
 
             {/* Submit Button */}
             <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 sm:space-x-4 pt-4 sm:pt-6 border-t border-gray-200 dark:border-slate-700">
-              <button type="button" onClick={() => navigate('/')} className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm sm:text-base">Cancel</button>
-              <button type="submit" className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg">Create Auction</button>
+              <button type="button" onClick={() => navigate('/')} disabled={isSubmitting} className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm sm:text-base disabled:opacity-50">Cancel</button>
+              <button type="submit" disabled={isSubmitting} className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Creating...
+                  </span>
+                ) : 'Create Auction'}
+              </button>
             </div>
           </form>
         </div>

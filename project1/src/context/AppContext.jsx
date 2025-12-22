@@ -43,7 +43,8 @@ export function AppProvider({ children, initialAuctions = [], initialUsers = [],
           })),
           seller: auction.seller?.username || auction.seller?.name || auction.sellerName || 'Unknown',
           sellerId: auction.seller?._id || null,
-          status: auction.status
+          status: auction.status,
+          isPermanent: auction.isPermanent || false
         }))
         setAuctions(dbAuctions)
       }
@@ -232,28 +233,46 @@ export function AppProvider({ children, initialAuctions = [], initialUsers = [],
     getSocket().emit('userDelete', { userEmail })
   }
 
-  function createAuction(auctionData) {
-    const maxId = auctions.length > 0 ? Math.max(...auctions.map(a => a.id || 0)) : 0
-    const durationHours = parseInt(auctionData.duration) || 24
+  async function createAuction(auctionData) {
+    try {
+      // Call the backend API to create the auction
+      const response = await auctionsAPI.create({
+        title: auctionData.title,
+        description: auctionData.description,
+        category: auctionData.category,
+        startingPrice: parseFloat(auctionData.startingPrice),
+        duration: parseInt(auctionData.duration) || 24,
+        image: auctionData.image || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800'
+      })
 
-    const newAuction = {
-      id: maxId + 1,
-      title: auctionData.title,
-      description: auctionData.description,
-      category: auctionData.category,
-      startingPrice: parseFloat(auctionData.startingPrice),
-      currentPrice: parseFloat(auctionData.startingPrice),
-      image: auctionData.image || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800',
-      endTime: Date.now() + (durationHours * 60 * 60 * 1000),
-      bids: [],
-      seller: auctionData.seller || auctionData.user?.name || 'Anonymous',
-      status: 'active'
+      const savedAuction = response.data.data || response.data
+
+      // Map the saved auction to our local format
+      const newAuction = {
+        id: savedAuction._id,
+        _id: savedAuction._id,
+        title: savedAuction.title,
+        description: savedAuction.description,
+        category: savedAuction.category,
+        startingPrice: savedAuction.startingPrice,
+        currentPrice: savedAuction.currentPrice,
+        image: savedAuction.image || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800',
+        endTime: new Date(savedAuction.endTime).getTime(),
+        bids: [],
+        seller: savedAuction.sellerName || auctionData.user?.name || 'Anonymous',
+        sellerId: savedAuction.seller,
+        status: 'active'
+      }
+
+      setAuctions(prev => [newAuction, ...prev])
+      return { success: true, auction: newAuction }
+    } catch (error) {
+      console.error('Error creating auction:', error)
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to create auction'
+      }
     }
-
-    setAuctions(prev => [newAuction, ...prev])
-    const socket = getSocket()
-    socket.emit('auctionCreate', { auction: newAuction })
-    return newAuction
   }
 
   // Auto-end expired auctions

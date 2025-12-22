@@ -278,6 +278,145 @@ async function seedDatabase() {
       ],
     })
 
+    // Create PERMANENT demo auctions (never expire)
+    console.log('Creating permanent demo auctions...')
+    const farFuture = new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000) // 100 years from now
+
+    await Auction.create({
+      title: 'Classic Omega Speedmaster Professional',
+      description:
+        'The iconic Omega Speedmaster Professional "Moonwatch" - the same model worn on the Apollo missions. Features manual-winding movement, hesalite crystal, and comes with original box and papers. Excellent condition with minor wear consistent with age.',
+      category: 'Watches',
+      startingPrice: 4500,
+      currentPrice: 4500,
+      image:
+        'https://img.chrono24.com/images/uhren/43725996-z8ktsyxkh4et7nifcjsdtbed-ExtraLarge.jpg',
+      endTime: farFuture,
+      seller: seller1._id,
+      sellerName: seller1.name,
+      status: 'active',
+      isPermanent: true,
+      bids: [],
+    })
+
+    await Auction.create({
+      title: 'Renaissance Oil Painting - Italian Landscape',
+      description:
+        'Stunning 18th century Italian landscape oil painting. Original gilt frame. Depicts the rolling hills of Tuscany with a pastoral scene. Authenticated by leading art historians. Perfect for collectors of classical European art.',
+      category: 'Art',
+      startingPrice: 12000,
+      currentPrice: 12000,
+      image:
+        'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800',
+      endTime: farFuture,
+      seller: seller2._id,
+      sellerName: seller2.name,
+      status: 'active',
+      isPermanent: true,
+      bids: [],
+    })
+
+    await Auction.create({
+      title: 'Rare First Edition Harry Potter Book',
+      description:
+        'First edition, first printing of "Harry Potter and the Philosopher\'s Stone" by J.K. Rowling. Published by Bloomsbury 1997. One of only 500 copies printed. Excellent condition with minor shelf wear. A true collector\'s item.',
+      category: 'Collectibles',
+      startingPrice: 25000,
+      currentPrice: 25000,
+      image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800',
+      endTime: farFuture,
+      seller: seller1._id,
+      sellerName: seller1.name,
+      status: 'active',
+      isPermanent: true,
+      bids: [],
+    })
+
+    await Auction.create({
+      title: 'Mid-Century Modern Eames Lounge Chair',
+      description:
+        'Authentic Herman Miller Eames Lounge Chair and Ottoman (670/671). Original 1970s production with rosewood veneer and black leather. All original parts, professionally cleaned and conditioned. A design icon for any modern home.',
+      category: 'Furniture',
+      startingPrice: 3500,
+      currentPrice: 3500,
+      image:
+        'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=800',
+      endTime: farFuture,
+      seller: seller2._id,
+      sellerName: seller2.name,
+      status: 'active',
+      isPermanent: true,
+      bids: [],
+    })
+
+    await Auction.create({
+      title: 'Sony PlayStation 5 Pro Limited Edition',
+      description:
+        'Brand new sealed PlayStation 5 Pro Limited Edition console. Includes two DualSense controllers, vertical stand, and exclusive limited edition design. Only 10,000 units produced worldwide. Perfect for gaming collectors.',
+      category: 'Electronics',
+      startingPrice: 800,
+      currentPrice: 800,
+      image:
+        'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800',
+      endTime: farFuture,
+      seller: seller1._id,
+      sellerName: seller1.name,
+      status: 'active',
+      isPermanent: true,
+      bids: [],
+    })
+
+    await Auction.create({
+      title: 'Vintage Cartier Love Bracelet 18K Gold',
+      description:
+        'Authentic Cartier Love Bracelet in 18K yellow gold. Size 17. Comes with original screwdriver, box, and certificate. Classic timeless design. Shows beautiful patina consistent with vintage pieces from the 1990s.',
+      category: 'Jewelry',
+      startingPrice: 6500,
+      currentPrice: 6500,
+      image:
+        'https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800',
+      endTime: farFuture,
+      seller: seller2._id,
+      sellerName: seller2.name,
+      status: 'active',
+      isPermanent: true,
+      bids: [],
+    })
+
+    await Auction.create({
+      title: 'Antique Persian Silk Rug - Tabriz',
+      description:
+        'Exquisite hand-knotted Persian silk rug from Tabriz. Approximately 100 years old. Features intricate floral medallion design with rich reds, blues, and ivory. Size: 8x10 feet. Museum quality piece with documented provenance.',
+      category: 'Collectibles',
+      startingPrice: 15000,
+      currentPrice: 15000,
+      image:
+        'https://images.unsplash.com/photo-1600166898405-da9535204843?w=800',
+      endTime: farFuture,
+      seller: seller1._id,
+      sellerName: seller1.name,
+      status: 'active',
+      isPermanent: true,
+      bids: [],
+    })
+
+    await Auction.create({
+      title: 'Apple Vision Pro 1TB - Sealed',
+      description:
+        'Brand new factory sealed Apple Vision Pro with 1TB storage. Includes all accessories, travel case, and AppleCare+. The ultimate spatial computing device. Experience apps, entertainment, and productivity like never before.',
+      category: 'Electronics',
+      startingPrice: 4200,
+      currentPrice: 4200,
+      image:
+        'https://images.unsplash.com/photo-1628202926206-c63a34b1618f?w=800',
+      endTime: farFuture,
+      seller: seller2._id,
+      sellerName: seller2.name,
+      status: 'active',
+      isPermanent: true,
+      bids: [],
+    })
+
     // Create platform settings
     console.log('Creating platform settings...')
     await Settings.create({

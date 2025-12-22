@@ -108,8 +108,8 @@ function AppContent() {
     setLocalUser(null)
   }
 
-  function handleCreateAuction(auctionData) {
-    createAuction({
+  async function handleCreateAuction(auctionData) {
+    return await createAuction({
       ...auctionData,
       user: user
     })

@@ -107,6 +107,32 @@ export const auctionsAPI = {
   },
 }
 
+// Upload API - Functions for file uploads
+export const uploadAPI = {
+  // Upload multiple images (up to 4)
+  uploadImages: function (files) {
+    const formData = new FormData()
+    for (let i = 0; i < files.length; i++) {
+      formData.append('images', files[i])
+    }
+    return api.post('/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
+  // Upload a single image
+  uploadSingle: function (file) {
+    const formData = new FormData()
+    formData.append('image', file)
+    return api.post('/upload/single', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
+}
+
 // Admin API - Functions for admin operations
 export const adminAPI = {
   // Get all users (admin only)

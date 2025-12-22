@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const path = require('path')
 
 const app = express()
 
@@ -20,7 +21,10 @@ app.use(
       if (!origin) return callback(null, true)
 
       // Check if origin is in allowed list or matches vercel pattern
-      if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('.vercel.app')) {
+      if (
+        allowedOrigins.indexOf(origin) !== -1 ||
+        origin.includes('.vercel.app')
+      ) {
         callback(null, true)
       } else {
         callback(null, true) // Allow all origins for now
@@ -36,6 +40,9 @@ app.use(
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
@@ -47,6 +54,7 @@ app.use('/api/users', require('./routes/users'))
 app.use('/api/auctions', require('./routes/auctions'))
 app.use('/api/admin', require('./routes/admin'))
 app.use('/api/activity', require('./routes/activity'))
+app.use('/api/upload', require('./routes/upload'))
 
 // 404 handler
 app.use((req, res, next) => {
