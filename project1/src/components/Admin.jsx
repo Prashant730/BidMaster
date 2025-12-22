@@ -453,9 +453,33 @@ function Admin(props) {
     updateContextUser(email, { status: 'active' })
   }
 
-  function deleteUser(email) {
-    if (window.confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
-      deleteContextUser(email)
+  async function deleteUser(user) {
+    if (!user) return
+
+    const userId = user._id || user.id
+
+    if (!userId) {
+      alert('Unable to delete user: missing user ID')
+      return
+    }
+
+    if (!window.confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      await adminAPI.deleteUser(userId)
+      setBackendUsers(function(prev) {
+        return prev.filter(function(existing) {
+          const existingId = existing._id || existing.id
+          return existingId !== userId
+        })
+      })
+      deleteContextUser(user.email)
+    } catch (error) {
+      console.error('Error deleting user:', error)
+      const message = error.response?.data?.message || 'Failed to delete user. Please try again.'
+      alert(message)
     }
   }
 
@@ -1055,11 +1079,7 @@ function Admin(props) {
                             {/* Don't allow deleting admin accounts or self */}
                             {u.role !== 'admin' && !u.isAdmin && u.email !== currentUser?.email && (
                               <button
-                                onClick={() => {
-                                  if (window.confirm(`Permanently delete ${u.name}? This action cannot be undone.`)) {
-                                    deleteUser(u.email)
-                                  }
-                                }}
+                                onClick={() => deleteUser(u)}
                                 className="px-3 py-1.5 rounded-md bg-gray-200 text-gray-700 text-xs font-medium hover:bg-gray-300 transition-colors shadow-sm"
                                 title="Delete user"
                               >
@@ -1945,11 +1965,7 @@ function Admin(props) {
                             {/* Don't allow deleting admin accounts or self */}
                             {u.role !== 'admin' && !u.isAdmin && u.email !== currentUser?.email && (
                               <button
-                                onClick={() => {
-                                  if (window.confirm(`Are you sure you want to permanently delete ${u.name}? This action cannot be undone.`)) {
-                                    deleteUser(u.email)
-                                  }
-                                }}
+                                onClick={() => deleteUser(u)}
                                 className="flex-1 px-3 py-2 rounded-lg bg-gray-200 text-gray-700 text-xs font-medium hover:bg-gray-300 transition-colors"
                               >
                                 Delete
