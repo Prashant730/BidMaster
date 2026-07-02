@@ -2,8 +2,13 @@ import axios from 'axios'
 
 // Get the API URL from environment variables, or use default localhost URL
 let API_URL = 'http://localhost:5000/api'
+
 if (import.meta.env && import.meta.env.VITE_API_URL) {
   API_URL = import.meta.env.VITE_API_URL
+} else if (import.meta.env && import.meta.env.PROD) {
+  // Use your new Render backend as the default in production
+  API_URL = 'https://bidmaster-1-zgvo.onrender.com/api'
+  console.log("Using Production API URL:", API_URL);
 }
 
 // Create an axios instance with base configuration

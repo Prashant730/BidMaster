@@ -2,8 +2,13 @@ import { io } from 'socket.io-client'
 
 // Get the socket URL from environment variables, or use default localhost URL
 let SOCKET_URL = 'http://localhost:5000'
+
 if (import.meta.env && import.meta.env.VITE_SOCKET_URL) {
   SOCKET_URL = import.meta.env.VITE_SOCKET_URL
+} else if (import.meta.env && import.meta.env.PROD) {
+  // Use your new Render backend as the default in production
+  SOCKET_URL = 'https://bidmaster-1-zgvo.onrender.com'
+  console.log("Using Production Socket URL:", SOCKET_URL);
 }
 
 // Variable to store the socket connection
