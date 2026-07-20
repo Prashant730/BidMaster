@@ -1,10 +1,15 @@
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
+const helmet = require('helmet')
 
 const app = express()
 
-// CORS configuration - allow Vercel and local origins
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: false
+}))
+
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
@@ -17,17 +22,15 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl)
       if (!origin) return callback(null, true)
 
-      // Check if origin is in allowed list or matches vercel pattern
       if (
         allowedOrigins.indexOf(origin) !== -1 ||
         origin.includes('.vercel.app')
       ) {
         callback(null, true)
       } else {
-        callback(null, true) // Allow all origins for now
+        callback(new Error('Not allowed by CORS'))
       }
     },
     credentials: true,
@@ -36,27 +39,23 @@ app.use(
   })
 )
 
-// Body parsing middleware
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json({ limit: '10kb' }))
+app.use(express.urlencoded({ extended: true, limit: '10kb' }))
 
-// Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
 
-// Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-// Routes
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/users', require('./routes/users'))
 app.use('/api/auctions', require('./routes/auctions'))
 app.use('/api/admin', require('./routes/admin'))
 app.use('/api/activity', require('./routes/activity'))
 app.use('/api/upload', require('./routes/upload'))
+app.use('/api/contact', require('./routes/contact'))
 
-// 404 handler
 app.use((req, res, next) => {
   res.status(404).json({
     success: false,
@@ -64,11 +63,9 @@ app.use((req, res, next) => {
   })
 })
 
-// Global error handler
 app.use((err, req, res, next) => {
   console.error('Error:', err.stack)
 
-  // Mongoose validation error
   if (err.name === 'ValidationError') {
     const errors = Object.values(err.errors).map((e) => ({ msg: e.message }))
     return res.status(400).json({
@@ -78,7 +75,6 @@ app.use((err, req, res, next) => {
     })
   }
 
-  // Mongoose duplicate key error
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue)[0]
     return res.status(409).json({
@@ -87,7 +83,6 @@ app.use((err, req, res, next) => {
     })
   }
 
-  // JWT errors
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
       success: false,
@@ -102,7 +97,13 @@ app.use((err, req, res, next) => {
     })
   }
 
-  // Default error
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({
+      success: false,
+      message: 'CORS: Origin not allowed',
+    })
+  }
+
   res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Internal Server Error',

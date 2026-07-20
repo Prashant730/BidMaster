@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { contactAPI } from '../services/api.js'
 
 function ContactSupport() {
   const navigate = useNavigate()
@@ -12,10 +13,62 @@ function ContactSupport() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [fieldErrors, setFieldErrors] = useState({})
+
+  const MAX_LENGTHS = {
+    name: 100,
+    email: 254,
+    subject: 200,
+    message: 5000
+  }
+
+  function validateForm() {
+    const errors = {}
+
+    if (!formData.name.trim()) {
+      errors.name = 'Name is required'
+    } else if (formData.name.trim().length > MAX_LENGTHS.name) {
+      errors.name = 'Name cannot exceed ' + MAX_LENGTHS.name + ' characters'
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errors.email = 'Please enter a valid email address'
+    } else if (formData.email.trim().length > MAX_LENGTHS.email) {
+      errors.email = 'Email cannot exceed ' + MAX_LENGTHS.email + ' characters'
+    }
+
+    if (!formData.subject.trim()) {
+      errors.subject = 'Subject is required'
+    } else if (formData.subject.trim().length > MAX_LENGTHS.subject) {
+      errors.subject = 'Subject cannot exceed ' + MAX_LENGTHS.subject + ' characters'
+    }
+
+    if (!formData.message.trim()) {
+      errors.message = 'Message is required'
+    } else if (formData.message.trim().length < 10) {
+      errors.message = 'Message must be at least 10 characters'
+    } else if (formData.message.trim().length > MAX_LENGTHS.message) {
+      errors.message = 'Message cannot exceed ' + MAX_LENGTHS.message + ' characters'
+    }
+
+    return errors
+  }
 
   function handleChange(e) {
-    const name = e.target.name
-    const value = e.target.value
+    const fieldName = e.target.name
+    const fieldValue = e.target.value
+
+    if (fieldErrors[fieldName]) {
+      setFieldErrors(function (prev) {
+        const updated = { ...prev }
+        delete updated[fieldName]
+        return updated
+      })
+    }
+
     setFormData(function(prev) {
       const newFormData = {
         name: prev.name,
@@ -24,33 +77,75 @@ function ContactSupport() {
         category: prev.category,
         message: prev.message
       }
-      newFormData[name] = value
+      newFormData[fieldName] = fieldValue
       return newFormData
     })
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    setIsSubmitting(true)
     setSubmitStatus(null)
+    setErrorMessage('')
+    setFieldErrors({})
 
-    // Simulate form submission
-    setTimeout(function() {
-      setIsSubmitting(false)
-      setSubmitStatus('success')
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        category: 'general',
-        message: ''
+    const errors = validateForm()
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      const response = await contactAPI.submit({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        subject: formData.subject.trim(),
+        category: formData.category,
+        message: formData.message.trim()
       })
 
-      // Reset success message after 5 seconds
-      setTimeout(function() {
-        setSubmitStatus(null)
-      }, 5000)
-    }, 1500)
+      if (response.data.success) {
+        setSubmitStatus('success')
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          category: 'general',
+          message: ''
+        })
+
+        setTimeout(function() {
+          setSubmitStatus(null)
+        }, 8000)
+      }
+    } catch (error) {
+      setSubmitStatus('error')
+
+      if (error.response) {
+        const status = error.response.status
+        const data = error.response.data
+
+        if (status === 429) {
+          setErrorMessage('You have sent too many messages. Please wait 15 minutes before trying again.')
+        } else if (status === 400 && data.errors) {
+          const serverErrors = {}
+          data.errors.forEach(function (err) {
+            serverErrors[err.field] = err.message
+          })
+          setFieldErrors(serverErrors)
+          setErrorMessage('Please fix the errors below and try again.')
+        } else {
+          setErrorMessage(data.message || 'Something went wrong. Please try again later.')
+        }
+      } else if (error.request) {
+        setErrorMessage('Unable to reach the server. Please check your internet connection and try again.')
+      } else {
+        setErrorMessage('An unexpected error occurred. Please try again.')
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const supportCategories = [
@@ -94,7 +189,6 @@ function ContactSupport() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 transition-colors duration-200">
       <div className="container mx-auto px-4">
-        {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-start">
             <div>
@@ -116,9 +210,7 @@ function ContactSupport() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Contact Information Sidebar */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Contact Methods */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 transition-colors duration-200">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Get in Touch</h2>
 
@@ -178,7 +270,6 @@ function ContactSupport() {
               </div>
             </div>
 
-            {/* Response Times */}
             <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl shadow-lg p-6 transition-colors duration-200">
               <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-3">Response Times</h3>
               <div className="space-y-2 text-sm">
@@ -201,7 +292,6 @@ function ContactSupport() {
               </div>
             </div>
 
-            {/* Helpful Links */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 transition-colors duration-200">
               <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-3">Helpful Resources</h3>
               <div className="space-y-2">
@@ -213,7 +303,6 @@ function ContactSupport() {
                 </button>
                 <button
                   onClick={function() {
-                    // This would open the beginner guide
                     window.scrollTo({ top: 0, behavior: 'smooth' })
                   }}
                   className="block w-full text-left text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:underline"
@@ -230,15 +319,13 @@ function ContactSupport() {
             </div>
           </div>
 
-          {/* Main Content - Contact Form */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Contact Form */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 transition-colors duration-200">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Send us a Message</h2>
 
               {submitStatus === 'success' && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                  <div className="flex items-center space-x-2 text-green-700">
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
+                  <div className="flex items-center space-x-2 text-green-700 dark:text-green-400">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
@@ -247,51 +334,63 @@ function ContactSupport() {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              {submitStatus === 'error' && errorMessage && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+                  <div className="flex items-center space-x-2 text-red-700 dark:text-red-400">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <span className="font-medium">{errorMessage}</span>
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Your Name *
                     </label>
                     <input
                       type="text"
-                      id="name"
+                      id="contact-name"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      required
-                      className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      maxLength={MAX_LENGTHS.name}
+                      className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.name ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-slate-600 focus:ring-purple-500')}
                       placeholder="John Doe"
                     />
+                    {fieldErrors.name && <p className="mt-1 text-sm text-red-500">{fieldErrors.name}</p>}
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Email Address *
                     </label>
                     <input
                       type="email"
-                      id="email"
+                      id="contact-email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      required
-                      className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      maxLength={MAX_LENGTHS.email}
+                      className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.email ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-slate-600 focus:ring-purple-500')}
                       placeholder="john@example.com"
                     />
+                    {fieldErrors.email && <p className="mt-1 text-sm text-red-500">{fieldErrors.email}</p>}
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="contact-category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Category *
                   </label>
                   <select
-                    id="category"
+                    id="contact-category"
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    required
                     className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     {supportCategories.map(function(cat) {
@@ -305,35 +404,46 @@ function ContactSupport() {
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="contact-subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Subject *
                   </label>
                   <input
                     type="text"
-                    id="subject"
+                    id="contact-subject"
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
-                    required
-                    className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    maxLength={MAX_LENGTHS.subject}
+                    className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.subject ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-slate-600 focus:ring-purple-500')}
                     placeholder="Brief description of your inquiry"
                   />
+                  {fieldErrors.subject && <p className="mt-1 text-sm text-red-500">{fieldErrors.subject}</p>}
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Message *
                   </label>
                   <textarea
-                    id="message"
+                    id="contact-message"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    required
+                    maxLength={MAX_LENGTHS.message}
                     rows={6}
-                    className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                    className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent resize-none dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.message ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-slate-600 focus:ring-purple-500')}
                     placeholder="Please provide as much detail as possible so we can assist you better..."
                   />
+                  <div className="flex justify-between mt-1">
+                    {fieldErrors.message ? (
+                      <p className="text-sm text-red-500">{fieldErrors.message}</p>
+                    ) : (
+                      <span></span>
+                    )}
+                    <span className={'text-xs ' + (formData.message.length > MAX_LENGTHS.message * 0.9 ? 'text-orange-500' : 'text-gray-400')}>
+                      {formData.message.length}/{MAX_LENGTHS.message}
+                    </span>
+                  </div>
                 </div>
 
                 <button
@@ -356,7 +466,6 @@ function ContactSupport() {
               </form>
             </div>
 
-            {/* FAQ Section */}
             <div id="faq" className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 transition-colors duration-200">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Frequently Asked Questions</h2>
               <div className="space-y-4">
@@ -378,4 +487,3 @@ function ContactSupport() {
 }
 
 export default ContactSupport
-

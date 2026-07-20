@@ -204,4 +204,10 @@ export const activityAPI = {
   },
 }
 
+export const contactAPI = {
+  submit: function (formData) {
+    return api.post('/contact', formData)
+  },
+}
+
 export default api
