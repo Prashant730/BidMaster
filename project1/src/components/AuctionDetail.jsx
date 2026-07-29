@@ -425,7 +425,7 @@ function AuctionDetail(props) {
                     return (
                       <div key={index} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${index === 0 ? 'bg-gray-50 dark:bg-[#1a1918] border-2 border-gray-200 dark:border-[#2a2825]' : 'bg-gray-50 dark:bg-slate-700'}`}>
                         <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black dark:bg-white text-white dark:text-black text-xs font-bold flex-shrink-0">{(bid.bidder || '').charAt(0)}</div>
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-800 dark:text-gray-200 text-xs font-bold flex-shrink-0">{(bid.bidder || '').charAt(0)}</div>
                           <div className="min-w-0 flex-1">
                             <div className="font-medium text-gray-800 dark:text-gray-100 text-sm sm:text-base truncate">
                               {bid.bidder}

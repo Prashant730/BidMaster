@@ -357,7 +357,7 @@ function Register() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-900 dark:hover:bg-gray-100 py-3 rounded-sm font-medium text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-black dark:bg-[#1a1918] hover:bg-gray-900 dark:hover:bg-black text-[#c3a372] py-3 rounded-sm font-medium text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center">
