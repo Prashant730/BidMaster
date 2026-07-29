@@ -1,36 +1,35 @@
-/* Professional Dark Theme for Bidding Site */
-/* Following 60-30-10 Rule: 60% Black, 30% White/Gray, 10% Gold Accent */
+/* Refined Dark Theme for Bidding Site */
 
 /* ============================================
    COLOR VARIABLES
    ============================================ */
 .dark {
-  /* 60% - Black backgrounds */
-  --bg-primary: #000000;
-  --bg-secondary: #0a0a0a;
-  --bg-card: #111111;
-  --bg-hover: #1a1a1a;
+  /* Backgrounds */
+  --bg-primary: #141413;
+  --bg-secondary: #1a1918;
+  --bg-card: #1e1d1b;
+  --bg-hover: #262422;
 
-  /* 30% - White/Gray text */
+  /* Text */
   --text-primary: #ffffff;
-  --text-secondary: #e5e7eb;
-  --text-muted: #9ca3af;
-  --text-subtle: #6b7280;
+  --text-secondary: #eaeaea;
+  --text-muted: #c4c4c4;
+  --text-subtle: #9c9c9c;
 
-  /* 10% - Gold accent */
-  --accent-gold: #fbbf24;
-  --accent-gold-bright: #fcd34d;
-  --accent-gold-dark: #d97706;
+  /* Accent */
+  --accent-gold: #c3a372;
+  --accent-gold-bright: #d4b88f;
+  --accent-gold-dark: #a28254;
 
   /* Action colors */
-  --action-bid: #ef4444;      /* Red for urgency - Bid buttons */
-  --action-buy: #f97316;      /* Orange for confidence - Buy Now */
-  --action-success: #22c55e;  /* Green for winning/success */
-  --action-live: #fbbf24;     /* Gold for LIVE badge */
+  --action-bid: #b95757;
+  --action-buy: #c48259;
+  --action-success: #63986a;
+  --action-live: #c3a372;
 
   /* Borders */
-  --border-dark: #1f1f1f;
-  --border-accent: #d97706;
+  --border-dark: #2a2825;
+  --border-accent: #a28254;
 }
 
 /* ============================================
@@ -62,8 +61,6 @@
 .dark h2,
 .dark h3,
 .dark h4,
-.dark .text-gray-800,
-.dark .text-gray-900,
 .dark .font-bold {
   color: var(--text-primary) !important;
 }
@@ -89,16 +86,16 @@
 .dark .text-2xl.font-bold,
 .dark .text-3xl.font-bold,
 .dark .text-4xl.font-bold {
-  color: var(--accent-gold) !important;
+  color: var(--accent-gold);
 }
 
 /* Links - Gold */
 .dark a:not(.bg-gradient-to-r):not(button) {
-  color: var(--accent-gold) !important;
+  color: var(--accent-gold);
 }
 
 .dark a:hover {
-  color: var(--accent-gold-bright) !important;
+  color: var(--accent-gold-bright);
 }
 
 /* Active navigation */
@@ -143,14 +140,15 @@
 }
 
 /* ============================================
-   LIVE BADGE - Gold for premium feel
+   LIVE BADGE - Elegant accent
    ============================================ */
 .dark .bg-red-500.animate-pulse,
 .dark span.animate-pulse {
-  background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%) !important;
-  color: var(--bg-primary) !important;
-  font-weight: 700 !important;
-  box-shadow: 0 0 20px rgba(251, 191, 36, 0.5) !important;
+  background: var(--accent-gold) !important;
+  color: #141413 !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  animation: none !important;
 }
 
 /* ENDED badge */
@@ -253,21 +251,6 @@
 .dark header {
   background-color: var(--bg-primary) !important;
   border-bottom: 1px solid var(--border-dark) !important;
-}
-
-/* Logo accent */
-.dark header .text-2xl,
-.dark header .font-bold {
-  color: var(--text-primary) !important;
-}
-
-/* Navigation */
-.dark nav a {
-  color: var(--text-secondary) !important;
-}
-
-.dark nav a:hover {
-  color: var(--accent-gold) !important;
 }
 
 /* ============================================
@@ -468,7 +451,7 @@
 }
 
 .dark button.rounded-full.bg-purple-600 {
-  background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%) !important;
-  color: var(--bg-primary) !important;
-  border: none !important;
+  background: var(--bg-secondary) !important;
+  color: var(--accent-gold) !important;
+  border-color: var(--accent-gold) !important;
 }

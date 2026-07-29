@@ -19,10 +19,7 @@ function Header(props) {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-600 to-blue-500 dark:from-yellow-500 dark:to-amber-500 rounded-lg flex items-center justify-center">
-              <span className="text-white dark:text-black font-bold text-sm sm:text-lg">BID</span>
-            </div>
-            <span className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">BidMaster</span>
+            <span className="text-2xl sm:text-3xl font-serif text-gray-900 dark:text-white tracking-tight">BidMaster</span>
           </Link>
 
           {/* Navigation */}
@@ -30,7 +27,7 @@ function Header(props) {
             <Link
               to="/"
               className={`font-medium transition-colors duration-200 ${
-                location.pathname === '/' ? 'text-purple-600 dark:text-yellow-400' : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-yellow-400'
+                location.pathname === '/' ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               Live Auctions
@@ -40,7 +37,7 @@ function Header(props) {
 						<Link
 							to="/create"
 							className={`font-medium transition-colors duration-200 ${
-								location.pathname === '/create' ? 'text-purple-600 dark:text-yellow-400' : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-yellow-400'
+								location.pathname === '/create' ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white'
 							}`}
 						>
 							Sell Item
@@ -48,7 +45,7 @@ function Header(props) {
 
 						<button
 							onClick={() => setShowBeginnerGuide(true)}
-							className="font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
+							className="font-medium text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
 						>
 							Learn More
 						</button>
@@ -80,7 +77,7 @@ function Header(props) {
 					<div className="relative">
 					<button
 						onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-						className="flex items-center justify-center w-10 h-10 rounded-full overflow-hidden bg-gradient-to-r from-purple-600 to-blue-500 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-purple-400"
+						className="flex items-center justify-center w-10 h-10 rounded-full overflow-hidden bg-black text-white font-semibold focus:outline-none focus:ring-2 focus:ring-gray-400"
 						aria-haspopup="true"
 						aria-expanded={isUserMenuOpen}
 						title={user.name}
@@ -98,7 +95,7 @@ function Header(props) {
 								<Link
 									to="/admin"
 									onClick={() => setIsUserMenuOpen(false)}
-									className="block px-4 py-2 text-sm text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-slate-700 font-semibold"
+									className="block px-4 py-2 text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 font-semibold"
 								>
 									Admin Panel
 								</Link>
@@ -141,7 +138,7 @@ function Header(props) {
 								<Link
 									to="/seller-approval"
 									onClick={() => setIsUserMenuOpen(false)}
-									className="block px-4 py-2 text-sm text-purple-600 dark:text-purple-400 hover:bg-gray-100 dark:hover:bg-slate-700 font-medium"
+									className="block px-4 py-2 text-sm text-black dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 font-medium"
 								>
 									Become a Seller
 								</Link>
@@ -178,19 +175,19 @@ function Header(props) {
 						)}
 					</div>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-4">
                 <Link
                   to="/login"
-                  className="hidden sm:block text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200"
+                  className="hidden sm:block text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white px-2 py-2 font-medium text-sm transition-colors duration-200"
                 >
-                  Login
+                  Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  className="bg-gray-900 hover:bg-gray-800 dark:bg-[#1a1918] dark:hover:bg-black text-[#c3a372] px-5 sm:px-6 py-2.5 rounded font-medium text-sm transition-all duration-200"
                 >
-                  <span className="hidden sm:inline">Sign Up</span>
-                  <span className="sm:hidden">Register</span>
+                  <span className="hidden sm:inline">Create Account</span>
+                  <span className="sm:hidden">Join</span>
                 </Link>
               </div>
             )}
@@ -211,36 +208,36 @@ function Header(props) {
 				{isMenuOpen && (
           <div className="md:hidden mt-4 pb-4 border-t border-gray-200 dark:border-slate-700 pt-4 animate-fadeIn">
             <div className="flex flex-col space-y-3">
-              <Link to="/" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+              <Link to="/" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
                 Live Auctions
               </Link>
               {(!user || !user.isAdmin) && (
-                <Link to="/create" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/create" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
                   Sell Item
                 </Link>
               )}
 							{user && (
 								<>
-									<Link to="/profile" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+									<Link to="/profile" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
 										My Profile
 									</Link>
 									{user.isAdmin && (
 										<>
-											<Link to="/admin" className="font-medium text-base text-purple-600 dark:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+											<Link to="/admin" className="font-medium text-base text-black dark:text-gray-200 py-2" onClick={() => setIsMenuOpen(false)}>
 												Admin Dashboard
 											</Link>
-											<Link to="/seller-approval" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+											<Link to="/seller-approval" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
 												Seller Approvals
 											</Link>
 										</>
 									)}
 									{(!user.isAdmin && user.role !== 'seller' && !user.sellerStatus) && (
-										<Link to="/seller-approval" className="font-medium text-base text-purple-600 dark:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+										<Link to="/seller-approval" className="font-medium text-base text-black dark:text-gray-200 py-2" onClick={() => setIsMenuOpen(false)}>
 											Become a Seller
 										</Link>
 									)}
 									{user.isAdmin && (
-										<Link to="/admin" className="font-medium text-base text-purple-600 dark:text-purple-400 py-2 hidden" onClick={() => setIsMenuOpen(false)}>
+										<Link to="/admin" className="font-medium text-base text-black dark:text-gray-200 py-2 hidden" onClick={() => setIsMenuOpen(false)}>
 											Admin Panel
 										</Link>
 									)}
@@ -256,26 +253,26 @@ function Header(props) {
                   setShowBeginnerGuide(true)
                   setIsMenuOpen(false)
                 }}
-                className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 text-left py-2"
+                className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-purple-400 text-left py-2"
               >
                 Learn More
               </button>
               {!user && (
                 <>
-                  <Link to="/login" className="font-medium text-base text-purple-600 dark:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/login" className="font-medium text-base text-black dark:text-gray-200 py-2" onClick={() => setIsMenuOpen(false)}>
                     Login
                   </Link>
-                  <Link to="/register" className="font-medium text-base bg-gradient-to-r from-purple-600 to-blue-500 text-white px-4 py-2 rounded-lg text-center" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/register" className="font-medium text-base bg-black text-white px-4 py-2 rounded-lg text-center" onClick={() => setIsMenuOpen(false)}>
                     Sign Up
                   </Link>
                 </>
               )}
               {user && !user.isAdmin && (
                 <>
-                  <Link to="/policy" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/policy" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
                     Policy
                   </Link>
-                  <Link to="/contact" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/contact" className="font-medium text-base text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-purple-400 py-2" onClick={() => setIsMenuOpen(false)}>
                     Contact
                   </Link>
                 </>

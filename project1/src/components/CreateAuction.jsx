@@ -25,7 +25,7 @@ function CreateAuction(props) {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Please Login</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">You need to be logged in to create an auction.</p>
-          <button onClick={() => navigate('/')} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">Back to Home</button>
+          <button onClick={() => navigate('/')} className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900">Back to Home</button>
         </div>
       </div>
     )
@@ -73,8 +73,8 @@ function CreateAuction(props) {
               </>
             ) : (
               <>
-                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-[#1a1918] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
@@ -91,7 +91,7 @@ function CreateAuction(props) {
           {!user.isAdmin && (
             <button
               onClick={() => navigate('/seller-approval')}
-              className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+              className="w-full bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition-colors"
             >
               Become a Seller
             </button>
@@ -224,7 +224,7 @@ function CreateAuction(props) {
                   setImageUrl(e.target.value)
                 }}
                 placeholder="https://images.unsplash.com/photo-..."
-                className="w-full border border-gray-300 dark:border-yellow-600 dark:bg-black dark:text-yellow-400 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-yellow-600 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 focus:border-transparent"
+                className="w-full border border-gray-300 dark:border-yellow-600 dark:bg-black dark:text-yellow-400 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-yellow-600 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
               />
               <p className="text-sm text-gray-500 dark:text-yellow-500/70 mt-1">Enter an image URL for your item, or leave blank to use a default image</p>
             </div>
@@ -247,7 +247,7 @@ function CreateAuction(props) {
                   )
                 })}
                 {images.length < 4 && (
-                  <label className="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg h-32 flex items-center justify-center cursor-pointer hover:border-purple-500 dark:hover:border-purple-400 transition-colors">
+                  <label className="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg h-32 flex items-center justify-center cursor-pointer hover:border-gray-900 dark:hover:border-gray-100 transition-colors">
                     <div className="text-center">
                       <svg className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -359,7 +359,7 @@ function CreateAuction(props) {
             {/* Submit Button */}
             <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 sm:space-x-4 pt-4 sm:pt-6 border-t border-gray-200 dark:border-slate-700">
               <button type="button" onClick={() => navigate('/')} disabled={isSubmitting} className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm sm:text-base disabled:opacity-50">Cancel</button>
-              <button type="submit" disabled={isSubmitting} className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+              <button type="submit" disabled={isSubmitting} className="w-full sm:w-auto bg-black dark:bg-white hover:bg-gray-900 dark:hover:bg-gray-100 text-white dark:text-black px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                 {isSubmitting ? (
                   <span className="flex items-center justify-center">
                     <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

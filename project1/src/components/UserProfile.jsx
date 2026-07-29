@@ -212,7 +212,7 @@ function UserProfile(props) {
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 transition-colors duration-200">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Admin Profile Header */}
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-2xl shadow-lg p-8 mb-8 text-white">
+          <div className="bg-black rounded-2xl shadow-lg p-8 mb-8 text-white">
             <div className="flex items-center space-x-6">
               {user.profilePhoto ? (
                 <img src={user.profilePhoto} alt={user.name} className="w-24 h-24 rounded-full object-cover border-4 border-white/30" />
@@ -226,9 +226,9 @@ function UserProfile(props) {
                   <h1 className="text-3xl font-bold">{user.name}</h1>
                   <span className="px-3 py-1 rounded-full bg-white/20 text-sm font-semibold">Administrator</span>
                 </div>
-                <p className="text-purple-100">{user.email}</p>
+                <p className="text-gray-300">{user.email}</p>
                 {(user.address || user.phone) && (
-                  <div className="text-sm text-purple-100 mt-2">
+                  <div className="text-sm text-gray-300 mt-2">
                     {user.address && <div>{user.address}</div>}
                     {user.phone && <div>{user.phone}</div>}
                   </div>
@@ -243,19 +243,19 @@ function UserProfile(props) {
               <div className="mb-4">
                 <div className="text-sm text-gray-500 dark:text-gray-400">Signed in as</div>
                 <div className="font-semibold text-gray-800 dark:text-gray-100 truncate">{user.name}</div>
-                <div className="text-xs text-purple-600 dark:text-purple-400 font-medium mt-1">Admin Account</div>
+                <div className="text-xs text-gray-900 dark:text-white font-medium mt-1">Admin Account</div>
               </div>
               <nav className="space-y-2">
-                <button onClick={() => setActiveTab('overview')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>
+                <button onClick={() => setActiveTab('overview')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-gray-100 dark:bg-[#2a2825] text-black dark:text-white' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>
                   Admin Overview
                 </button>
-                <button onClick={() => setActiveTab('settings')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>
+                <button onClick={() => setActiveTab('settings')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-gray-100 dark:bg-[#2a2825] text-black dark:text-white' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>
                   Profile Settings
                 </button>
                 <div className="pt-4 border-t">
                   <button
                     onClick={() => navigate('/admin')}
-                    className="w-full text-left px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors font-medium"
+                    className="w-full text-left px-4 py-2 rounded-lg bg-black text-white hover:bg-gray-900 transition-colors font-medium"
                   >
                     Go to Admin Panel →
                   </button>
@@ -268,9 +268,9 @@ function UserProfile(props) {
               {activeTab === 'overview' && (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-2xl p-6 text-center">
+                    <div className="bg-black text-white rounded-2xl p-6 text-center">
                       <div className="text-3xl font-bold mb-2">{adminStats && adminStats.totalUsers ? adminStats.totalUsers : 0}</div>
-                      <div className="text-purple-100 text-sm">Total Users</div>
+                      <div className="text-gray-300 text-sm">Total Users</div>
                     </div>
                     <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-2xl p-6 text-center">
                       <div className="text-3xl font-bold mb-2">{adminStats && adminStats.pendingValidations ? adminStats.pendingValidations : 0}</div>
@@ -280,7 +280,7 @@ function UserProfile(props) {
                       <div className="text-3xl font-bold mb-2">{adminStats && adminStats.activeAuctions ? adminStats.activeAuctions : 0}</div>
                       <div className="text-green-100 text-sm">Active Auctions</div>
                     </div>
-                    <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl p-6 text-center">
+                    <div className="bg-gray-900 text-white rounded-2xl p-6 text-center">
                       <div className="text-3xl font-bold mb-2">₹{Math.round(adminStats && adminStats.totalRevenue ? adminStats.totalRevenue : 0).toLocaleString()}</div>
                       <div className="text-indigo-100 text-sm">Total Revenue</div>
                     </div>
@@ -291,28 +291,28 @@ function UserProfile(props) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <button
                         onClick={() => navigate('/admin')}
-                        className="p-4 border-2 border-purple-200 dark:border-purple-800 rounded-xl hover:border-purple-400 dark:hover:border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors text-left"
+                        className="p-4 border-2 border-gray-200 dark:border-[#2a2825] rounded-xl hover:border-gray-900 dark:hover:border-gray-100 hover:bg-gray-50 dark:hover:bg-[#2a2825] transition-colors text-left"
                       >
                         <div className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Manage Users</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400">View and manage all platform users</div>
                       </button>
                       <button
                         onClick={() => navigate('/admin')}
-                        className="p-4 border-2 border-purple-200 dark:border-purple-800 rounded-xl hover:border-purple-400 dark:hover:border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors text-left"
+                        className="p-4 border-2 border-gray-200 dark:border-[#2a2825] rounded-xl hover:border-gray-900 dark:hover:border-gray-100 hover:bg-gray-50 dark:hover:bg-[#2a2825] transition-colors text-left"
                       >
                         <div className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Manage Auctions</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400">Oversee all active and ended auctions</div>
                       </button>
                       <button
                         onClick={() => navigate('/admin')}
-                        className="p-4 border-2 border-purple-200 dark:border-purple-800 rounded-xl hover:border-purple-400 dark:hover:border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors text-left"
+                        className="p-4 border-2 border-gray-200 dark:border-[#2a2825] rounded-xl hover:border-gray-900 dark:hover:border-gray-100 hover:bg-gray-50 dark:hover:bg-[#2a2825] transition-colors text-left"
                       >
                         <div className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Financial Reports</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400">View revenue and transaction data</div>
                       </button>
                       <button
                         onClick={() => navigate('/admin')}
-                        className="p-4 border-2 border-purple-200 dark:border-purple-800 rounded-xl hover:border-purple-400 dark:hover:border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors text-left"
+                        className="p-4 border-2 border-gray-200 dark:border-[#2a2825] rounded-xl hover:border-gray-900 dark:hover:border-gray-100 hover:bg-gray-50 dark:hover:bg-[#2a2825] transition-colors text-left"
                       >
                         <div className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Platform Settings</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400">Configure platform-wide settings</div>
@@ -328,7 +328,7 @@ function UserProfile(props) {
                           <div className="font-semibold text-gray-800 dark:text-gray-100">Account Type</div>
                           <div className="text-sm text-gray-600 dark:text-gray-400">Full administrative access</div>
                         </div>
-                        <span className="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium">Admin</span>
+                        <span className="px-3 py-1 rounded-full bg-gray-100 dark:bg-[#1a1918] text-black dark:text-white font-medium">Admin</span>
                       </div>
                       <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
                         <div>
@@ -355,7 +355,7 @@ function UserProfile(props) {
                       {photoPreview ? (
                         <img src={photoPreview} alt="Profile" className="w-20 h-20 rounded-full object-cover" />
                       ) : (
-                        <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-xl font-bold text-white">
+                        <div className="w-20 h-20 rounded-full bg-black flex items-center justify-center text-xl font-bold text-white">
                           {formValues.name ? formValues.name.charAt(0) : 'A'}
                         </div>
                       )}
@@ -402,7 +402,7 @@ function UserProfile(props) {
                             }
                           })
                         }}
-                        className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
                         placeholder="Enter your full name"
                       />
                     </div>
@@ -433,7 +433,7 @@ function UserProfile(props) {
                             }
                           })
                         }}
-                        className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
                         placeholder="Street, City, Country"
                       />
                     </div>
@@ -444,7 +444,7 @@ function UserProfile(props) {
                         type="tel"
                         value={formValues.phone}
                         onChange={(e) => setFormValues(prev => ({ ...prev, phone: e.target.value }))}
-                        className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
                         placeholder="e.g. +1 555 123 4567"
                       />
                     </div>
@@ -455,7 +455,7 @@ function UserProfile(props) {
                           if (!onUpdateUser) return
                           onUpdateUser({ ...user, ...formValues })
                         }}
-                        className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                        className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition-colors"
                       >
                         Save Changes
                       </button>
@@ -479,7 +479,7 @@ function UserProfile(props) {
             {user.profilePhoto ? (
               <img src={user.profilePhoto} alt={user.name} className="w-24 h-24 rounded-full object-cover" />
             ) : (
-              <div className="w-24 h-24 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white text-3xl font-bold">{user.name.charAt(0)}</div>
+              <div className="w-24 h-24 bg-black rounded-full flex items-center justify-center text-white text-3xl font-bold">{user.name.charAt(0)}</div>
             )}
             <div>
               <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{user.name}</h1>
@@ -502,10 +502,10 @@ function UserProfile(props) {
               <div className="font-semibold text-gray-800 dark:text-gray-100 truncate">{user.name}</div>
             </div>
             <nav className="space-y-2">
-              <button onClick={() => setActiveTab('overview')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>Overview</button>
-              <button onClick={() => setActiveTab('bids')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'bids' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>My Bids</button>
-              <button onClick={() => setActiveTab('won')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'won' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>Won Items</button>
-              <button onClick={() => setActiveTab('settings')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>Settings</button>
+              <button onClick={() => setActiveTab('overview')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-gray-100 dark:bg-[#2a2825] text-black dark:text-white' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>Overview</button>
+              <button onClick={() => setActiveTab('bids')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'bids' ? 'bg-gray-100 dark:bg-[#2a2825] text-black dark:text-white' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>My Bids</button>
+              <button onClick={() => setActiveTab('won')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'won' ? 'bg-gray-100 dark:bg-[#2a2825] text-black dark:text-white' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>Won Items</button>
+              <button onClick={() => setActiveTab('settings')} className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-gray-100 dark:bg-[#2a2825] text-black dark:text-white' : 'hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'}`}>Settings</button>
             </nav>
           </aside>
 
@@ -514,9 +514,9 @@ function UserProfile(props) {
             {activeTab === 'overview' && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-2xl p-6 text-center">
+                  <div className="bg-black text-white rounded-2xl p-6 text-center">
                     <div className="text-3xl font-bold mb-2">₹{totalBiddingAmount.toLocaleString()}</div>
-                    <div className="text-purple-100">Total Bidding Amount</div>
+                    <div className="text-gray-300">Total Bidding Amount</div>
                   </div>
                   <div className="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-2xl p-6 text-center">
                     <div className="text-3xl font-bold mb-2">{wonItems.length}</div>
@@ -598,21 +598,21 @@ function UserProfile(props) {
                 ) : (
                   <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 transition-colors duration-200">
                     <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Become a Seller</h2>
-                    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-6">
+                    <div className="bg-gray-50 dark:bg-[#1a1918] border border-gray-200 dark:border-[#2a2825] rounded-lg p-6">
                       <div className="flex items-start space-x-4">
-                        <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                          <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-12 h-12 bg-gray-100 dark:bg-[#1a1918] rounded-full flex items-center justify-center flex-shrink-0">
+                          <svg className="w-6 h-6 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                           </svg>
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">Start Selling on BidMaster</h3>
-                          <p className="text-sm text-purple-800 dark:text-purple-200 mb-4">
+                          <h3 className="font-semibold text-black dark:text-white mb-2">Start Selling on BidMaster</h3>
+                          <p className="text-sm text-gray-900 dark:text-gray-200 mb-4">
                             Want to sell your items through auctions? Request seller approval and start creating your own auctions once approved by our admin team.
                           </p>
                           <button
                             onClick={() => navigate('/seller-approval')}
-                            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                            className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition-colors font-medium"
                           >
                             Request Seller Approval
                           </button>
@@ -635,7 +635,7 @@ function UserProfile(props) {
                               <div className="text-xs text-gray-500 dark:text-gray-400">{new Date(bid.time).toLocaleString()}</div>
                             </div>
                           </div>
-                          <button onClick={() => navigate(`/auction/${auction.id}`)} className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">View</button>
+                          <button onClick={() => navigate(`/auction/${auction.id}`)} className="text-sm text-gray-900 dark:text-white hover:text-black dark:hover:text-white">View</button>
                         </div>
                       ))}
                     </div>
@@ -668,7 +668,7 @@ function UserProfile(props) {
                       return (
                         <div
                           key={auctionId}
-                          className="flex items-center space-x-4 p-4 border border-gray-100 dark:border-slate-700 rounded-lg hover:border-purple-200 dark:hover:border-purple-700 transition-colors cursor-pointer"
+                          className="flex items-center space-x-4 p-4 border border-gray-100 dark:border-slate-700 rounded-lg hover:border-gray-300 dark:hover:border-gray-600 transition-colors cursor-pointer"
                           onClick={() => navigate(`/auction/${auctionId}`)}
                         >
                           <img src={auction.image} alt={auction.title} className="w-16 h-16 object-cover rounded-lg" />
@@ -682,7 +682,7 @@ function UserProfile(props) {
                             )}
                           </div>
                           <div className="text-right">
-                            <div className="text-sm font-semibold text-purple-600 dark:text-purple-400">LIVE</div>
+                            <div className="text-sm font-semibold text-gray-900 dark:text-white">LIVE</div>
                             <div className="text-xs text-gray-500 dark:text-gray-400">{hoursLeft}h {minutesLeft}m left</div>
                           </div>
                         </div>
@@ -768,7 +768,7 @@ function UserProfile(props) {
                       type="text"
                       value={formValues.name}
                       onChange={(e) => setFormValues(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
                       placeholder="Enter your full name"
                     />
                   </div>
@@ -779,7 +779,7 @@ function UserProfile(props) {
                       type="text"
                       value={formValues.address}
                       onChange={(e) => setFormValues(prev => ({ ...prev, address: e.target.value }))}
-                      className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
                       placeholder="Street, City, Country"
                     />
                   </div>
@@ -790,7 +790,7 @@ function UserProfile(props) {
                       type="tel"
                       value={formValues.phone}
                       onChange={(e) => setFormValues(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
                       placeholder="e.g. +1 555 123 4567"
                     />
                   </div>
@@ -801,7 +801,7 @@ function UserProfile(props) {
                         if (!onUpdateUser) return
                         onUpdateUser({ ...user, ...formValues })
                       }}
-                      className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                      className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition-colors"
                     >
                       Save Changes
                     </button>

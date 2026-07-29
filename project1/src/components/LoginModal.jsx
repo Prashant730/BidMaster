@@ -38,11 +38,11 @@ function LoginModal(props) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-90 flex items-center justify-center p-4 sm:p-6 z-50">
-      <div className="bg-white dark:bg-black rounded-xl sm:rounded-2xl shadow-2xl dark:shadow-yellow-500/20 max-w-md w-full transform transition-all max-h-[90vh] overflow-y-auto dark:border-2 dark:border-yellow-600">
+      <div className="bg-white dark:bg-[#1a1918] rounded-sm shadow-2xl border border-gray-200 dark:border-[#2a2825] max-w-md w-full transform transition-all max-h-[90vh] overflow-y-auto">
         <div className="p-4 sm:p-6">
           <div className="flex justify-between items-center mb-4 sm:mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-yellow-400">{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
-            <button onClick={onClose} className="text-gray-400 dark:text-yellow-500 hover:text-gray-600 dark:hover:text-yellow-300 transition-colors">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -65,7 +65,7 @@ function LoginModal(props) {
                     }
                     setFormData(newFormData)
                   }}
-                  className="w-full border border-gray-300 dark:border-yellow-600 dark:bg-black dark:text-yellow-400 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 dark:placeholder-yellow-600 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full border border-gray-300 dark:border-[#2a2825] dark:bg-[#141413] dark:text-white rounded-sm px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 transition-colors"
                   placeholder="Enter your full name"
                   required
                 />
@@ -82,7 +82,7 @@ function LoginModal(props) {
                   requestSeller: formData.requestSeller
                 }
                 setFormData(newFormData)
-              }} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter your email" required />
+              }} className="w-full border border-gray-300 dark:border-[#2a2825] dark:bg-[#141413] dark:text-white rounded-sm px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 transition-colors" placeholder="Enter your email" required />
             </div>
 
             <div>
@@ -95,17 +95,17 @@ function LoginModal(props) {
                   requestSeller: formData.requestSeller
                 }
                 setFormData(newFormData)
-              }} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter your password" required />
+              }} className="w-full border border-gray-300 dark:border-[#2a2825] dark:bg-[#141413] dark:text-white rounded-sm px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 transition-colors" placeholder="Enter your password" required />
             </div>
 
             {!isLogin && (
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <div className="bg-gray-50 dark:bg-[#1a1918] border border-gray-200 dark:border-[#2a2825] rounded-sm p-4">
                 <label className="flex items-start space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formData.requestSeller}
                     onChange={(e) => setFormData({ ...formData, requestSeller: e.target.checked })}
-                    className="mt-1 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                    className="mt-1 w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
                   />
                   <div>
                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Request Seller Account</div>
@@ -117,7 +117,7 @@ function LoginModal(props) {
               </div>
             )}
 
-            <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg">{isLogin ? 'Sign In' : 'Create Account'}</button>
+            <button type="submit" className="w-full bg-black dark:bg-[#1a1918] text-[#c3a372] hover:bg-gray-900 dark:hover:bg-black py-2.5 sm:py-3 rounded-sm font-medium text-sm sm:text-base transition-colors">{isLogin ? 'Sign In' : 'Create Account'}</button>
           </form>
 
           <div className="mt-4 sm:mt-6 text-center">
@@ -132,7 +132,7 @@ function LoginModal(props) {
                   requestSeller: false
                 })
               }}
-              className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium"
+              className="text-gray-900 dark:text-white hover:underline font-medium"
             >
               {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
             </button>

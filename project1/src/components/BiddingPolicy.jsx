@@ -63,7 +63,7 @@ function BiddingPolicy() {
       case 'overview':
         return (
           <div className="space-y-6">
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-l-4 border-purple-500 dark:border-purple-400 p-6 rounded-lg">
+            <div className="bg-gray-50 dark:bg-[#1a1918] border-l-4 border-black dark:border-white p-6 rounded-lg">
               <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">BidMaster Bidding Policy</h3>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                 This policy establishes the rules and procedures for participating in auctions on BidMaster.
@@ -241,7 +241,7 @@ function BiddingPolicy() {
       case 'bid-submission':
         return (
           <div className="space-y-6">
-            <div className="bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-500 dark:border-purple-400 p-6 rounded-lg">
+            <div className="bg-gray-50 dark:bg-[#1a1918] border-l-4 border-black dark:border-white p-6 rounded-lg">
               <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">Bid Submission Requirements</h3>
               <p className="text-gray-700 dark:text-gray-300">
                 All bids must be submitted in accordance with these requirements to be considered valid.
@@ -799,7 +799,7 @@ function BiddingPolicy() {
                 </ul>
                 <Link
                   to="/contact"
-                  className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                  className="inline-block bg-black hover:bg-gray-900 text-white px-6 py-2 rounded-lg font-medium transition-colors"
                 >
                   Visit Contact Support Page →
                 </Link>
@@ -828,7 +828,7 @@ function BiddingPolicy() {
           <div>
             <button
               onClick={function() { navigate('/') }}
-              className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 mb-4 transition-colors">
+              className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white mb-4 transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -851,7 +851,7 @@ function BiddingPolicy() {
                   
                   let buttonClass = 'w-full text-left px-4 py-3 rounded-lg transition-all duration-200 '
                   if (activeSection === section.id) {
-                    buttonClass += 'bg-purple-600 text-white shadow-md'
+                    buttonClass += 'bg-black text-white shadow-md'
                   } else {
                     buttonClass += 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
                   }

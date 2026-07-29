@@ -199,7 +199,7 @@ function ContactSupport() {
             </div>
             <button
               onClick={function() { navigate('/') }}
-              className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+              className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -216,12 +216,12 @@ function ContactSupport() {
 
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-xl">📧</span>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-800 dark:text-gray-100">Email</h3>
-                    <a href="mailto:support@bidmaster.com" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+                    <a href="mailto:support@bidmaster.com" className="text-gray-900 dark:text-white hover:text-black dark:hover:text-gray-300">
                       support@bidmaster.com
                     </a>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Response within 24 hours</p>
@@ -234,7 +234,7 @@ function ContactSupport() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-800 dark:text-gray-100">Phone</h3>
-                    <a href="tel:18002436278" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+                    <a href="tel:18002436278" className="text-gray-900 dark:text-white hover:text-black dark:hover:text-gray-300">
                       1-800-BID-MASTER
                     </a>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Mon-Fri: 9 AM - 6 PM EST</p>
@@ -247,7 +247,7 @@ function ContactSupport() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-800 dark:text-gray-100">Live Chat</h3>
-                    <button className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+                    <button className="text-gray-900 dark:text-white hover:text-black dark:hover:text-gray-300">
                       Start Chat
                     </button>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Available 24/7</p>
@@ -270,7 +270,7 @@ function ContactSupport() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl shadow-lg p-6 transition-colors duration-200">
+            <div className="bg-gray-50 dark:bg-[#1a1918] rounded-xl shadow-lg p-6 transition-colors duration-200">
               <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-3">Response Times</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
@@ -297,7 +297,7 @@ function ContactSupport() {
               <div className="space-y-2">
                 <button
                   onClick={function() { navigate('/policy') }}
-                  className="block w-full text-left text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:underline"
+                  className="block w-full text-left text-gray-900 dark:text-white hover:text-black dark:hover:text-gray-300 hover:underline"
                 >
                   📜 Bidding Policy
                 </button>
@@ -305,13 +305,13 @@ function ContactSupport() {
                   onClick={function() {
                     window.scrollTo({ top: 0, behavior: 'smooth' })
                   }}
-                  className="block w-full text-left text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:underline"
+                  className="block w-full text-left text-gray-900 dark:text-white hover:text-black dark:hover:text-gray-300 hover:underline"
                 >
                   📚 Beginner's Guide
                 </button>
                 <a
                   href="#faq"
-                  className="block text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:underline"
+                  className="block text-gray-900 dark:text-white hover:text-black dark:hover:text-gray-300 hover:underline"
                 >
                   ❓ Frequently Asked Questions
                 </a>
@@ -358,7 +358,7 @@ function ContactSupport() {
                       value={formData.name}
                       onChange={handleChange}
                       maxLength={MAX_LENGTHS.name}
-                      className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.name ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-slate-600 focus:ring-purple-500')}
+                      className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.name ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-[#2a2825] focus:ring-black dark:focus:ring-white')}
                       placeholder="John Doe"
                     />
                     {fieldErrors.name && <p className="mt-1 text-sm text-red-500">{fieldErrors.name}</p>}
@@ -375,7 +375,7 @@ function ContactSupport() {
                       value={formData.email}
                       onChange={handleChange}
                       maxLength={MAX_LENGTHS.email}
-                      className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.email ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-slate-600 focus:ring-purple-500')}
+                      className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.email ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-[#2a2825] focus:ring-black dark:focus:ring-white')}
                       placeholder="john@example.com"
                     />
                     {fieldErrors.email && <p className="mt-1 text-sm text-red-500">{fieldErrors.email}</p>}
@@ -414,7 +414,7 @@ function ContactSupport() {
                     value={formData.subject}
                     onChange={handleChange}
                     maxLength={MAX_LENGTHS.subject}
-                    className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.subject ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-slate-600 focus:ring-purple-500')}
+                    className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.subject ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-[#2a2825] focus:ring-black dark:focus:ring-white')}
                     placeholder="Brief description of your inquiry"
                   />
                   {fieldErrors.subject && <p className="mt-1 text-sm text-red-500">{fieldErrors.subject}</p>}
@@ -431,7 +431,7 @@ function ContactSupport() {
                     onChange={handleChange}
                     maxLength={MAX_LENGTHS.message}
                     rows={6}
-                    className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent resize-none dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.message ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-slate-600 focus:ring-purple-500')}
+                    className={'w-full border rounded-lg px-4 py-3 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent resize-none dark:bg-slate-700 dark:text-gray-100 ' + (fieldErrors.message ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 dark:border-[#2a2825] focus:ring-black dark:focus:ring-white')}
                     placeholder="Please provide as much detail as possible so we can assist you better..."
                   />
                   <div className="flex justify-between mt-1">
@@ -449,7 +449,7 @@ function ContactSupport() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  className="w-full bg-black dark:bg-[#1a1918] hover:bg-gray-900 dark:hover:bg-black text-[#c3a372] px-6 py-3 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center">

@@ -151,7 +151,7 @@ function AuctionDetail(props) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center transition-colors duration-200">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 dark:border-yellow-400 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-300">Loading auction details...</p>
         </div>
       </div>
@@ -163,7 +163,7 @@ function AuctionDetail(props) {
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center transition-colors duration-200">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Auction Not Found</h2>
-          <button onClick={() => navigate('/')} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">Back to Auctions</button>
+          <button onClick={() => navigate('/')} className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900">Back to Auctions</button>
         </div>
       </div>
     )
@@ -276,7 +276,7 @@ function AuctionDetail(props) {
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-4 sm:py-6 md:py-8 transition-colors duration-200">
       <div className="container mx-auto px-4 sm:px-6">
         {/* Back button */}
-        <button onClick={() => navigate('/')} className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 mb-4 sm:mb-6 transition-colors text-sm sm:text-base">
+        <button onClick={() => navigate('/')} className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white mb-4 sm:mb-6 transition-colors text-sm sm:text-base">
           <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
@@ -298,7 +298,7 @@ function AuctionDetail(props) {
                 <div className="flex-1">
                   <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">{auction.title}</h1>
                   <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                    <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold">{auction.category}</span>
+                    <span className="bg-gray-100 dark:bg-[#1a1918] text-black dark:text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold">{auction.category}</span>
                     {isAuctionEnded ? (
                       <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold">ENDED</span>
                     ) : isEndingSoon ? (
@@ -342,7 +342,7 @@ function AuctionDetail(props) {
               </div>
 
               {/* Timer */}
-              <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-yellow-500/10 dark:to-yellow-600/10 dark:border dark:border-yellow-600/50 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
+              <div className="bg-gray-50 dark:bg-[#1a1918] dark:border dark:border-[#2a2825] rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
                 <div className="text-center mb-2">
                   <div className="text-xs sm:text-sm text-gray-600 dark:text-yellow-400 mb-1">
                     {auction.isPermanent ? 'Permanent Auction' : 'Auction Ends In'}
@@ -358,7 +358,7 @@ function AuctionDetail(props) {
                   </div>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-yellow-900/30 rounded-full h-2 overflow-hidden">
-                  <div className="bg-gradient-to-r from-purple-500 to-blue-500 dark:from-yellow-500 dark:to-yellow-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, Math.max(0, ((auction.endTime - new Date()) / (24 * 60 * 60 * 1000)) * 100))}%` }}></div>
+                  <div className="bg-black dark:bg-white h-2 rounded-full transition-all duration-1000" style={{ width: auction.isPermanent ? '100%' : `${Math.min(100, Math.max(0, ((auction.endTime - new Date()) / (24 * 60 * 60 * 1000)) * 100))}%` }}></div>
                 </div>
               </div>
 
@@ -373,14 +373,14 @@ function AuctionDetail(props) {
                         value={bidAmount}
                         onChange={(e) => setBidAmount(e.target.value)}
                         placeholder={`Minimum ₹${(auction.currentPrice + 100).toLocaleString()}`}
-                        className="flex-1 border border-gray-300 dark:border-yellow-600 dark:bg-black dark:text-yellow-400 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 placeholder-gray-500 dark:placeholder-yellow-600 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 focus:border-transparent"
+                        className="flex-1 border border-gray-300 dark:border-yellow-600 dark:bg-black dark:text-yellow-400 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 placeholder-gray-500 dark:placeholder-yellow-600 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
                         min={auction.currentPrice + 100}
                         step="100"
                       />
                       <button
                         type="submit"
                         disabled={!user || (user && user.isAdmin) || bidLoading}
-                        className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-500 dark:from-yellow-500 dark:to-yellow-400 hover:from-purple-700 hover:to-blue-600 dark:hover:from-yellow-400 dark:hover:to-yellow-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white dark:text-black px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg dark:shadow-yellow-500/30"
+                        className="w-full sm:w-auto bg-black dark:bg-[#1a1918] hover:bg-gray-900 dark:hover:bg-black text-[#c3a372] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg dark:shadow-yellow-500/30"
                       >
                         {bidLoading ? 'Placing Bid...' : (user ? (user.isAdmin ? 'Admins cannot bid' : 'Place Bid') : 'Login to Bid')}
                       </button>
@@ -423,9 +423,9 @@ function AuctionDetail(props) {
                     return sortedBids
                   }()).map(function(bid, index) {
                     return (
-                      <div key={index} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${index === 0 ? 'bg-purple-50 dark:bg-purple-900/20 border-2 border-purple-200 dark:border-purple-800' : 'bg-gray-50 dark:bg-slate-700'}`}>
+                      <div key={index} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${index === 0 ? 'bg-gray-50 dark:bg-[#1a1918] border-2 border-gray-200 dark:border-[#2a2825]' : 'bg-gray-50 dark:bg-slate-700'}`}>
                         <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">{(bid.bidder || '').charAt(0)}</div>
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black dark:bg-white text-white dark:text-black text-xs font-bold flex-shrink-0">{(bid.bidder || '').charAt(0)}</div>
                           <div className="min-w-0 flex-1">
                             <div className="font-medium text-gray-800 dark:text-gray-100 text-sm sm:text-base truncate">
                               {bid.bidder}
@@ -450,7 +450,7 @@ function AuctionDetail(props) {
             <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6">
               <h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">Seller Information</h3>
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-lg sm:text-xl font-bold flex-shrink-0">{auction.seller.charAt(0)}</div>
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-800 dark:text-gray-200 text-lg sm:text-xl font-bold flex-shrink-0">{auction.seller.charAt(0)}</div>
                 <div className="min-w-0">
                   <div className="font-bold text-gray-800 dark:text-gray-100 text-base sm:text-lg truncate">{auction.seller}</div>
                   <div className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Verified Seller</div>

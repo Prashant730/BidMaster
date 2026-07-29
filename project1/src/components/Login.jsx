@@ -89,15 +89,12 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+    <div className="min-h-screen bg-transparent flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
       <div className="max-w-md w-full">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center justify-center space-x-2 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-500 dark:from-yellow-500 dark:to-amber-500 rounded-lg flex items-center justify-center">
-              <span className="text-white dark:text-black font-bold text-xl">BID</span>
-            </div>
-            <span className="text-3xl font-bold text-gray-800 dark:text-white">BidMaster</span>
+          <Link to="/" className="inline-flex items-center justify-center mb-6">
+            <span className="text-3xl tracking-tight font-bold text-gray-900 dark:text-white">BidMaster</span>
           </Link>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome Back</h2>
           <p className="mt-2 text-gray-600 dark:text-gray-300">
@@ -106,7 +103,7 @@ function Login() {
         </div>
 
         {/* Login Form */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl dark:shadow-yellow-500/10 p-8 border dark:border-slate-700">
+        <div className="bg-white dark:bg-[#1a1918] rounded-sm p-8 border border-gray-200 dark:border-[#2a2825] shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error Message */}
             {errors.submit && (
@@ -131,7 +128,7 @@ function Login() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-slate-600'} rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 dark:bg-slate-700 dark:text-gray-100 transition-colors`}
+                className={`w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-[#2a2825]'} rounded-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-[#141413] dark:text-white transition-colors`}
                 placeholder="your@email.com"
               />
               {errors.email && (
@@ -151,7 +148,7 @@ function Login() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border ${errors.password ? 'border-red-500' : 'border-gray-300 dark:border-slate-600'} rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 dark:bg-slate-700 dark:text-gray-100 transition-colors pr-12`}
+                  className={`w-full px-4 py-3 border ${errors.password ? 'border-red-500' : 'border-gray-300 dark:border-[#2a2825]'} rounded-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-[#141413] dark:text-white transition-colors pr-12`}
                   placeholder="Enter your password"
                 />
                 <button
@@ -181,11 +178,11 @@ function Login() {
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                  className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
                 />
                 <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
               </label>
-              <Link to="/contact" className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+              <Link to="/contact" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white underline">
                 Forgot password?
               </Link>
             </div>
@@ -194,7 +191,7 @@ function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white py-3 rounded-lg font-bold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-900 dark:hover:bg-gray-100 py-3 rounded-sm font-medium text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center">
@@ -214,7 +211,7 @@ function Login() {
           <div className="mt-6 text-center">
             <p className="text-gray-600 dark:text-gray-400">
               Don't have an account?{' '}
-              <Link to="/register" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold">
+              <Link to="/register" className="text-gray-900 dark:text-white hover:underline font-medium">
                 Create one now
               </Link>
             </p>

@@ -123,9 +123,9 @@ function BeginnerGuide(props) {
       icon: '🏆',
       content: (
         <div className="space-y-4">
-          <div className="bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-500 dark:border-purple-400 p-4 rounded">
-            <h4 className="font-bold text-purple-800 dark:text-purple-300 mb-2">Congratulations!</h4>
-            <p className="text-purple-700 dark:text-purple-300">You've won an auction! Here's what happens next.</p>
+          <div className="bg-gray-50 dark:bg-[#1a1918] border-l-4 border-black dark:border-white p-4 rounded">
+            <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">Congratulations!</h4>
+            <p className="text-gray-800 dark:text-gray-200">You've won an auction! Here's what happens next.</p>
           </div>
 
           <div className="space-y-6">
@@ -280,10 +280,10 @@ function BeginnerGuide(props) {
     <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col transition-colors duration-200">
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-blue-500 text-white p-6 flex justify-between items-center">
+        <div className="bg-black dark:bg-[#1a1918] p-6 flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold mb-2">Beginner's Guide to Bidding</h2>
-            <p className="text-blue-100">Everything you need to know to start bidding successfully</p>
+            <h2 className="text-3xl font-bold mb-2 text-[#c3a372]">Beginner's Guide to Bidding</h2>
+            <p className="text-[#c3a372]">Everything you need to know to start bidding successfully</p>
           </div>
           <button
             onClick={onClose}
@@ -307,9 +307,9 @@ function BeginnerGuide(props) {
               
               let buttonClass = 'px-4 py-3 font-medium text-sm whitespace-nowrap transition-colors '
               if (activeSection === key) {
-                buttonClass += 'text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400 bg-white dark:bg-slate-800'
+                buttonClass += 'text-black dark:text-white border-b-2 border-black dark:border-white bg-white dark:bg-slate-800'
               } else {
-                buttonClass += 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-slate-800'
+                buttonClass += 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800'
               }
               
               return (
@@ -340,7 +340,7 @@ function BeginnerGuide(props) {
             <Link
               to="/contact"
               onClick={onClose}
-              className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium underline"
+              className="text-gray-900 dark:text-gray-200 hover:text-black dark:hover:text-white font-medium underline"
             >
               Contact our support team
             </Link>
@@ -348,7 +348,7 @@ function BeginnerGuide(props) {
           </div>
           <button
             onClick={onClose}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+            className="bg-black hover:bg-gray-900 text-white px-6 py-2 rounded-lg font-medium transition-colors"
           >
             Got it, thanks!
           </button>

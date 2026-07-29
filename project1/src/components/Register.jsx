@@ -125,15 +125,12 @@ function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+    <div className="min-h-screen bg-transparent py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center justify-center space-x-2 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-500 dark:from-yellow-500 dark:to-amber-500 rounded-lg flex items-center justify-center">
-              <span className="text-white dark:text-black font-bold text-xl">BID</span>
-            </div>
-            <span className="text-3xl font-bold text-gray-800 dark:text-white">BidMaster</span>
+          <Link to="/" className="inline-flex items-center justify-center mb-6">
+            <span className="text-3xl tracking-tight font-bold text-gray-900 dark:text-white">BidMaster</span>
           </Link>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Create Your Account</h2>
           <p className="mt-2 text-gray-600 dark:text-gray-300">
@@ -142,7 +139,7 @@ function Register() {
         </div>
 
         {/* Registration Form */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl dark:shadow-yellow-500/10 p-8 border dark:border-slate-700">
+        <div className="bg-white dark:bg-[#1a1918] rounded-sm p-8 border border-gray-200 dark:border-[#2a2825] shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error Message */}
             {errors.submit && (
@@ -167,7 +164,7 @@ function Register() {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border ${errors.username ? 'border-red-500' : 'border-gray-300 dark:border-slate-600'} rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 dark:bg-slate-700 dark:text-gray-100 transition-colors`}
+                className={`w-full px-4 py-3 border ${errors.username ? 'border-red-500' : 'border-gray-300 dark:border-[#2a2825]'} rounded-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-[#141413] dark:text-white transition-colors`}
                 placeholder="Choose a username"
               />
               {errors.username && (
@@ -186,7 +183,7 @@ function Register() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-slate-600'} rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 dark:bg-slate-700 dark:text-gray-100 transition-colors`}
+                className={`w-full px-4 py-3 border ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-[#2a2825]'} rounded-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-[#141413] dark:text-white transition-colors`}
                 placeholder="Enter your full name"
               />
               {errors.name && (
@@ -205,7 +202,7 @@ function Register() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-slate-600'} rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 dark:bg-slate-700 dark:text-gray-100 transition-colors`}
+                className={`w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-[#2a2825]'} rounded-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-[#141413] dark:text-white transition-colors`}
                 placeholder="your@email.com"
               />
               {errors.email && (
@@ -224,7 +221,7 @@ function Register() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 dark:bg-slate-700 dark:text-gray-100 transition-colors"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-[#2a2825] rounded-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-[#141413] dark:text-white transition-colors"
                 placeholder="+1 (555) 000-0000"
               />
             </div>
@@ -241,7 +238,7 @@ function Register() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border ${errors.password ? 'border-red-500' : 'border-gray-300 dark:border-slate-600'} rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 dark:bg-slate-700 dark:text-gray-100 transition-colors pr-12`}
+                  className={`w-full px-4 py-3 border ${errors.password ? 'border-red-500' : 'border-gray-300 dark:border-[#2a2825]'} rounded-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-[#141413] dark:text-white transition-colors pr-12`}
                   placeholder="Create a strong password"
                 />
                 <button
@@ -279,7 +276,7 @@ function Register() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300 dark:border-slate-600'} rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-yellow-500 dark:bg-slate-700 dark:text-gray-100 transition-colors pr-12`}
+                  className={`w-full px-4 py-3 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300 dark:border-[#2a2825]'} rounded-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-[#141413] dark:text-white transition-colors pr-12`}
                   placeholder="Re-enter your password"
                 />
                 <button
@@ -305,18 +302,18 @@ function Register() {
             </div>
 
             {/* Seller Request */}
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+            <div className="bg-gray-50 dark:bg-[#1a1918] border border-gray-200 dark:border-[#2a2825] rounded-sm p-4">
               <label className="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
                   name="requestSeller"
                   checked={formData.requestSeller}
                   onChange={handleChange}
-                  className="mt-1 w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                  className="mt-1 w-5 h-5 text-black border-gray-300 rounded focus:ring-black"
                 />
                 <div>
                   <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 mr-2 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                     Request Seller Account
@@ -336,16 +333,16 @@ function Register() {
                   name="agreeToTerms"
                   checked={formData.agreeToTerms}
                   onChange={handleChange}
-                  className={`mt-1 w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500 ${errors.agreeToTerms ? 'border-red-500' : ''}`}
+                  className={`mt-1 w-5 h-5 text-black border-gray-300 rounded focus:ring-black ${errors.agreeToTerms ? 'border-red-500' : ''}`}
                 />
                 <div>
                   <span className="text-sm text-gray-700 dark:text-gray-300">
                     I agree to the{' '}
-                    <Link to="/policy" className="text-purple-600 dark:text-purple-400 hover:underline">
+                    <Link to="/policy" className="text-gray-900 dark:text-white hover:underline">
                       Terms and Conditions
                     </Link>{' '}
                     and{' '}
-                    <Link to="/policy" className="text-purple-600 dark:text-purple-400 hover:underline">
+                    <Link to="/policy" className="text-gray-900 dark:text-white hover:underline">
                       Privacy Policy
                     </Link>
                   </span>
@@ -360,7 +357,7 @@ function Register() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white py-3 rounded-lg font-bold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-900 dark:hover:bg-gray-100 py-3 rounded-sm font-medium text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center">
@@ -380,7 +377,7 @@ function Register() {
           <div className="mt-6 text-center">
             <p className="text-gray-600 dark:text-gray-400">
               Already have an account?{' '}
-              <Link to="/login" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold">
+              <Link to="/login" className="text-gray-900 dark:text-white hover:underline font-medium">
                 Sign in here
               </Link>
             </p>
@@ -392,8 +389,8 @@ function Register() {
           <p>By creating an account, you'll be able to:</p>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-2">
-                <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-gray-100 dark:bg-[#1a1918] border border-gray-200 dark:border-[#2a2825] rounded-full flex items-center justify-center mb-2">
+                <svg className="w-6 h-6 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -401,8 +398,8 @@ function Register() {
               <p className="text-xs">Participate in live auctions</p>
             </div>
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-2">
-                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-gray-100 dark:bg-[#1a1918] border border-gray-200 dark:border-[#2a2825] rounded-full flex items-center justify-center mb-2">
+                <svg className="w-6 h-6 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
               </div>
@@ -410,8 +407,8 @@ function Register() {
               <p className="text-xs">Get real-time notifications</p>
             </div>
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center mb-2">
-                <svg className="w-6 h-6 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-gray-100 dark:bg-[#1a1918] border border-gray-200 dark:border-[#2a2825] rounded-full flex items-center justify-center mb-2">
+                <svg className="w-6 h-6 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
               </div>

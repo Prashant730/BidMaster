@@ -115,7 +115,7 @@ function AuctioneerDashboard(props) {
         <div className="text-center">
           <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Please Login</h2>
           <p className={`mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>You need to be logged in to access the Auctioneer Dashboard.</p>
-          <button onClick={() => navigate('/')} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
+          <button onClick={() => navigate('/')} className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900">
             Go Home
           </button>
         </div>
@@ -129,7 +129,7 @@ function AuctioneerDashboard(props) {
         <div className="text-center">
           <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Access Denied</h2>
           <p className={`mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>You must be an auctioneer to view this page.</p>
-          <button onClick={() => navigate('/')} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
+          <button onClick={() => navigate('/')} className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900">
             Go Home
           </button>
         </div>
@@ -150,7 +150,7 @@ function AuctioneerDashboard(props) {
               Your auctioneer account is pending admin approval. Once validated, you'll be able to manage auctions and access all features.
             </p>
           </div>
-          <button onClick={() => navigate('/')} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
+          <button onClick={() => navigate('/')} className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900">
             Go Home
           </button>
         </div>
@@ -279,7 +279,7 @@ function AuctioneerDashboard(props) {
               </button>
               <button
                 onClick={() => navigate('/create')}
-                className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-500 text-white font-medium hover:from-purple-700 hover:to-blue-600 transition-all shadow-lg"
+                className="px-4 py-2 rounded-lg bg-black hover:bg-gray-900 transition-all shadow-lg"
               >
                 + Create Auction
               </button>
@@ -295,7 +295,7 @@ function AuctioneerDashboard(props) {
               <StatCard
                 title="Total Auctions"
                 value={stats.total}
-                color="from-purple-500 to-blue-500"
+                color="bg-black"
                 icon="📊"
               />
               <StatCard
@@ -313,7 +313,7 @@ function AuctioneerDashboard(props) {
               <StatCard
                 title="Total Revenue"
                 value={`₹${Math.round(stats.totalRevenue).toLocaleString()}`}
-                color="from-indigo-500 to-purple-500"
+                color="bg-gray-900"
                 icon="💵"
               />
             </div>
@@ -324,7 +324,7 @@ function AuctioneerDashboard(props) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button
                   onClick={() => navigate('/create')}
-                  className={`p-6 border-2 border-dashed rounded-xl hover:border-purple-500 transition-all text-left ${isDark ? 'border-gray-600 bg-gray-700 hover:bg-purple-900/20' : 'border-gray-300 hover:bg-purple-50'}`}
+                  className={`p-6 border-2 border-dashed rounded-xl hover:border-gray-900 transition-all text-left ${isDark ? 'border-gray-600 bg-gray-700 hover:bg-gray-800' : 'border-gray-300 hover:bg-gray-100'}`}
                 >
                   <div className="text-3xl mb-2">➕</div>
                   <h3 className={`font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>Create New Auction</h3>
@@ -376,7 +376,7 @@ function AuctioneerDashboard(props) {
                         <div>
                           <span className="font-medium text-gray-800">{item.bid.bidder}</span>
                           <span className="text-gray-600"> bid </span>
-                          <span className="font-semibold text-purple-600">₹{item.bid.amount.toLocaleString()}</span>
+                          <span className="font-semibold text-gray-900 dark:text-white">₹{item.bid.amount.toLocaleString()}</span>
                           <span className="text-gray-600"> on </span>
                           <span className="font-medium">{item.auction.title}</span>
                         </div>
@@ -404,7 +404,7 @@ function AuctioneerDashboard(props) {
                       onChange={(e) => setThreeMinuteRuleEnabled(e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
                   </label>
                 </div>
               </div>
@@ -423,12 +423,12 @@ function AuctioneerDashboard(props) {
                   placeholder="Search auctions..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
                 />
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
                 >
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
@@ -445,7 +445,7 @@ function AuctioneerDashboard(props) {
                   <p className="text-gray-500 font-medium">No auctions found</p>
                   <button
                     onClick={() => navigate('/create')}
-                    className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700"
+                    className="mt-4 bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-900"
                   >
                     Create Your First Auction
                   </button>
@@ -501,7 +501,7 @@ function AuctioneerDashboard(props) {
                         {auction.bids.length > 0 && (
                           <div className="flex justify-between">
                             <span className="text-gray-600">Highest Bidder:</span>
-                            <span className="font-semibold text-purple-600">
+                            <span className="font-semibold text-gray-900 dark:text-white">
                               {auction.bids[auction.bids.length - 1].bidder}
                             </span>
                           </div>
@@ -511,7 +511,7 @@ function AuctioneerDashboard(props) {
                       <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => navigate(`/auction/${auction.id}`)}
-                          className="flex-1 px-3 py-2 rounded bg-purple-600 text-white text-xs hover:bg-purple-700 transition-colors"
+                          className="flex-1 px-3 py-2 rounded bg-black text-white text-xs hover:bg-gray-900 transition-colors"
                         >
                           View
                         </button>
@@ -578,7 +578,7 @@ function AuctioneerDashboard(props) {
                   <p className="text-gray-500 font-medium">No auctions yet</p>
                   <button
                     onClick={() => navigate('/create')}
-                    className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700"
+                    className="mt-4 bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-900"
                   >
                     Create Your First Auction
                   </button>
@@ -611,12 +611,12 @@ function AuctioneerDashboard(props) {
                             </div>
                             <p className="text-sm text-gray-600 mb-1">Category: {auction.category}</p>
                             <p className="text-sm text-gray-600">
-                              Current Price: <span className="font-semibold text-purple-600">₹{auction.currentPrice.toLocaleString()}</span>
+                              Current Price: <span className="font-semibold text-gray-900 dark:text-white">₹{auction.currentPrice.toLocaleString()}</span>
                             </p>
                           </div>
                           <button
                             onClick={() => navigate(`/auction/${auction.id}`)}
-                            className="px-4 py-2 rounded-lg bg-purple-600 text-white text-sm hover:bg-purple-700 transition-colors"
+                            className="px-4 py-2 rounded-lg bg-black text-white text-sm hover:bg-gray-900 transition-colors"
                           >
                             View Auction
                           </button>
@@ -644,7 +644,7 @@ function AuctioneerDashboard(props) {
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <div className="font-semibold text-purple-600">₹{bid.amount.toLocaleString()}</div>
+                                  <div className="font-semibold text-gray-900 dark:text-white">₹{bid.amount.toLocaleString()}</div>
                                 </div>
                               </div>
                             ))}

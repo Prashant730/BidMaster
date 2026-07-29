@@ -672,7 +672,7 @@ function Admin(props) {
         <div className="text-center">
           <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Access Denied</h2>
           <p className={`mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>You must be an administrator to view this page.</p>
-          <button onClick={function() { navigate('/') }} className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">Go Home</button>
+          <button onClick={function() { navigate('/') }} className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900">Go Home</button>
         </div>
       </div>
     )
@@ -688,12 +688,12 @@ function Admin(props) {
             <p className={isDark ? 'text-gray-400' : 'text-gray-500'}>Manage users, auctions, and platform settings</p>
           </div>
           <div className="flex space-x-2">
-            <button onClick={function() { setActiveTab('dashboard') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='dashboard'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Dashboard</button>
-            <button onClick={function() { setActiveTab('users') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='users'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Users</button>
-            <button onClick={function() { setActiveTab('auctions') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='auctions'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Auctions</button>
-            <button onClick={function() { setActiveTab('financials') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='financials'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Financials</button>
-            <button onClick={function() { setActiveTab('config') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='config'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Configuration</button>
-            <button onClick={function() { setActiveTab('moderation') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='moderation'?'bg-purple-600 text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Moderation</button>
+            <button onClick={function() { setActiveTab('dashboard') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='dashboard'?'bg-black text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Dashboard</button>
+            <button onClick={function() { setActiveTab('users') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='users'?'bg-black text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Users</button>
+            <button onClick={function() { setActiveTab('auctions') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='auctions'?'bg-black text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Auctions</button>
+            <button onClick={function() { setActiveTab('financials') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='financials'?'bg-black text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Financials</button>
+            <button onClick={function() { setActiveTab('config') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='config'?'bg-black text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Configuration</button>
+            <button onClick={function() { setActiveTab('moderation') }} className={'px-4 py-2 rounded-lg ' + (activeTab==='moderation'?'bg-black text-white':isDark?'bg-gray-700 text-gray-200':'bg-gray-100 text-gray-700')}>Moderation</button>
           </div>
         </div>
 
@@ -701,11 +701,11 @@ function Admin(props) {
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              <StatCard title="Total Users" value={stats.totalUsers} color="from-purple-500 to-blue-500" />
+              <StatCard title="Total Users" value={stats.totalUsers} color="bg-black" />
               <StatCard title="Pending Validations" value={stats.pendingValidations} color="from-yellow-500 to-orange-500" />
               <StatCard title="Live Auctions" value={stats.activeAuctions} color="from-green-500 to-teal-500" />
               <StatCard title="Bids Today" value={stats.bidsToday} color="from-pink-500 to-red-500" />
-              <StatCard title="Revenue (est.)" value={`₹${Math.round(stats.estimatedRevenue).toLocaleString()}`} color="from-indigo-500 to-purple-500" />
+              <StatCard title="Revenue (est.)" value={`₹${Math.round(stats.estimatedRevenue).toLocaleString()}`} color="bg-gray-900" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -737,13 +737,13 @@ function Admin(props) {
                 <div className="space-y-3 max-h-64 overflow-y-auto">
                   {loadingActivities ? (
                     <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-black dark:border-white"></div>
                       <span className={`ml-2 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Loading activities...</span>
                     </div>
                   ) : activitiesError ? (
                     <div className="text-center py-4">
                       <p className="text-red-500 text-sm">{activitiesError}</p>
-                      <button onClick={fetchActivities} className="text-purple-500 text-sm mt-2 hover:underline">Retry</button>
+                      <button onClick={fetchActivities} className="text-gray-900 dark:text-gray-300 text-sm mt-2 hover:underline">Retry</button>
                     </div>
                   ) : liveActivities.length === 0 ? (
                     <div className="text-center py-8">
@@ -754,7 +754,7 @@ function Admin(props) {
                     liveActivities.slice(0, 15).map(function(activity, i) {
                       // Determine icon and color based on activity type
                       var typeConfig = {
-                        bid: { icon: '💰', bg: isDark ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-700', label: 'Bid' },
+                        bid: { icon: '💰', bg: isDark ? 'bg-[#2a2825] text-white' : 'bg-gray-200 text-black', label: 'Bid' },
                         auction_created: { icon: '🎯', bg: isDark ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700', label: 'New Auction' },
                         auction_updated: { icon: '✏️', bg: isDark ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700', label: 'Updated' },
                         auction_ended: { icon: '🏁', bg: isDark ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-700', label: 'Ended' },
@@ -853,7 +853,7 @@ function Admin(props) {
                     placeholder="Search by name or email..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className={`w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 ${isDark ? 'bg-gray-600 border-gray-500 text-white placeholder-gray-400' : 'border-gray-300'}`}
+                    className={`w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white ${isDark ? 'bg-gray-600 border-gray-500 text-white placeholder-gray-400' : 'border-gray-300'}`}
                   />
                 </div>
                 <div>
@@ -861,7 +861,7 @@ function Admin(props) {
                   <select
                     value={filterRole}
                     onChange={(e) => setFilterRole(e.target.value)}
-                    className={`w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 ${isDark ? 'bg-gray-600 border-gray-500 text-white' : 'border-gray-300'}`}
+                    className={`w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white ${isDark ? 'bg-gray-600 border-gray-500 text-white' : 'border-gray-300'}`}
                   >
                     <option value="all">All Roles</option>
                     <option value="bidder">Bidders</option>
@@ -873,7 +873,7 @@ function Admin(props) {
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className={`w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 ${isDark ? 'bg-gray-600 border-gray-500 text-white' : 'border-gray-300'}`}
+                    className={`w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white ${isDark ? 'bg-gray-600 border-gray-500 text-white' : 'border-gray-300'}`}
                   >
                     <option value="all">All Status</option>
                     <option value="active">Active</option>
@@ -918,7 +918,7 @@ function Admin(props) {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex flex-col gap-1">
                             <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              u.role === 'admin' || u.isAdmin ? 'bg-purple-100 text-purple-800' :
+                              u.role === 'admin' || u.isAdmin ? 'bg-gray-200 text-black' :
                               u.role === 'auctioneer' ? 'bg-blue-100 text-blue-800' :
                               u.role === 'seller' ? 'bg-indigo-100 text-indigo-800' :
                               'bg-gray-100 text-gray-800'
@@ -1146,7 +1146,7 @@ function Admin(props) {
                       <div className="flex gap-2 mt-4">
                         <button
                           onClick={() => navigate(`/auction/${a.id}`)}
-                          className="flex-1 px-3 py-2 rounded bg-purple-600 text-white text-xs hover:bg-purple-700 transition-colors"
+                          className="flex-1 px-3 py-2 rounded bg-black text-white text-xs hover:bg-gray-900 transition-colors"
                         >
                           View
                         </button>
@@ -1225,7 +1225,7 @@ function Admin(props) {
 
               {/* Key Financial Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl p-6 text-white">
+                <div className="bg-gradient-to-br bg-black rounded-2xl p-6 text-white">
                   <div className="text-sm text-white/80 mb-1">Total Revenue</div>
                   <div className="text-3xl font-bold mb-2">₹{Math.round(totalRevenue).toLocaleString()}</div>
                   <div className="text-xs text-white/70">From {endedAuctionsWithBids.length} completed auctions</div>
@@ -1240,7 +1240,7 @@ function Admin(props) {
                   <div className="text-3xl font-bold mb-2">₹{Math.round(potentialRevenue).toLocaleString()}</div>
                   <div className="text-xs text-white/70">From {activeAuctionsWithBids.length} active auctions</div>
                 </div>
-                <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl p-6 text-white">
+                <div className="bg-gradient-to-br bg-gray-900 rounded-2xl p-6 text-white">
                   <div className="text-sm text-white/80 mb-1">Commission Rate</div>
                   <div className="text-3xl font-bold mb-2">{Math.round(commissionRate * 100)}%</div>
                   <div className="text-xs text-white/70">Current platform fee</div>
@@ -1276,10 +1276,10 @@ function Admin(props) {
                               setContextCommissionRate(val)
                             }
                           }}
-                          className={`border rounded-lg px-4 py-2 w-32 focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg font-semibold ${isDark ? 'bg-gray-600 border-gray-500 text-white' : 'border-gray-300'}`}
+                          className={`border rounded-lg px-4 py-2 w-32 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white text-lg font-semibold ${isDark ? 'bg-gray-600 border-gray-500 text-white' : 'border-gray-300'}`}
                         />
                         <div className="flex flex-col">
-                          <span className="text-2xl font-bold text-purple-600">{Math.round(commissionRate * 100)}%</span>
+                          <span className="text-2xl font-bold text-black dark:text-white">{Math.round(commissionRate * 100)}%</span>
                           <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Percentage</span>
                         </div>
                       </div>
@@ -1342,7 +1342,7 @@ function Admin(props) {
                                 <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>₹{auction.currentPrice.toLocaleString()}</span>
                               </td>
                               <td className="py-4 pr-4">
-                                <span className="font-semibold text-purple-500">₹{Math.round(commission).toLocaleString()}</span>
+                                <span className="font-semibold text-gray-900 dark:text-gray-300">₹{Math.round(commission).toLocaleString()}</span>
                               </td>
                               <td className="py-4 pr-4">
                                 <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>₹{Math.round(sellerReceives).toLocaleString()}</span>
@@ -1359,7 +1359,7 @@ function Admin(props) {
                         <tr>
                           <td colSpan="2" className={`py-4 pr-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>Total</td>
                           <td className={`py-4 pr-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>₹{Math.round(totalTransactionValue).toLocaleString()}</td>
-                          <td className="py-4 pr-4 text-purple-500">₹{Math.round(totalRevenue).toLocaleString()}</td>
+                          <td className="py-4 pr-4 text-gray-900 dark:text-gray-300">₹{Math.round(totalRevenue).toLocaleString()}</td>
                           <td className={`py-4 pr-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>₹{Math.round(totalTransactionValue - totalRevenue).toLocaleString()}</td>
                           <td className="py-4 pr-4"></td>
                         </tr>
@@ -1448,7 +1448,7 @@ function Admin(props) {
                     setCategories(prev=> [...prev, categoryInput])
                     setCategoryInput('')
                   }}
-                  className="px-3 py-2 rounded bg-purple-600 text-white hover:bg-purple-700"
+                  className="px-3 py-2 rounded bg-black text-white hover:bg-gray-900"
                 >
                   Add
                 </button>
@@ -1639,7 +1639,7 @@ function Admin(props) {
                         <option value="medium">Medium</option>
                         <option value="high">High</option>
                       </select>
-                      <button onClick={addAnnouncement} className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+                      <button onClick={addAnnouncement} className="px-4 py-2 bg-black text-white rounded hover:bg-gray-900">
                         Post Announcement
                       </button>
                     </div>
@@ -1712,7 +1712,7 @@ function Admin(props) {
                     onClick={() => setModerationView('bids')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       moderationView === 'bids'
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-black text-white'
                         : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -1722,7 +1722,7 @@ function Admin(props) {
                     onClick={() => setModerationView('users')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       moderationView === 'users'
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-black text-white'
                         : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -1732,7 +1732,7 @@ function Admin(props) {
                     onClick={() => setModerationView('reports')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       moderationView === 'reports'
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-black text-white'
                         : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -1742,7 +1742,7 @@ function Admin(props) {
                     onClick={() => setModerationView('tickets')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       moderationView === 'tickets'
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-black text-white'
                         : isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -1760,7 +1760,7 @@ function Admin(props) {
                       placeholder="Search bids by bidder name, auction title, or amount..."
                       value={bidSearchTerm}
                       onChange={(e) => setBidSearchTerm(e.target.value)}
-                      className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
                     />
                     <div className="text-sm text-gray-600">
                       Showing {filteredBids.length} of {allBids.length} bids
@@ -1813,7 +1813,7 @@ function Admin(props) {
                                     <span className="font-medium">Bidder:</span> {bid.bidder}
                                   </div>
                                   <div className="text-sm text-gray-600 mb-1">
-                                    <span className="font-medium">Bid Amount:</span> <span className="text-lg font-bold text-purple-600">${bid.amount.toLocaleString()}</span>
+                                    <span className="font-medium">Bid Amount:</span> <span className="text-lg font-bold text-black dark:text-white">${bid.amount.toLocaleString()}</span>
                                   </div>
                                   <div className="text-xs text-gray-500">
                                     Placed: {new Date(bid.time).toLocaleString()}
@@ -1856,12 +1856,12 @@ function Admin(props) {
                       placeholder="Search users by name or email..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
                     />
                     <select
                       value={filterStatus}
                       onChange={(e) => setFilterStatus(e.target.value)}
-                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
                     >
                       <option value="all">All Status</option>
                       <option value="active">Active</option>
@@ -1891,7 +1891,7 @@ function Admin(props) {
                               <div className="flex items-center gap-2 mb-1">
                                 <h3 className="font-semibold text-gray-800">{u.name}</h3>
                                 {u.isAdmin && (
-                                  <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-medium">Admin</span>
+                                  <span className="px-2 py-0.5 rounded-full bg-gray-200 text-black text-xs font-medium">Admin</span>
                                 )}
                               </div>
                               <p className="text-sm text-gray-600 mb-2">{u.email}</p>
@@ -1986,7 +1986,7 @@ function Admin(props) {
                     <select
                       value={reportFilter}
                       onChange={(e) => setReportFilter(e.target.value)}
-                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
                     >
                       <option value="all">All Reports</option>
                       <option value="pending">Pending</option>
@@ -2011,7 +2011,7 @@ function Admin(props) {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 <span className={`px-2 py-1 rounded-full text-xs ${
-                                  report.type === 'auction' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+                                  report.type === 'auction' ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-black'
                                 }`}>
                                   {report.type === 'auction' ? 'Auction Report' : 'User Report'}
                                 </span>
@@ -2063,7 +2063,7 @@ function Admin(props) {
                     <select
                       value={ticketFilter}
                       onChange={(e) => setTicketFilter(e.target.value)}
-                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
                     >
                       <option value="all">All Tickets</option>
                       <option value="open">Open</option>
@@ -2124,7 +2124,7 @@ function Admin(props) {
                             <div className="flex flex-col gap-2 ml-4">
                               <button
                                 onClick={() => setSelectedTicket(selectedTicket === ticket.id ? null : ticket.id)}
-                                className="px-4 py-2 rounded-lg bg-purple-600 text-white text-sm font-medium hover:bg-purple-700 transition-colors"
+                                className="px-4 py-2 rounded-lg bg-black text-white text-sm font-medium hover:bg-gray-900 transition-colors"
                               >
                                 {selectedTicket === ticket.id ? 'Hide Reply' : 'Reply'}
                               </button>
@@ -2185,7 +2185,7 @@ function QuickLink(props) {
   const label = props.label
   const onClick = props.onClick
   return (
-    <button onClick={onClick} className="px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium text-sm text-left">
+    <button onClick={onClick} className="px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-800 dark:text-gray-200 font-medium text-sm text-left">
       {label}
     </button>
   )

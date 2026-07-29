@@ -62,89 +62,71 @@ function Hero(props) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
           <div className="flex flex-col items-start text-left">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-              Discover Rare Finds & Win Amazing Deals
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-gray-900 dark:text-white mb-6 leading-tight tracking-tight">
+              Curated auctions for the discerning collector.
             </h1>
             
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-xl mb-8 leading-relaxed">
-              Join thousands of elite bidders in our exclusive live auctions. From luxury timepieces to rare collectibles, experience the thrill of winning what you love.
+            <p className="text-lg text-gray-600 dark:text-[#d4d0c8] max-w-xl mb-10 leading-relaxed font-light">
+              Explore an exclusive selection of verified luxury timepieces, fine art, and rare collectibles. Experience the elegance of live bidding from anywhere in the world.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row gap-5 w-full sm:w-auto">
               {(!user || !user.isAdmin) && (
                 <>
                   <button
                     onClick={handleStartBidding}
-                    className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+                    className="px-8 py-3.5 bg-[#2a2825] dark:bg-[#f0eee9] hover:opacity-90 text-white dark:text-[#141413] rounded font-medium text-[15px] transition-opacity flex items-center justify-center gap-2"
                   >
-                    Start Bidding Now
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
+                    View Current Auctions
                   </button>
                   
                   <button
                     onClick={() => setShowHowItWorks(true)}
-                    className="px-8 py-3.5 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-lg font-medium text-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center shadow-sm"
+                    className="px-8 py-3.5 bg-transparent border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-[#eaeaea] rounded font-medium text-[15px] hover:border-gray-900 dark:hover:border-[#f0eee9] transition-colors flex items-center justify-center"
                   >
-                    How It Works
+                    How it works
                   </button>
                 </>
               )}
-            </div>
-
-            <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 w-full grid grid-cols-3 gap-6">
-              <div>
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">10K+</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">Active Bidders</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">500+</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">Live Auctions</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">₹2Cr+</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Sales</div>
-              </div>
             </div>
           </div>
 
           <div className="hidden lg:flex justify-end">
             <div 
               onClick={handleFeaturedClick}
-              className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700 transition-transform hover:-translate-y-1 duration-300 cursor-pointer group"
+              className="w-full max-w-md bg-white dark:bg-[#1e1d1b] rounded-sm overflow-hidden border border-gray-100 dark:border-[#2a2825] cursor-pointer group shadow-sm hover:shadow-md transition-shadow duration-300"
             >
-              <div className="relative h-72 overflow-hidden bg-gray-100 dark:bg-gray-700">
-                 <img src={displayAuction.image} alt={displayAuction.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="relative h-80 overflow-hidden bg-gray-100 dark:bg-[#1a1918]">
+                 <img src={displayAuction.image} alt={displayAuction.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
                  
-                 <div className="absolute top-4 right-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2">
-                   {timeLeft !== 'Ended' && <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>}
-                   <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                     {timeLeft === 'Ended' ? 'Auction Ended' : `Ends in ${timeLeft}`}
+                 <div className="absolute top-4 right-4 bg-white/95 dark:bg-[#141413]/95 backdrop-blur-sm px-4 py-2 rounded-sm shadow-sm flex items-center gap-2 border border-gray-100 dark:border-[#2a2825]">
+                   {timeLeft !== 'Ended' && <div className="w-2 h-2 rounded-full bg-[#c3a372]"></div>}
+                   <span className="text-xs font-medium tracking-wide uppercase text-gray-900 dark:text-white">
+                     {timeLeft === 'Ended' ? 'Ended' : `${timeLeft}`}
                    </span>
                  </div>
               </div>
 
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
+              <div className="p-8">
+                <div className="flex justify-between items-start mb-6">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 truncate max-w-[280px]">{displayAuction.title}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {displayAuction.category ? `${displayAuction.category} • Verified Authentic` : 'Mint Condition • Verified Authentic'}
+                    <h3 className="text-xl font-serif text-gray-900 dark:text-white mb-2 truncate max-w-[280px]">{displayAuction.title}</h3>
+                    <p className="text-sm text-gray-500 dark:text-[#d4d0c8] font-light">
+                      {displayAuction.category ? `${displayAuction.category}` : 'Featured Listing'}
                     </p>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex items-end justify-between pt-6 border-t border-gray-100 dark:border-[#2a2825]">
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1 uppercase tracking-wider">Current Bid</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="text-[10px] text-gray-500 dark:text-[#a39f98] font-medium mb-1 uppercase tracking-widest">Current Bid</p>
+                    <p className="text-2xl font-serif text-gray-900 dark:text-white">
                       ₹{displayAuction.currentPrice?.toLocaleString('en-IN')}
                     </p>
                   </div>
-                  <button className="px-6 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                    Place Bid
-                  </button>
+                  <span className="text-sm border-b border-gray-900 dark:border-[#f0eee9] text-gray-900 dark:text-white pb-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    View Details
+                  </span>
                 </div>
               </div>
             </div>
